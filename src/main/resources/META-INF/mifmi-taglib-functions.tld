@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+		version="2.0">
+	
+	<tlib-version>1.1</tlib-version>
+	<short-name>mf</short-name>
+	<uri>http://mifmi.org/jsp/taglib/functions</uri>
+	
+	<function>
+		<name>strcat</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String strcat(java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>strcat3</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String strcat(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>strcat4</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String strcat(java.lang.String, java.lang.String, java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>strcatNotNull</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String strcatNotNull(java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>strcatNotNull3</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String strcatNotNull(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>strcatNotNull4</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String strcatNotNull(java.lang.String, java.lang.String, java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>strcatNotBlank</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String strcatNotBlank(java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>strcatNotBlank3</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String strcatNotBlank(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>strcatNotBlank4</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String strcatNotBlank(java.lang.String, java.lang.String, java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>replace</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String replace(java.lang.String, java.lang.String, java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>halfAlNum</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String halfAlNum(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>h</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String escapeHTML(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>br</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String br(java.lang.String)</function-signature>
+	</function>
+	<function>
+		<name>formatDate</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String formatDate(java.util.Date, java.lang.String, java.util.TimeZone)</function-signature>
+	</function>
+</taglib>
