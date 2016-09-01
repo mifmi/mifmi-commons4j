@@ -20,7 +20,7 @@ import org.mifmi.commons4j.config.ResourceBundleConfig;
 public class ConfigTest {
 
 	@Test
-	public void testSampleCode() throws Exception {
+	public void testSampleCodeResourceBundle() throws Exception {
 		Config config = new ResourceBundleConfig(
 				"testconfig",
 				new Locale("ja", "JP"),
@@ -47,5 +47,39 @@ public class ConfigTest {
 		assertEquals("locale en_US", localeEnUS);
 		assertEquals("locale en", localeEn);
 		assertEquals("locale default", localeDefault);
+	}
+
+	@Test
+	public void testSampleCodeAppConfig() throws Exception {
+		final String configName = "settings.properties";
+		final String appName = "sampleapp";
+		final String groupName = "mifmi.org";
+		
+		// Load
+		Config config = Config.loadFromAppConfig(configName, appName, groupName);
+		
+		// Set
+		config.set("test.string", "テスト");
+		config.set("test.int", 12345);
+		config.set("test.boolean", true);
+		config.set("test.array", new String[]{"ふー", "ばー", "ばず"});
+		
+		// Store
+		config.storeToAppConfig(configName, appName, groupName, "comment");
+		
+		// Reload
+		Config config2 = Config.loadFromAppConfig(configName, appName, groupName);
+		
+		// Get form reloaded configure
+		String stringVal = config2.get("test.string");
+		int intVal = config2.getAsInt("test.int");
+		boolean booleanVal = config2.getAsBoolean("test.boolean");
+		String[] arrayVal = config2.getAsArray("test.array");
+		
+		assertEquals("テスト", stringVal);
+		assertEquals(12345, intVal);
+		assertEquals(true, booleanVal);
+		assertArrayEquals(new String[]{"ふー", "ばー", "ばず"}, arrayVal);
+		
 	}
 }
