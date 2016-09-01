@@ -17,10 +17,14 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-public class ResourceBundleConfig extends AbstractConfig {
+public class ResourceBundleConfig extends Config {
 	
 	private ResourceBundle resourceBundle;
-
+	
+	public ResourceBundleConfig(ResourceBundle resourceBundle) {
+		this.resourceBundle = resourceBundle;
+	}
+	
 	public ResourceBundleConfig(String baseName) {
 		this(baseName, (Enumeration<Locale>)null);
 	}
@@ -98,20 +102,35 @@ public class ResourceBundleConfig extends AbstractConfig {
 	
 	@Override
 	protected String handleGetValue(String key, String defaultValue) {
-		if (!handleHasKey(key)) {
+		if (!handleContainsKey(key)) {
 			return defaultValue;
 		}
 		return this.resourceBundle.getString(key);
 	}
 	
 	@Override
-	protected boolean handleHasKey(String key) {
+	protected String handleSetValue(String key, String value) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected String handleRemoveValue(String key) {
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
+	protected boolean handleContainsKey(String key) {
 		return this.resourceBundle.containsKey(key);
 	}
 	
 	@Override
 	protected Set<String> handleGetKeySet() {
 		return this.resourceBundle.keySet();
+	}
+
+	@Override
+	protected int handleGetSize() {
+		return this.resourceBundle.keySet().size();
 	}
 
 	public ResourceBundle getBundle() {
