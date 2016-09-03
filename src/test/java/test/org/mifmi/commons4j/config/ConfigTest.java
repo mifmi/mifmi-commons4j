@@ -19,6 +19,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mifmi.commons4j.config.Config;
 import org.mifmi.commons4j.config.ResourceBundleConfig;
@@ -55,6 +56,7 @@ public class ConfigTest {
 		assertEquals("locale default", localeDefault);
 	}
 
+	@Ignore
 	@Test
 	public void testSampleCodeAppConfig() throws Exception {
 		final String configName = "settings.properties";
