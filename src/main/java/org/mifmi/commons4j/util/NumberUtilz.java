@@ -833,7 +833,83 @@ public final class NumberUtilz {
 		
 		return num;
 	}
-
+	
+	public static byte[] toByteArray(Number number) {
+		if (number == null) {
+			return null;
+		}
+		
+		if (number instanceof Byte) {
+			byte n = number.byteValue();
+			return new byte[]{
+					n
+					};
+		} else if (number instanceof Short) {
+			short n = number.shortValue();
+			return new byte[]{
+					(byte)((n >> 0) & 0xff),
+					(byte)((n >> 8) & 0xff),
+					};
+		} else if (number instanceof Integer || number instanceof AtomicInteger) {
+			int n = number.intValue();
+			return new byte[]{
+					(byte)((n >> 0) & 0xff),
+					(byte)((n >> 8) & 0xff),
+					(byte)((n >> 16) & 0xff),
+					(byte)((n >> 24) & 0xff),
+					};
+		} else if (number instanceof Long || number instanceof AtomicLong) {
+			long n = number.longValue();
+			return new byte[]{
+					(byte)((n >> 0) & 0xff),
+					(byte)((n >> 8) & 0xff),
+					(byte)((n >> 16) & 0xff),
+					(byte)((n >> 24) & 0xff),
+					(byte)((n >> 32) & 0xff),
+					(byte)((n >> 40) & 0xff),
+					(byte)((n >> 48) & 0xff),
+					(byte)((n >> 56) & 0xff),
+					};
+		} else if (number instanceof Float) {
+			int n = Float.floatToRawIntBits(number.floatValue());
+			return new byte[]{
+					(byte)((n >> 0) & 0xff),
+					(byte)((n >> 8) & 0xff),
+					(byte)((n >> 16) & 0xff),
+					(byte)((n >> 24) & 0xff),
+					};
+		} else if (number instanceof Double) {
+			long n = Double.doubleToRawLongBits(number.doubleValue());
+			return new byte[]{
+					(byte)((n >> 0) & 0xff),
+					(byte)((n >> 8) & 0xff),
+					(byte)((n >> 16) & 0xff),
+					(byte)((n >> 24) & 0xff),
+					(byte)((n >> 32) & 0xff),
+					(byte)((n >> 40) & 0xff),
+					(byte)((n >> 48) & 0xff),
+					(byte)((n >> 56) & 0xff),
+					};
+		} else if (number instanceof BigInteger) {
+			BigInteger n = ((BigInteger)number);
+			return n.toByteArray();
+		} else if (number instanceof BigDecimal) {
+			BigDecimal n = ((BigDecimal)number);
+			int scale = n.scale();
+			byte[] unscaledValue = n.unscaledValue().toByteArray();
+			
+			byte[] binary = new byte[unscaledValue.length + 4];
+			System.arraycopy(unscaledValue, 0, binary, 0, unscaledValue.length);
+			binary[unscaledValue.length] = (byte)((scale >> 0) & 0xff);
+			binary[unscaledValue.length + 1] = (byte)((scale >> 8) & 0xff);
+			binary[unscaledValue.length + 2] = (byte)((scale >> 16) & 0xff);
+			binary[unscaledValue.length + 3] = (byte)((scale >> 24) & 0xff);
+			return binary;
+		} else {
+			throw new IllegalArgumentException();
+		}
+	}
+	
 	public static String toString(Number value, String pattern) {
 		if (value == null) {
 			return null;

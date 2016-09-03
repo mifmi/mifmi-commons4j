@@ -14,10 +14,11 @@ import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
 
-public class ResourceBundleConfig extends Config {
+public class ResourceBundleConfig extends AbstractConfig {
 	
 	private ResourceBundle resourceBundle;
 	
@@ -98,23 +99,28 @@ public class ResourceBundleConfig extends Config {
 		}
 	}
 	// end temporary code */
-		
-	
+
 	@Override
-	protected String handleGetValue(String key, String defaultValue) {
-		if (!handleContainsKey(key)) {
-			return defaultValue;
-		}
-		return this.resourceBundle.getString(key);
+	protected boolean handleSupportsObjectValue() {
+		return false;
 	}
 	
 	@Override
-	protected String handleSetValue(String key, String value) {
+	protected Object handleGetValue(String key) {
+		try {
+			return this.resourceBundle.getString(key);
+		} catch (MissingResourceException e) {
+			return null;
+		}
+	}
+	
+	@Override
+	protected Object handleSetValue(String key, Object value) {
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	protected String handleRemoveValue(String key) {
+	protected Object handleRemoveValue(String key) {
 		throw new UnsupportedOperationException();
 	}
 
