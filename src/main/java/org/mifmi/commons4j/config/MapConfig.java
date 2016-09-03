@@ -11,26 +11,31 @@ package org.mifmi.commons4j.config;
 import java.util.Map;
 import java.util.Set;
 
-public class MapConfig extends Config {
+public class MapConfig extends AbstractConfig {
 	
-	private Map<String, String> map;
+	private Map<String, Object> map;
 	
-	public MapConfig(Map<String, String> map) {
+	public MapConfig(Map<String, Object> map) {
 		this.map = map;
 	}
 
 	@Override
-	protected String handleGetValue(String key, String defaultValue) {
-		return this.map.getOrDefault(key, defaultValue);
+	protected boolean handleSupportsObjectValue() {
+		return true;
+	}
+
+	@Override
+	protected Object handleGetValue(String key) {
+		return this.map.get(key);
 	}
 	
 	@Override
-	protected String handleSetValue(String key, String value) {
+	protected Object handleSetValue(String key, Object value) {
 		return this.map.put(key, value);
 	}
 
 	@Override
-	protected String handleRemoveValue(String key) {
+	protected Object handleRemoveValue(String key) {
 		return this.map.remove(key);
 	}
 

@@ -81,9 +81,62 @@ public final class StringUtilz {
 		}
 	}
 
+	public static String[] split(String str, char separator) {
+		return split(str, separator, false, -1, -1, false);
+	}
+	
+	public static String[] split(String str, char separator, boolean trim, int maxCount, int escapeChar, boolean unescape) {
+		if (str == null) {
+			return null;
+		}
+		
+		if (str.isEmpty() || maxCount == 0) {
+			return new String[0];
+		}
+		
+		int sepCnt = count(str, separator);
+		if (sepCnt == 0) {
+			return new String[]{str};
+		}
+		
+		int strLen = str.length();
+		StringBuilder sb = new StringBuilder(strLen);
+		boolean escaped = false;
+		List<String> list = new ArrayList<>(sepCnt + 1);
+		for (int i = 0; i < strLen; i++) {
+			char ch = str.charAt(i);
+			if (escaped) {
+				sb.append(ch);
+				if (!Character.isHighSurrogate(ch)) {
+					escaped = false;
+				}
+			} else {
+				if (0 <= escapeChar && ch == escapeChar) {
+					if (!unescape) {
+						sb.append(ch);
+					}
+					escaped = true;
+				} else if (ch == separator) {
+					if (maxCount < 0 || list.size() < maxCount - 1) {
+						list.add((trim) ? toStringWithTrim(sb) : sb.toString());
+						sb.setLength(0);
+					} else {
+						sb.append(ch);
+					}
+				} else {
+					sb.append(ch);
+				}
+			}
+		}
+		list.add((trim) ? toStringWithTrim(sb) : sb.toString());
+		
+		return list.toArray(new String[list.size()]);
+	}
+	
 	public static String[] split(String str, String separatorRegex) {
 		return split(str, separatorRegex, false);
 	}
+	
 	public static String[] split(String str, String separatorRegex, boolean trim) {
 		if (str == null) {
 			return null;
@@ -126,10 +179,10 @@ public final class StringUtilz {
 		return sb;
 	}
 	
-	public static String join(String separator, Collection<Object> values) {
+	public static <T> String join(String separator, Collection<T> values) {
 		return join(new StringBuilder(), separator, values).toString();
 	}
-	public static StringBuilder join(StringBuilder sb, String separator, Collection<Object> values) {
+	public static <T> StringBuilder join(StringBuilder sb, String separator, Collection<T> values) {
 		if (values == null || values.isEmpty()) {
 			return sb;
 		}
@@ -462,6 +515,10 @@ public final class StringUtilz {
 		}
 		
 		return sb.toString();
+	}
+	
+	public static String escape(String str, char escapeChar, char... targetChars) {
+		return escape(str, escapeChar, targetChars, null);
 	}
 	
 	public static String escape(String str, char escapeChar, char[] targetChars, char[] escapedChars) {
@@ -1175,5 +1232,38 @@ public final class StringUtilz {
 			}
 		}
 		return true;
+	}
+	
+	public static String toStringWithTrim(StringBuilder sb) {
+		if (sb == null) {
+			return null;
+		}
+		
+		int len = sb.length();
+		if (len == 0) { 
+			return "";
+		}
+		
+		int sIdx;
+		for (sIdx = 0; sIdx < len; sIdx++) {
+			char ch = sb.charAt(sIdx);
+			if (!Character.isWhitespace(ch)) {
+				break;
+			}
+		}
+		
+		if (sIdx == len) {
+			return "";
+		}
+		
+		int eIdx;
+		for (eIdx = len - 1; 0 <= eIdx; eIdx--) {
+			char ch = sb.charAt(eIdx);
+			if (!Character.isWhitespace(ch)) {
+				break;
+			}
+		}
+		
+		return sb.substring(sIdx, eIdx + 1);
 	}
 }

@@ -14,10 +14,11 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.InvalidPropertiesFormatException;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.Set;
 
-public class PropertiesConfig extends Config {
+public class PropertiesConfig extends AbstractConfig {
 	
 	private Properties properties;
 	
@@ -82,13 +83,18 @@ public class PropertiesConfig extends Config {
 	}
 
 	@Override
-	protected String handleGetValue(String key, String defaultValue) {
-		return this.properties.getProperty(key, defaultValue);
+	protected boolean handleSupportsObjectValue() {
+		return false;
+	}
+
+	@Override
+	protected Object handleGetValue(String key) {
+		return this.properties.getProperty(key);
 	}
 	
 	@Override
-	protected String handleSetValue(String key, String value) {
-		return (String)this.properties.setProperty(key, value);
+	protected Object handleSetValue(String key, Object value) {
+		return this.properties.setProperty(key, Objects.toString(value));
 	}
 
 	@Override
