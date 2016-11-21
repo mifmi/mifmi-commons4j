@@ -26,9 +26,10 @@ public final class ObjectUtilz {
 	 * Null safe comparison of Comparables.
 	 * A null value is considered less than a non-null value.
 	 * 
+	 * @param <T> type of the object
 	 * @param o1 the first object to be compared, may be null.
 	 * @param o2 the second object to be compared, may be null.
-	 * @return a negative value if o1 < o2, zero if o1 = o2 and a positive value if o1 > o2.
+	 * @return a negative value if o1 &lt; o2, zero if o1 = o2 and a positive value if o1 &gt; o2.
 	 */
 	public static <T extends Comparable<? super T>> int compare(T o1, T o2) {
 		return compare(o1, o2, false);
@@ -37,10 +38,11 @@ public final class ObjectUtilz {
 	/**
 	 * Null safe comparison of Comparables.
 	 * 
+	 * @param <T> type of the object
 	 * @param o1 the first object to be compared, may be null
 	 * @param o2 the second object to be compared, may be null
 	 * @param nullGreater if true then a null value is considered greater than a non-null value, otherwise a null value is considered less than a non-null value
-	 * @return a negative value if o1 < o2, zero if o1 = o2 and a positive value if o1 > o2
+	 * @return a negative value if o1 &lt; o2, zero if o1 = o2 and a positive value if o1 &gt; o2
 	 */
 	public static <T extends Comparable<? super T>> int compare(T o1, T o2, boolean nullGreater) {
 		if (o1 == null) {

@@ -20,7 +20,7 @@ public class MapConfig extends AbstractConfig {
 	}
 
 	@Override
-	protected boolean handleSupportsObjectValue() {
+	protected boolean supportsObjectValue() {
 		return true;
 	}
 

@@ -26,14 +26,14 @@ public class ConfigConnectionLoader extends AbstractConnectionLoader {
 		String keyPrefix = this.configKeyPrefix + name + ".";
 
 		Connection conn;
-		String datasource = this.conf.get(keyPrefix + "datasource", null);
+		String datasource = this.conf.getAsString(keyPrefix + "datasource", null);
 		if (datasource != null) {
 			conn = getDataSourceConnection(name);
 		} else {
-			String driver = this.conf.get(keyPrefix + "driver");
-			String url = this.conf.get(keyPrefix + "url");
-			String user = this.conf.get(keyPrefix + "user", null);
-			String password = this.conf.get(keyPrefix + "password", null);
+			String driver = this.conf.getAsString(keyPrefix + "driver");
+			String url = this.conf.getAsString(keyPrefix + "url");
+			String user = this.conf.getAsString(keyPrefix + "user", null);
+			String password = this.conf.getAsString(keyPrefix + "password", null);
 			
 			conn = getJDBCConnection(driver, url, user, password);
 		}

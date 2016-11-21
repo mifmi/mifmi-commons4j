@@ -8,19 +8,16 @@
  */
 package org.mifmi.commons4j.config;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.time.temporal.TemporalAccessor;
 import java.util.Enumeration;
 import java.util.InvalidPropertiesFormatException;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -39,87 +36,24 @@ public interface Config {
 	}
 
 	static Config loadFromAppConfig(String configName, String appName, String groupName) throws InvalidPropertiesFormatException, IOException {
-		Path filePath = buildAppConfigFilePath(configName, appName, groupName);
-		if (Files.exists(filePath)) {
-			// File exists
-			try (BufferedReader br = Files.newBufferedReader(filePath, Charset.forName("UTF-8"))) {
-				return new PropertiesConfig(br);
-			}
-		} else {
-			// File no exists
-			return new PropertiesConfig(new OrderedProperties());
-		}
+		return AbstractConfig.loadFromAppConfig(configName, appName, groupName);
 	}
 
 	static void storeToAppConfig(Config config, String configName, String appName, String groupName, String comments) throws IOException {
-		Path filePath = buildAppConfigFilePath(configName, appName, groupName);
-		
-		Files.createDirectories(filePath.getParent());
-		
-		Properties properties;
-		if (config instanceof PropertiesConfig) {
-			properties = ((PropertiesConfig)config).getProperties();
-		} else {
-			Map<String, Object> map = config.asMap();
-			properties = new OrderedProperties();
-			for (Map.Entry<String, Object> entry : map.entrySet()) {
-				properties.setProperty(entry.getKey(), Objects.toString(entry.getValue()));
-			}
-		}
-		
-		try (BufferedWriter bw = Files.newBufferedWriter(filePath, Charset.forName("UTF-8"))) {
-			properties.store(bw, comments);
-		}
+		AbstractConfig.storeToAppConfig(config, configName, appName, groupName, comments);
 	}
 	
+	boolean isUseStringSyntax();
 	
-	static Path buildAppConfigFilePath(String configName, String appName, String groupName) {
-		String osName = System.getProperty("os.name").toLowerCase();
-
-		Path filePath;
-		if (osName.startsWith("windows")) {
-			String roamingAppData = System.getenv("AppData");
-			if (roamingAppData != null && !roamingAppData.isEmpty()) {
-				// C:/Users/username/AppData/Local
-				// C:/Users/username/AppData/Roaming
-				// C:/Documents and Settings/username/Local Settings/Application Data
-				// C:/Documents and Settings/username/Application Data
-				filePath = Paths.get(roamingAppData);
-			} else {
-				filePath = Paths.get(System.getProperty("user.home"), "Application Data");
-			}
-		} else if (osName.startsWith("mac")) {
-			// /Users/username/Library/Preferences
-			filePath = Paths.get(System.getProperty("user.home"), "Library", "Preferences");
-		} else {
-			filePath = null;
-		}
-		
-		if (filePath == null || !Files.exists(filePath)) {
-			// /Users/username/.config/
-			filePath = Paths.get(System.getProperty("user.home"), ".config");
-		}
-		
-		if (groupName == null) {
-			if (appName == null) {
-				filePath = filePath.resolve(Paths.get(configName));
-			} else {
-				filePath = filePath.resolve(Paths.get(appName, configName));
-			}
-		} else {
-			if (appName == null) {
-				filePath = filePath.resolve(Paths.get(groupName, configName));
-			} else {
-				filePath = filePath.resolve(Paths.get(groupName, appName, configName));
-			}
-		}
-		
-		return filePath;
-	}
+	void setUseStringSyntax(boolean useStringSyntax);
 	
-	String get(String key);
+	<T> T get(String key);
 	
-	String get(String key, String defaultValue);
+	<T> T get(String key, T defaultValue);
+	
+	String getAsString(String key);
+	
+	String getAsString(String key, String defaultValue);
 	
 	int getAsInt(String key);
 	
@@ -133,6 +67,14 @@ public interface Config {
 	
 	double getAsDouble(String key, double defaultValue);
 	
+	BigInteger getAsBigInteger(String key);
+	
+	BigInteger getAsBigInteger(String key, BigInteger defaultValue);
+	
+	BigDecimal getAsBigDecimal(String key);
+	
+	BigDecimal getAsBigDecimal(String key, BigDecimal defaultValue);
+	
 	<T extends Number> T getAsNumber(String key, Class<T> numberClass);
 	
 	<T extends Number> T getAsNumber(String key, Class<T> numberClass, T defaultValue);
@@ -144,6 +86,14 @@ public interface Config {
 	OffsetDateTime getAsOffsetDateTime(String key);
 	
 	OffsetDateTime getAsOffsetDateTime(String key, OffsetDateTime defaultValue);
+	
+	OffsetTime getAsOffsetTime(String key);
+	
+	OffsetTime getAsOffsetTime(String key, OffsetTime defaultValue);
+
+	LocalDate getAsLocalDate(String key);
+	
+	LocalDate getAsLocalDate(String key, LocalDate defaultValue);
 	
 	<T extends TemporalAccessor> T getAsTemporal(String key, Class<T> temporalClass);
 	
@@ -157,9 +107,13 @@ public interface Config {
 	
 	byte[] getAsBinary(String key, byte[] defaultValue);
 	
-	String[] getAsArray(String key);
+	Object[] getAsArray(String key);
 	
-	String[] getAsArray(String key, String[] defaultValue);
+	Object[] getAsArray(String key, Object[] defaultValue);
+	
+	String[] getAsStringArray(String key);
+	
+	String[] getAsStringArray(String key, String[] defaultValue);
 	
 	Map<String, Object> getAsMap(String key);
 

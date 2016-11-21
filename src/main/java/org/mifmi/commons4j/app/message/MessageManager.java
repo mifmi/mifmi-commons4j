@@ -34,19 +34,19 @@ public class MessageManager {
 	}
 
 	public String loadMessage(String messageKey) {
-		return this.messageConfig.get(messageKey);
+		return this.messageConfig.getAsString(messageKey);
 	}
 
 	public String loadMessage(String messageKey, String defaultValue) {
-		return this.messageConfig.get(messageKey, defaultValue);
+		return this.messageConfig.getAsString(messageKey, defaultValue);
 	}
 
 	public String loadMessage(String messageKey, Object... params) {
-		return StringUtilz.format(this.messageConfig.get(messageKey), params);
+		return StringUtilz.format(this.messageConfig.getAsString(messageKey), params);
 	}
 
 	public String loadMessage(String messageKey, String defaultValue, Object... params) {
-		return StringUtilz.format(this.messageConfig.get(messageKey, defaultValue), params);
+		return StringUtilz.format(this.messageConfig.getAsString(messageKey, defaultValue), params);
 	}
 
 	public Message loadMessageObject(String messageId, Object... params) {
