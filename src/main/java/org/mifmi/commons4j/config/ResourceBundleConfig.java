@@ -101,7 +101,7 @@ public class ResourceBundleConfig extends AbstractConfig {
 	// end temporary code */
 
 	@Override
-	protected boolean handleSupportsObjectValue() {
+	protected boolean supportsObjectValue() {
 		return false;
 	}
 	

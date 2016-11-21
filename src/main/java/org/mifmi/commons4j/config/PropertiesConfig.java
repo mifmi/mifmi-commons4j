@@ -83,7 +83,7 @@ public class PropertiesConfig extends AbstractConfig {
 	}
 
 	@Override
-	protected boolean handleSupportsObjectValue() {
+	protected boolean supportsObjectValue() {
 		return false;
 	}
 

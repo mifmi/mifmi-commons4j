@@ -14,7 +14,7 @@ The mifmi-commons4j presents basic utility classes for Java development.
             new Locale("en", "US")
             );
     
-    String stringVal = config.get("test.string");
+    String stringVal = config.getAsString("test.string");
     int intVal = config.getAsInt("test.int");
     boolean booleanVal = config.getAsBool("test.boolean");
     String[] arrayVal = config.getAsArray("test.array");

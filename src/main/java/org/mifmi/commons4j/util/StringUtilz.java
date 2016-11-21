@@ -47,7 +47,7 @@ public final class StringUtilz {
 		// NOP
 	}
 	
-	public static int count(String str, char ch) {
+	public static int count(CharSequence str, char ch) {
 		if (str == null) {
 			return 0;
 		}
@@ -61,6 +61,93 @@ public final class StringUtilz {
 		}
 		
 		return count;
+	}
+	
+	public static boolean startsWith(CharSequence str, char startChar) {
+		if (str == null) {
+			return false;
+		}
+		
+		if (str.length() < 1) {
+			return false;
+		}
+		
+		char firstCh = str.charAt(0);
+		return (firstCh == startChar);
+	}
+	
+	public static boolean endsWith(CharSequence str, char endChar) {
+		if (str == null) {
+			return false;
+		}
+		
+		if (str.length() < 1) {
+			return false;
+		}
+		
+		char lastCh = str.charAt(str.length() - 1);
+		return (lastCh == endChar);
+	}
+	
+	public static boolean surroundsWith(CharSequence str, char startChar, char endChar) {
+		if (str == null) {
+			return false;
+		}
+		
+		if (str.length() < 2) {
+			return false;
+		}
+		
+		char firstCh = str.charAt(0);
+		if (firstCh != startChar) {
+			return false;
+		}
+		
+		char lastCh = str.charAt(str.length() - 1);
+		if (lastCh != endChar) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public static boolean surroundsWith(CharSequence str, CharSequence startStr, CharSequence endStr) {
+		if (str == null) {
+			return false;
+		}
+
+		int len = str.length();
+		int startLen = (startStr == null) ? 0 : startStr.length();
+		int endLen = (endStr == null) ? 0 : endStr.length();
+		
+		if (len < startLen + endLen) {
+			return false;
+		}
+		
+		if (startLen != 0) {
+			for (int i = 0; i < startLen; i++) {
+				char ch = str.charAt(i);
+				char startCh = startStr.charAt(i);
+				
+				if (ch != startCh) {
+					return false;
+				}
+			}
+		}
+
+		if (endLen != 0) {
+			int offset = len - endLen;
+			for (int i = 0; i < endLen; i++) {
+				char ch = str.charAt(i + offset);
+				char endCh = endStr.charAt(i);
+				
+				if (ch != endCh) {
+					return false;
+				}
+			}
+		}
+		
+		return true;
 	}
 	
 	public static String left(String str, int len) {
@@ -118,7 +205,7 @@ public final class StringUtilz {
 					escaped = true;
 				} else if (ch == separator) {
 					if (maxCount < 0 || list.size() < maxCount - 1) {
-						list.add((trim) ? toStringWithTrim(sb) : sb.toString());
+						list.add(toString(sb, trim));
 						sb.setLength(0);
 					} else {
 						sb.append(ch);
@@ -128,7 +215,7 @@ public final class StringUtilz {
 				}
 			}
 		}
-		list.add((trim) ? toStringWithTrim(sb) : sb.toString());
+		list.add(toString(sb, trim));
 		
 		return list.toArray(new String[list.size()]);
 	}
@@ -522,6 +609,21 @@ public final class StringUtilz {
 	}
 	
 	public static String escape(String str, char escapeChar, char[] targetChars, char[] escapedChars) {
+		if (str == null) {
+			return null;
+		}
+		
+		int len = str.length();
+		StringBuilder sb = new StringBuilder(len * 2);
+		escape(sb, str, escapeChar, targetChars, escapedChars);
+		return sb.toString();
+	}
+	
+	public static void escape(StringBuilder sb, String str, char escapeChar, char... targetChars) {
+		escape(sb, str, escapeChar, targetChars, null);
+	}
+	
+	public static void escape(StringBuilder sb, String str, char escapeChar, char[] targetChars, char[] escapedChars) {
 		if (escapedChars != null) {
 			if (targetChars.length != escapedChars.length) {
 				throw new IllegalArgumentException();
@@ -529,14 +631,10 @@ public final class StringUtilz {
 		}
 		
 		if (str == null) {
-			return null;
-		}
-		if (targetChars == null || targetChars.length == 0) {
-			return str;
+			return;
 		}
 		
 		int len = str.length();
-		StringBuilder sb = new StringBuilder(len * 2);
 		for (int i = 0; i < len; i++) {
 			char ch = str.charAt(i);
 			if (ch == escapeChar) {
@@ -544,11 +642,13 @@ public final class StringUtilz {
 				sb.append(escapeChar);
 			} else {
 				int targetIdx = -1;
-				for (int j = 0; j < targetChars.length; j++) {
-					char targetChar = targetChars[j];
-					if (ch == targetChar) {
-						targetIdx = j;
-						break;
+				if (targetChars != null) {
+					for (int j = 0; j < targetChars.length; j++) {
+						char targetChar = targetChars[j];
+						if (ch == targetChar) {
+							targetIdx = j;
+							break;
+						}
 					}
 				}
 				if (targetIdx == -1) {
@@ -563,13 +663,26 @@ public final class StringUtilz {
 				}
 			}
 		}
-		return sb.toString();
 	}
 
 	public static String unescape(String str, char escapeChar, char[] targetChars, char[] escapedChars) {
 		return unescape(str, escapeChar, targetChars, escapedChars, false);
 	}
 	public static String unescape(String str, char escapeChar, char[] targetChars, char[] escapedChars, boolean useUnicodeEscape) {
+		if (str == null) {
+			return null;
+		}
+		
+		int len = str.length();
+		StringBuilder sb = new StringBuilder(len);
+		unescape(sb, str, escapeChar, targetChars, escapedChars, useUnicodeEscape);
+		return sb.toString();
+	}
+
+	public static void unescape(StringBuilder sb, String str, char escapeChar, char[] targetChars, char[] escapedChars) {
+		unescape(sb, str, escapeChar, targetChars, escapedChars, false);
+	}
+	public static void unescape(StringBuilder sb, String str, char escapeChar, char[] targetChars, char[] escapedChars, boolean useUnicodeEscape) {
 		if (targetChars != null && escapedChars != null) {
 			if (targetChars.length != escapedChars.length) {
 				throw new IllegalArgumentException();
@@ -577,19 +690,16 @@ public final class StringUtilz {
 		}
 		
 		if (str == null) {
-			return null;
-		}
-		if ((targetChars == null || targetChars.length == 0) && !useUnicodeEscape) {
-			return str;
+			return;
 		}
 		
 		int idx = str.indexOf(escapeChar);
 		if (idx == -1) {
-			return str;
+			sb.append(str);
+			return;
 		}
 		
 		int len = str.length();
-		StringBuilder sb = new StringBuilder(len);
 		boolean escape = false;
 		for (int i = 0; i < len; i++) {
 			char ch = str.charAt(i);
@@ -651,7 +761,6 @@ public final class StringUtilz {
 				}
 			}
 		}
-		return sb.toString();
 	}
 	
 	public static String null2Str(String str) {
@@ -1234,9 +1343,13 @@ public final class StringUtilz {
 		return true;
 	}
 	
-	public static String toStringWithTrim(StringBuilder sb) {
+	public static String toString(StringBuilder sb, boolean trim) {
 		if (sb == null) {
 			return null;
+		}
+		
+		if (!trim) {
+			return sb.toString();
 		}
 		
 		int len = sb.length();

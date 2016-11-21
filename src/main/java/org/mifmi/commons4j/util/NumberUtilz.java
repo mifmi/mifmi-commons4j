@@ -10,6 +10,7 @@ package org.mifmi.commons4j.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -895,16 +896,8 @@ public final class NumberUtilz {
 			return n.toByteArray();
 		} else if (number instanceof BigDecimal) {
 			BigDecimal n = ((BigDecimal)number);
-			int scale = n.scale();
-			byte[] unscaledValue = n.unscaledValue().toByteArray();
-			
-			byte[] binary = new byte[unscaledValue.length + 4];
-			System.arraycopy(unscaledValue, 0, binary, 0, unscaledValue.length);
-			binary[unscaledValue.length] = (byte)((scale >> 0) & 0xff);
-			binary[unscaledValue.length + 1] = (byte)((scale >> 8) & 0xff);
-			binary[unscaledValue.length + 2] = (byte)((scale >> 16) & 0xff);
-			binary[unscaledValue.length + 3] = (byte)((scale >> 24) & 0xff);
-			return binary;
+			String s = n.toString();
+			return s.getBytes(Charset.forName("US-ASCII"));
 		} else {
 			throw new IllegalArgumentException();
 		}

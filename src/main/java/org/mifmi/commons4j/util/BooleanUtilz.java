@@ -82,7 +82,7 @@ public final class BooleanUtilz {
 	}
 
 	/**
-	 * Returns (val1 && val2).
+	 * Returns (val1 &amp;&amp; val2).
 	 * 
 	 * @param val1 first boolean value
 	 * @param val2 second boolean value
@@ -93,7 +93,7 @@ public final class BooleanUtilz {
 	}
 
 	/**
-	 * Returns (vals[0] && vals[1] && ...).
+	 * Returns (vals[0] &amp;&amp; vals[1] &amp;&amp; ...).
 	 * 
 	 * @param vals boolean values
 	 * @return true if the arguments are true and false otherwise
@@ -113,7 +113,7 @@ public final class BooleanUtilz {
 	}
 
 	/**
-	 * Returns (val1 && val2).
+	 * Returns (val1 &amp;&amp; val2).
 	 * "", zero and null are regarded as false.
 	 * 
 	 * @param val1 first boolean value
@@ -125,7 +125,7 @@ public final class BooleanUtilz {
 	}
 
 	/**
-	 * Returns (vals[0] && vals[1] && ...).
+	 * Returns (vals[0] &amp;&amp; vals[1] &amp;&amp; ...).
 	 * "", zero and null are regarded as false.
 	 * 
 	 * @param vals boolean values
