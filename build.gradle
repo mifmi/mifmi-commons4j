@@ -1,14 +1,20 @@
+plugins {
+    id "com.jfrog.bintray" version "1.7"
+}
+
 apply plugin: 'java'
 apply plugin: 'maven'
 
+
 archivesBaseName = 'mifmi-commons4j'
 group = 'org.mifmi'
-version = getVersion('0.0.0-SHAPSHOT')
+version = getVersionNum(getParam('releaseVersion', 'RELEASE_VERSION', '0.0.0-SHAPSHOT'))
 description = archivesBaseName
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 def sourceEncoding = 'UTF-8'
+
 
 repositories {
     jcenter()
@@ -19,12 +25,18 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version:'4.12'
 }
 
-def getVersion(defaultVersion) {
-    def v = (project.hasProperty('ver')) ? "$ver" : defaultVersion
-    if (v.startsWith('v')) {
-        v = v.substring(1)
+def getParam(propName, envName, defaultValue) {
+    if (project.hasProperty(propName)) {
+        return project.property(propName)
+    } else if (System.getenv(envName) != null) {
+        return System.getenv(envName)
+    } else {
+        return defaultValue
     }
-    return v
+}
+
+def getVersionNum(ver) {
+    return (ver.startsWith('v')) ? ver.substring(1) : ver
 }
 
 tasks.withType(JavaCompile) {
@@ -57,4 +69,27 @@ javadoc {
     options.locale = 'en_US'
     options.encoding = sourceEncoding
     options.charSet = sourceEncoding
+}
+
+bintray {
+    user = getParam('bintrayUser', 'BINTRAY_USER', null)
+    key = getParam('bintrayApiKey', 'BINTRAY_API_KEY', null)
+    configurations = ['archives']
+    dryRun = false
+    pkg {
+        repo = 'maven'
+        name = 'mifmi-commons4j'
+        version {
+            name = version
+            vcsTag = 'v' + version
+            gpg {
+                sign = true
+            }
+            mavenCentralSync {
+                sync = true
+                user = getParam('ossUser', 'OSS_USER', null)
+                password = getParam('ossPassword', 'OSS_PASSWORD', null)
+            }
+        }
+    }
 }
