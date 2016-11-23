@@ -11,11 +11,9 @@ Thumbs.db
 /target/
 
 # Gradle
-/gradlew
-/gradlew.bat
+/.gradle/
 /build/
 /gradle/
-/.gradle/
 
 # Java
 *.class
