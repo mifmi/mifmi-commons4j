@@ -3,12 +3,19 @@
 Thumbs.db
 
 # Eclipse
-.project
-.classpath
-.settings/
+/.project
+/.classpath
+/.settings/
 
 # Maven
-target/
+/target/
+
+# Gradle
+/gradlew
+/gradlew.bat
+/build/
+/gradle/
+/.gradle/
 
 # Java
 *.class
@@ -16,3 +23,4 @@ target/
 
 # Others
 *.bak
+/bin/

@@ -1,0 +1,60 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+archivesBaseName = 'mifmi-commons4j'
+group = 'org.mifmi'
+version = getVersion('0.0.0-SHAPSHOT')
+description = archivesBaseName
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+def sourceEncoding = 'UTF-8'
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
+    testCompile group: 'junit', name: 'junit', version:'4.12'
+}
+
+def getVersion(defaultVersion) {
+    def v = (project.hasProperty('ver')) ? "$ver" : defaultVersion
+    if (v.startsWith('v')) {
+        v = v.substring(1)
+    }
+    return v
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = sourceEncoding
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+jar {
+    into('META-INF') {
+        from 'LICENSE'
+    }
+}
+
+javadoc {
+    options.locale = 'en_US'
+    options.encoding = sourceEncoding
+    options.charSet = sourceEncoding
+}

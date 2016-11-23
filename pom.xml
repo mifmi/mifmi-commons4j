@@ -1,5 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.mifmi</groupId>
@@ -8,13 +9,32 @@
   <packaging>jar</packaging>
 
   <name>mifmi-commons4j</name>
-  <url>http://maven.apache.org</url>
+  <url>https://github.com/mifmi/mifmi-commons4j</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>1.8</java.version>
     <user.name>mifmi.org</user.name>
   </properties>
+
+  <organization>
+    <name>mifmi.org</name>
+    <url>https://www.mifmi.org</url>
+  </organization>
+
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://opensource.org/licenses/MIT</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <scm>
+    <connection>scm:git:https://github.com/mifmi/mifmi-commons4j.git</connection>
+    <developerConnection>scm:git:https://github.com:mifmi/mifmi-commons4j.git</developerConnection>
+    <url>https://github.com/mifmi/mifmi-commons4j</url>
+  </scm>
 
   <dependencies>
     <dependency>
@@ -90,10 +110,13 @@
           <encoding>${project.build.sourceEncoding}</encoding>
           <docencoding>UTF-8</docencoding>
           <charset>UTF-8</charset>
+          <links>
+            <link>https://docs.oracle.com/javase/8/docs/api/</link>
+          </links>
         </configuration>
         <executions>
           <execution>
-            <phase>attach-javadocs</phase>
+            <phase>package</phase>
             <goals>
               <goal>jar</goal>
             </goals>
