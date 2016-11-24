@@ -19,7 +19,7 @@ public class StringTokenParser {
 	private char[] escapedChars;
 	private String[][] blockquoteSets;
 	private boolean blockquoteStart;
-	private boolean terminateBlockEnd;
+	private boolean terminateBlockquoteEnd;
 	private boolean trim;
 	
 	private StringToken lastToken = null;
@@ -38,7 +38,7 @@ public class StringTokenParser {
 		this.escapedChars = null;
 		
 		this.blockquoteSets = null;
-		this.terminateBlockEnd = false;
+		this.terminateBlockquoteEnd = false;
 		
 		this.trim = false;
 	}
@@ -62,10 +62,10 @@ public class StringTokenParser {
 		return this;
 	}
 	
-	public StringTokenParser setBlockquote(String[][] blockquoteSets, boolean blockquoteStart, boolean terminateBlockEnd) {
+	public StringTokenParser setBlockquote(String[][] blockquoteSets, boolean blockquoteStart, boolean terminateBlockquoteEnd) {
 		this.blockquoteSets = blockquoteSets;
 		this.blockquoteStart = blockquoteStart;
-		this.terminateBlockEnd = terminateBlockEnd;
+		this.terminateBlockquoteEnd = terminateBlockquoteEnd;
 		return this;
 	}
 	
@@ -85,15 +85,20 @@ public class StringTokenParser {
 	}
 	
 	public StringTokenParser skipWhitespaces() {
+		this.index += countNextWhitespaces();
+		return this;
+	}
+	
+	private int countNextWhitespaces() {
+		int count = 0;
 		for (int i = this.index; i < this.endIdx; i++) {
 			char ch = this.str.charAt(i);
-			this.index = i;
 			if (!Character.isWhitespace(ch)) {
 				break;
 			}
+			count++;
 		}
-		
-		return this;
+		return count;
 	}
 	
 	public int getCurrentIndex() {
@@ -119,19 +124,32 @@ public class StringTokenParser {
 	public StringToken nextToken(String... terminators) {
 		return nextToken(0, terminators);
 	}
+	
 	public StringToken nextToken(int terminatorOffset, String... terminators) {
-		if (this.trim) {
-			skipWhitespaces();
-		}
+		StringToken token = peekNextToken(terminatorOffset, terminators);
 		
-		StringToken token = readToken(this.str, this.index, this.endIdx, this.escapeChar, this.escapeTargetChars, this.escapedChars, this.blockquoteSets, this.blockquoteStart, this.terminateBlockEnd, this.trim, terminatorOffset, terminators);
 		this.index = token.getTerminatorEndIndex();
 		this.lastToken = token;
 		
 		return token;
 	}
 
-	private static StringToken readToken(String str, int beginIdx, int endIdx, int escapeChar, char[] escapeTargetChars, char[] escapedChars, String[][] blockquoteSets, boolean blockquoteStart, boolean terminateBlockEnd, boolean trim, int terminatorOffset, String... terminators) {
+	public StringToken peekNextToken(String... terminators) {
+		return peekNextToken(0, terminators);
+	}
+	
+	public StringToken peekNextToken(int terminatorOffset, String... terminators) {
+		int whitespaceOffset = 0;
+		if (this.trim) {
+			whitespaceOffset = countNextWhitespaces();
+		}
+		
+		StringToken token = readToken(this.str, this.index + whitespaceOffset, this.endIdx, this.escapeChar, this.escapeTargetChars, this.escapedChars, this.blockquoteSets, this.blockquoteStart, this.terminateBlockquoteEnd, this.trim, terminatorOffset, terminators);
+		
+		return token;
+	}
+
+	private static StringToken readToken(String str, int beginIdx, int endIdx, int escapeChar, char[] escapeTargetChars, char[] escapedChars, String[][] blockquoteSets, boolean blockquoteStart, boolean terminateBlockquoteEnd, boolean trim, int terminatorOffset, String... terminators) {
 		int maxIdx = endIdx - 1;
 		StringBuilder sb = new StringBuilder(endIdx - beginIdx);
 		int blockquoteSetIdx = -1;
@@ -170,7 +188,7 @@ public class StringTokenParser {
 						String blockEndStr = (blockquoteSet.length < 2) ? blockquoteSet[0] : blockquoteSet[blockquoteSet.length - 1];
 						
 						if (str.startsWith(blockEndStr, i)) {
-							if (terminateBlockEnd) {
+							if (terminateBlockquoteEnd) {
 								return new StringToken(StringUtilz.toString(sb, trim), i, blockquoteSet, blockEndStr, i + blockEndStr.length(), (endIdx <= i + blockEndStr.length()));
 							}
 							blockquoteSetIdx = -1;
@@ -192,9 +210,9 @@ public class StringTokenParser {
 				}
 
 				if (blockquoteSetIdx == -1 && terminators != null && terminators.length != 0 && beginIdx + terminatorOffset <= i) {
-					for (String delimiter : terminators) {
-						if (str.startsWith(delimiter, i)) {
-							return new StringToken(StringUtilz.toString(sb, trim), i, null, delimiter, i + delimiter.length(), (endIdx <= i + delimiter.length()));
+					for (String terminator : terminators) {
+						if (str.startsWith(terminator, i)) {
+							return new StringToken(StringUtilz.toString(sb, trim), i, null, terminator, i + terminator.length(), (endIdx <= i + terminator.length()));
 						}
 					}
 				}
