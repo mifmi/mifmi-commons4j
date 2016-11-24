@@ -6,14 +6,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 
 
-archivesBaseName = 'mifmi-commons4j'
-group = 'org.mifmi'
-version = getVersionNum(getParam('releaseVersion', 'RELEASE_VERSION', '0.0.0-SHAPSHOT'))
-description = archivesBaseName
-
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
-def sourceEncoding = 'UTF-8'
+version = getVersionNum(getParam('releaseVersion', 'RELEASE_VERSION', '0.0.0-SNAPSHOT'))
 
 
 repositories {
@@ -25,10 +18,11 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version:'4.12'
 }
 
+
 def getParam(propName, envName, defaultValue) {
-    if (project.hasProperty(propName)) {
+    if (propName != null && project.hasProperty(propName)) {
         return project.property(propName)
-    } else if (System.getenv(envName) != null) {
+    } else if (envName != null && System.getenv(envName) != null) {
         return System.getenv(envName)
     } else {
         return defaultValue
@@ -38,6 +32,7 @@ def getParam(propName, envName, defaultValue) {
 def getVersionNum(ver) {
     return (ver.startsWith('v')) ? ver.substring(1) : ver
 }
+
 
 tasks.withType(JavaCompile) {
 	options.encoding = sourceEncoding
@@ -68,7 +63,7 @@ jar {
 javadoc {
     options.locale = 'en_US'
     options.encoding = sourceEncoding
-    options.charSet = sourceEncoding
+    options.charSet = javadocCharset
 }
 
 bintray {
@@ -77,8 +72,8 @@ bintray {
     configurations = ['archives']
     dryRun = false
     pkg {
-        repo = 'maven'
-        name = 'mifmi-commons4j'
+        repo = bintrayRepository
+        name = bintrayPackage
         version {
             name = version
             vcsTag = 'v' + version
