@@ -29,4 +29,9 @@ public class NotMatcher<T> extends AbstractMatcher<T> {
 	public IMatcher<T> getMatcher() {
 		return this.matcher;
 	}
+
+	@Override
+	public String toString() {
+		return "Not " + this.matcher.toString();
+	}
 }

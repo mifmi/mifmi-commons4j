@@ -21,12 +21,18 @@ public class ChronoMatcher extends AbstractMatcher<TemporalAccessor> {
 	private boolean unsupportedGreater;
 	
 
+	public ChronoMatcher(TemporalAccessor value) {
+		this(value, QuantityMatchType.Equals);
+	}
+	
 	public ChronoMatcher(TemporalAccessor value, QuantityMatchType matchType) {
 		this(value, matchType, false);
 	}
+	
 	public ChronoMatcher(TemporalAccessor value, QuantityMatchType matchType, boolean bothSupportOnly) {
 		this(value, matchType, bothSupportOnly, false, false);
 	}
+	
 	public ChronoMatcher(TemporalAccessor value, QuantityMatchType matchType, boolean bothSupportOnly, boolean nullGreater, boolean unsupportedGreater) {
 		this.value = value;
 		this.matchType = matchType;

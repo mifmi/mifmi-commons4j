@@ -10,18 +10,14 @@ package org.mifmi.commons4j.matcher;
 
 public class ComparableMatcher<T extends Comparable<T>> extends AbstractMatcher<T> {
 	
-	public enum MatchType {
-		Equals,
-		LessThan,
-		LessEquals,
-		GreaterThan,
-		GreaterEquals,
-	}
-
 	private T pattern;
-	private MatchType matchType;
+	private QuantityMatchType matchType;
 
-	public ComparableMatcher(T pattern, MatchType matchType) {
+	public ComparableMatcher(T pattern) {
+		this(pattern, QuantityMatchType.Equals);
+	}
+	
+	public ComparableMatcher(T pattern, QuantityMatchType matchType) {
 		this.pattern = pattern;
 		this.matchType = matchType;
 	}

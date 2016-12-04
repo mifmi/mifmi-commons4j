@@ -18,6 +18,10 @@ public class StringMatcher extends AbstractMatcher<String> {
 	private String patternUpperCase;
 	private Locale locale;
 
+	public StringMatcher(String pattern) {
+		this(pattern, PartialMatchType.Equals);
+	}
+
 	public StringMatcher(String pattern, PartialMatchType matchType) {
 		this(pattern, matchType, false, null);
 	}

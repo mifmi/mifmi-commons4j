@@ -23,4 +23,8 @@ public class AnythingMatcher<T> extends AbstractMatcher<T> {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "*";
+	}
 }
