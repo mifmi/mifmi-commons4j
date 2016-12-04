@@ -159,7 +159,9 @@ public abstract class AbstractConfig implements Config {
 	public String getAsString(String key) {
 		Object value = getValue(key);
 		
-		if (isUseStringSyntax()) {
+		if (value == null) {
+			return null;
+		} else if (isUseStringSyntax()) {
 			return parseString(value);
 		} else {
 			return toString(value, false);
@@ -170,7 +172,9 @@ public abstract class AbstractConfig implements Config {
 	public String getAsString(String key, String defaultValue) {
 		Object value = getValue(key, defaultValue);
 		
-		if (isUseStringSyntax()) {
+		if (value == null) {
+			return null;
+		} else if (isUseStringSyntax()) {
 			return parseString(value);
 		} else {
 			return toString(value, false);
