@@ -9,7 +9,7 @@ env:
 
 deploy:
   provider: script
-  script: ./gradlew bintrayUpload
+  script: ./gradlew bintrayUpload --stacktrace
   on:
     tags: true
     all_branches: true
