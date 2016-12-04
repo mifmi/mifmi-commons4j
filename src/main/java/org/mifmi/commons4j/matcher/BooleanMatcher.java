@@ -34,4 +34,8 @@ public class BooleanMatcher extends AbstractMatcher<Boolean> {
 		return this.value.equals(value);
 	}
 
+	@Override
+	public String toString() {
+		return (this.value == null) ? "null" : this.value.toString();
+	}
 }

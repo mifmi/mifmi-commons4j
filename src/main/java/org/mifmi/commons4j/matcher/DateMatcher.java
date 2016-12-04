@@ -16,6 +16,10 @@ public class DateMatcher extends AbstractMatcher<Date> {
 
 	private Date value;
 	private QuantityMatchType matchType;
+
+	public DateMatcher(Date value) {
+		this(value, QuantityMatchType.Equals);
+	}
 	
 	public DateMatcher(Date value, QuantityMatchType matchType) {
 		this.value = value;

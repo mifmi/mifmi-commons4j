@@ -35,6 +35,6 @@ public class ObjectMatcher<T> extends AbstractMatcher<T> {
 
 	@Override
 	public String toString() {
-		return "" + this.pattern;
+		return (this.pattern == null) ? "null" : this.pattern.toString();
 	}
 }
