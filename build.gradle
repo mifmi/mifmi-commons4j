@@ -1,23 +1,20 @@
 plugins {
-    id "com.jfrog.bintray" version "1.7"
+    id 'java'
+    id 'maven'
+    id 'com.jfrog.bintray' version '1.7'
 }
-
-apply plugin: 'java'
-apply plugin: 'maven'
-
-def ver = getVersionNum(getParam('releaseVersion', 'RELEASE_VERSION', '0.0.0-SNAPSHOT'))
-version = ver
-
 
 repositories {
     jcenter()
 }
 
 dependencies {
-    compile group: 'javax.servlet', name: 'javax.servlet-api', version:'3.1.0'
-    testCompile group: 'junit', name: 'junit', version:'4.12'
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '3.1.0'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
+def ver = getVersionNum(getParam('releaseVersion', 'RELEASE_VERSION', '0.0.0-SNAPSHOT'))
+version = ver
 
 def getParam(propName, envName, defaultValue) {
     if (propName != null && project.hasProperty(propName)) {
@@ -71,7 +68,7 @@ bintray {
     key = getParam('bintrayApiKey', 'BINTRAY_API_KEY', null)
     configurations = ['archives']
     publish = false
-    dryRun = false
+    dryRun = true
     pkg {
         userOrg = bintrayUserOrg
         repo = bintrayRepository
