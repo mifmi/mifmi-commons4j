@@ -130,6 +130,23 @@ public final class FileUtilz {
 		return path.substring(0, idx);
 	}
 	
+	public static Path getPath(Path basePath, String... subPaths) {
+		if (subPaths == null || subPaths.length == 0) {
+			return basePath;
+		}
+		
+		Path path = basePath;
+		for (String subPath : subPaths) {
+			if (subPath == null) {
+				continue;
+			}
+			
+			path = path.resolve(subPath);
+		}
+		
+		return path;
+	}
+	
 	public static String getPath(String basePath, String subPath) {
 		return getPath(basePath, subPath, File.separatorChar);
 	}
