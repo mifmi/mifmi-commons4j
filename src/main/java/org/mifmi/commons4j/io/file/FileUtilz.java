@@ -8,6 +8,7 @@
  */
 package org.mifmi.commons4j.io.file;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,16 +19,15 @@ import java.util.Date;
 import org.mifmi.commons4j.util.StringUtilz;
 
 public final class FileUtilz {
-	
-	private static final char[] FILE_NAME_SEPATATORS = {'/', '\\'};
-	private static final char DEFAULT_FILE_NAME_SEPATATOR = '/';
+
+	private static final char[] FILE_NAME_SEPATATORS = {'/', '\\', File.separatorChar};
 	private static final char FILE_EXTENTION_SEPARATOR = '.';
 	
 	private FileUtilz() {
 	}
 	
 	public static char getFileNameSeparator(String path) {
-		return getFileNameSeparator(path, DEFAULT_FILE_NAME_SEPATATOR);
+		return getFileNameSeparator(path, File.separatorChar);
 	}
 	
 	public static char getFileNameSeparator(String path, char defaultSeparator) {
@@ -131,7 +131,7 @@ public final class FileUtilz {
 	}
 	
 	public static String getPath(String basePath, String subPath) {
-		return getPath(basePath, subPath, DEFAULT_FILE_NAME_SEPATATOR);
+		return getPath(basePath, subPath, File.separatorChar);
 	}
 	
 	public static String getPath(String basePath, String subPath, char separator) {
