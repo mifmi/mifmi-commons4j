@@ -8,7 +8,6 @@
  */
 package org.mifmi.commons4j.config;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -17,7 +16,6 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
@@ -26,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
-import java.util.InvalidPropertiesFormatException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +32,12 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.mifmi.commons4j.io.file.FileUtilz;
 import org.mifmi.commons4j.text.token.StringToken;
 import org.mifmi.commons4j.text.token.StringTokenParser;
 import org.mifmi.commons4j.util.BinaryUtilz;
 import org.mifmi.commons4j.util.BooleanUtilz;
+import org.mifmi.commons4j.util.EnvUtilz;
 import org.mifmi.commons4j.util.NumberUtilz;
 import org.mifmi.commons4j.util.StringUtilz;
 
@@ -931,26 +930,9 @@ public abstract class AbstractConfig implements Config {
 			throw new ConfigParseException(e);
 		}
 	}
-	
 
-	/* default */ static Config loadFromAppConfig(String configName, String appName, String groupName) throws InvalidPropertiesFormatException, IOException {
-		Path filePath = buildAppConfigFilePath(configName, appName, groupName);
-		Config config;
-		if (Files.exists(filePath)) {
-			// File exists
-			try (BufferedReader br = Files.newBufferedReader(filePath, Charset.forName("UTF-8"))) {
-				config = new PropertiesConfig(br);
-			}
-		} else {
-			// File no exists
-			config = new PropertiesConfig(new OrderedProperties());
-		}
-		config.setUseStringSyntax(true);
-		return config;
-	}
-
-	/* default */ static void storeToAppConfig(Config config, String configName, String appName, String groupName, String comments) throws IOException {
-		Path filePath = buildAppConfigFilePath(configName, appName, groupName);
+	private static void storeToAppConfig(Config config, String configName, String appName, String groupName, String comments) throws IOException {
+		Path filePath = FileUtilz.getPath(EnvUtilz.getConfigDir(), groupName, appName, configName);
 		
 		Files.createDirectories(filePath.getParent());
 		
@@ -968,50 +950,6 @@ public abstract class AbstractConfig implements Config {
 		try (BufferedWriter bw = Files.newBufferedWriter(filePath, Charset.forName("UTF-8"))) {
 			properties.store(bw, comments);
 		}
-	}
-	
-	private static Path buildAppConfigFilePath(String configName, String appName, String groupName) {
-		String osName = System.getProperty("os.name").toLowerCase();
-
-		Path filePath;
-		if (osName.startsWith("windows")) {
-			String roamingAppData = System.getenv("AppData");
-			if (roamingAppData != null && !roamingAppData.isEmpty()) {
-				// C:/Users/username/AppData/Local
-				// C:/Users/username/AppData/Roaming
-				// C:/Documents and Settings/username/Local Settings/Application Data
-				// C:/Documents and Settings/username/Application Data
-				filePath = Paths.get(roamingAppData);
-			} else {
-				filePath = Paths.get(System.getProperty("user.home"), "Application Data");
-			}
-		} else if (osName.startsWith("mac")) {
-			// /Users/username/Library/Preferences
-			filePath = Paths.get(System.getProperty("user.home"), "Library", "Preferences");
-		} else {
-			filePath = null;
-		}
-		
-		if (filePath == null || !Files.exists(filePath)) {
-			// /Users/username/.config/
-			filePath = Paths.get(System.getProperty("user.home"), ".config");
-		}
-		
-		if (groupName == null) {
-			if (appName == null) {
-				filePath = filePath.resolve(Paths.get(configName));
-			} else {
-				filePath = filePath.resolve(Paths.get(appName, configName));
-			}
-		} else {
-			if (appName == null) {
-				filePath = filePath.resolve(Paths.get(groupName, configName));
-			} else {
-				filePath = filePath.resolve(Paths.get(groupName, appName, configName));
-			}
-		}
-		
-		return filePath;
 	}
 
 	protected static String toString(Object value, boolean useStringSyntax) {
