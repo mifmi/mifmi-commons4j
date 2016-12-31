@@ -8,9 +8,13 @@
  */
 package org.mifmi.commons4j.config;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
@@ -21,6 +25,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
+
+import org.mifmi.commons4j.io.file.FileUtilz;
+import org.mifmi.commons4j.util.EnvUtilz;
 
 public interface Config {
 	static Config from(Map<String, Object> map) {
@@ -36,11 +43,19 @@ public interface Config {
 	}
 
 	static Config loadFromAppConfig(String configName, String appName, String groupName) throws InvalidPropertiesFormatException, IOException {
-		return AbstractConfig.loadFromAppConfig(configName, appName, groupName);
-	}
-
-	static void storeToAppConfig(Config config, String configName, String appName, String groupName, String comments) throws IOException {
-		AbstractConfig.storeToAppConfig(config, configName, appName, groupName, comments);
+		Path filePath = FileUtilz.getPath(EnvUtilz.getConfigDir(), groupName, appName, configName);
+		Config config;
+		if (Files.exists(filePath)) {
+			// File exists
+			try (BufferedReader br = Files.newBufferedReader(filePath, Charset.forName("UTF-8"))) {
+				config = new PropertiesConfig(br);
+			}
+		} else {
+			// File no exists
+			config = new PropertiesConfig(new OrderedProperties());
+		}
+		config.setUseStringSyntax(true);
+		return config;
 	}
 	
 	boolean isUseStringSyntax();
