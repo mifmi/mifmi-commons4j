@@ -63,7 +63,7 @@ public final class StringUtilz {
 		return count;
 	}
 	
-	public static boolean startsWith(CharSequence str, char startChar) {
+	public static boolean startsWith(CharSequence str, char prefix) {
 		if (str == null) {
 			return false;
 		}
@@ -73,10 +73,10 @@ public final class StringUtilz {
 		}
 		
 		char firstCh = str.charAt(0);
-		return (firstCh == startChar);
+		return (firstCh == prefix);
 	}
 	
-	public static boolean endsWith(CharSequence str, char endChar) {
+	public static boolean endsWith(CharSequence str, char suffix) {
 		if (str == null) {
 			return false;
 		}
@@ -86,10 +86,105 @@ public final class StringUtilz {
 		}
 		
 		char lastCh = str.charAt(str.length() - 1);
-		return (lastCh == endChar);
+		return (lastCh == suffix);
 	}
 	
-	public static boolean surroundsWith(CharSequence str, char startChar, char endChar) {
+	public static boolean startsWith(CharSequence str, CharSequence prefix) {
+		if (str == null) {
+			return false;
+		}
+		
+		if (prefix == null || prefix.length() == 0) {
+			return true;
+		}
+		
+		int len = prefix.length();
+		
+		if (str.length() < len) {
+			return false;
+		}
+
+		for (int i = 0; i < len; i++) {
+			char ch = str.charAt(i);
+			char prefixCh = prefix.charAt(i);
+			
+			if (ch != prefixCh) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public static boolean endsWith(CharSequence str, CharSequence suffix) {
+		if (str == null) {
+			return false;
+		}
+		
+		if (suffix == null || suffix.length() == 0) {
+			return true;
+		}
+		
+		int len = suffix.length();
+		int offset = str.length() - len;
+		
+		if (offset < 0) {
+			return false;
+		}
+
+		for (int i = 0; i < len; i++) {
+			char ch = str.charAt(i + offset);
+			char suffixCh = suffix.charAt(i);
+			
+			if (ch != suffixCh) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public static CharSequence startsWith(CharSequence str, CharSequence... prefixes) {
+		if (str == null) {
+			return null;
+		}
+		
+		if (prefixes == null || prefixes.length == 0) {
+			return null;
+		}
+		
+		for (CharSequence prefix : prefixes) {
+			if (startsWith(str, prefix)) {
+				return prefix;
+			}
+		}
+		
+		return null;
+	}
+	
+	public static CharSequence endsWith(CharSequence str, CharSequence... suffixes) {
+		if (str == null) {
+			return null;
+		}
+		
+		if (suffixes == null || suffixes.length == 0) {
+			return null;
+		}
+		
+		for (CharSequence suffix : suffixes) {
+			if (endsWith(str, suffix)) {
+				return suffix;
+			}
+		}
+		
+		return null;
+	}
+
+	public static boolean surroundsWith(CharSequence str, char prefix, char suffix) {
+		return surroundsWith(str, (int)prefix, (int)suffix);
+	}
+	
+	public static boolean surroundsWith(CharSequence str, int prefix, int suffix) {
 		if (str == null) {
 			return false;
 		}
@@ -98,52 +193,43 @@ public final class StringUtilz {
 			return false;
 		}
 		
-		char firstCh = str.charAt(0);
-		if (firstCh != startChar) {
-			return false;
+		if (0 <= prefix) {
+			if (!startsWith(str, (char)prefix)) {
+				return false;
+			}
 		}
 		
-		char lastCh = str.charAt(str.length() - 1);
-		if (lastCh != endChar) {
-			return false;
+		if (0 <= suffix) {
+			if (!endsWith(str, (char)suffix)) {
+				return false;
+			}
 		}
 		
 		return true;
 	}
 	
-	public static boolean surroundsWith(CharSequence str, CharSequence startStr, CharSequence endStr) {
+	public static boolean surroundsWith(CharSequence str, CharSequence prefix, CharSequence suffix) {
 		if (str == null) {
 			return false;
 		}
-
+		
 		int len = str.length();
-		int startLen = (startStr == null) ? 0 : startStr.length();
-		int endLen = (endStr == null) ? 0 : endStr.length();
+		int startLen = (prefix == null) ? 0 : prefix.length();
+		int endLen = (suffix == null) ? 0 : suffix.length();
 		
 		if (len < startLen + endLen) {
 			return false;
 		}
 		
-		if (startLen != 0) {
-			for (int i = 0; i < startLen; i++) {
-				char ch = str.charAt(i);
-				char startCh = startStr.charAt(i);
-				
-				if (ch != startCh) {
-					return false;
-				}
+		if (prefix != null) {
+			if (!startsWith(str, prefix)) {
+				return false;
 			}
 		}
-
-		if (endLen != 0) {
-			int offset = len - endLen;
-			for (int i = 0; i < endLen; i++) {
-				char ch = str.charAt(i + offset);
-				char endCh = endStr.charAt(i);
-				
-				if (ch != endCh) {
-					return false;
-				}
+		
+		if (suffix != null) {
+			if (!endsWith(str, suffix)) {
+				return false;
 			}
 		}
 		
