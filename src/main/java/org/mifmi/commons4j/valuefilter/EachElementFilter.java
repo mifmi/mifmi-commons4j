@@ -23,7 +23,7 @@ public class EachElementFilter implements ValueFilter<Object, Object> {
 	}
 
 	public <R extends Object> R filter(Object value) {
-		R r = filter(value);
+		R r = (R)filterObject(value);
 		return r;
 	}
 
