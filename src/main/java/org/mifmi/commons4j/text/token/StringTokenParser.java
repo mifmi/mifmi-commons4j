@@ -50,7 +50,7 @@ public class StringTokenParser {
 	public StringTokenParser setEscape(int escapeChar, char[] escapeTargetChars, char[] escapedChars) {
 		if (escapeTargetChars == null && escapedChars == null) {
 			// NOP
-		} else if (escapeTargetChars.length == escapedChars.length) {
+		} else if (escapeTargetChars != null && escapedChars != null && escapeTargetChars.length == escapedChars.length) {
 			// NOP
 		} else {
 			throw new IllegalArgumentException();
