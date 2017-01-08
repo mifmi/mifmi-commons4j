@@ -6,6 +6,69 @@ The mifmi-commons4j presents basic utility classes for Java development.
 
 ## How to use
 
+### NamedFormatter - org.mifmi.commons4j.text.format
+
+    // Define value with name
+    Map<String, Object> vars = new HashMap<>();
+    vars.put("varNull", null);
+    vars.put("varStr", "val");
+    vars.put("varInt", 123456);
+    vars.put("varDec", new BigDecimal("123456.789"));
+    vars.put("varDate", OffsetDateTime.parse("2000-01-23T04:05:06.123456789+09:00"));
+    vars.put("varBool", true);
+    
+    
+    //// Refer value as '${varName}'
+    
+    // Refer value
+    Assert.assertEquals("val", new NamedFormatter("${varStr}").format(vars));
+    Assert.assertEquals("FOOvalBAR123456BAZ", new NamedFormatter("FOO${varStr}BAR${varInt}BAZ").format(vars));
+    
+    
+    //// Format value as '${varName%format}'
+    
+    // Format Integer value
+    Assert.assertEquals("123,456", new NamedFormatter("${varInt%#,##0}").format(vars));
+    Assert.assertEquals("123,456.000000", new NamedFormatter("${varInt%#,##0.000000}").format(vars));
+    
+    // Format Decimal value
+    Assert.assertEquals("123,457", new NamedFormatter("${varDec%#,##0}").format(vars));
+    Assert.assertEquals("123,456.789000", new NamedFormatter("${varDec%#,##0.000000}").format(vars));
+    
+    // Format Date value
+    Assert.assertEquals("20000123 040506123", new NamedFormatter("${varDate%uuuuMMdd HHmmssSSS}").format(vars));
+    
+    
+    //// Choice value as '${varName/val1:ret1/val2:ret2/default:retDefault}'
+    //// Operator:
+    ////   != is Not
+    ////   < is Less than
+    ////   <= is Less than equals
+    ////   > is Greater than
+    ////   >= is Greater than equals
+    
+    // Choice String value
+    Assert.assertEquals("Z", new NamedFormatter("${varStr/xxx:X/yyy:Y/default:Z}").format(vars));
+    Assert.assertEquals("Y", new NamedFormatter("${varStr/xxx:X/val:Y/default:Z}").format(vars));
+    Assert.assertEquals("Z", new NamedFormatter("${varStr/xxx:X/!=val:Y/default:Z}").format(vars));
+    
+    // Choice Integer value
+    Assert.assertEquals("Y", new NamedFormatter("${varInt/<123456:X/123456:Y/>123456:Z}").format(vars));
+    
+    // Choice Decimal value
+    Assert.assertEquals("Y", new NamedFormatter("${varDec/<123456.789:X/123456.789:Y/>123456.789:Z}").format(vars));
+    
+    // Choice Date value
+    Assert.assertEquals("Y", new NamedFormatter("${varDate/<#2000-01-23#:X/#2000-01-23#:Y/>#2000-01-23#:Z}").format(vars));
+    Assert.assertEquals("Y", new NamedFormatter("${varDate/<#2000-01-23T04:05:06.123456789+09:00#:X/#2000-01-23T04:05:06.123456789+09:00#:Y/>#2000-01-23T04:05:06.123456789+09:00#:Z}").format(vars));
+    
+    // Choice Boolean value
+    Assert.assertEquals("Y", new NamedFormatter("${varBool/false:X/true:Y}").format(vars));
+    Assert.assertEquals("X", new NamedFormatter("${varBool/!=false:X/!=true:Y}").format(vars));
+    
+    // Choice Null value
+    Assert.assertEquals("Y", new NamedFormatter("${varNull/'null':X/null:Y/default:Z}").format(vars));
+
 ### Config - org.mifmi.commons4j.config
 
     Config config = new ResourceBundleConfig(
