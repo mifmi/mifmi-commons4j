@@ -1,4 +1,4 @@
-## 0.2.0 (2016-12-31)
+## 0.2.0 (2017-01-08)
 
 Add:
 
@@ -19,7 +19,7 @@ Fixed:
 
   - Fix Config#getAsString; When config value is null then return not null but ""
   - Remove unnecessary dependence 'javax.servlet'
-
+  - Fix some bugs
 
 ## 0.1.0 (2016-11-25)
 
