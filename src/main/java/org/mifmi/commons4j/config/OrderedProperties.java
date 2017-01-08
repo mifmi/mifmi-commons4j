@@ -149,6 +149,10 @@ public class OrderedProperties extends Properties {
 
 	@Override
 	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+		
 		if (this == obj) {
 			return true;
 		}
@@ -272,13 +276,13 @@ public class OrderedProperties extends Properties {
 
 	@Override
 	public synchronized void load(InputStream inStream) throws IOException {
-		// TODO: Overwrite logic of super class
+		// Call super class method
 		super.load(inStream);
 	}
 
 	@Override
 	public synchronized void load(Reader reader) throws IOException {
-		// TODO: Overwrite logic of super class
+		// Call super class method
 		super.load(reader);
 	}
 
@@ -294,19 +298,19 @@ public class OrderedProperties extends Properties {
 
 	@Override
 	public void store(OutputStream out, String comments) throws IOException {
-		// TODO: Overwrite logic of super class
+		// Call super class method
 		super.store(out, comments);
 	}
 
 	@Override
 	public void store(Writer writer, String comments) throws IOException {
-		// TODO: Overwrite logic of super class
+		// Call super class method
 		super.store(writer, comments);
 	}
 
 	@Override
 	public synchronized void loadFromXML(InputStream in) throws IOException, InvalidPropertiesFormatException {
-		// TODO: Overwrite logic of super class
+		// Call super class method
 		super.loadFromXML(in);
 	}
 
@@ -317,7 +321,7 @@ public class OrderedProperties extends Properties {
 
 	@Override
 	public void storeToXML(OutputStream os, String comment, String encoding) throws IOException {
-		// TODO: Overwrite logic of super class
+		// Call super class method
 		super.storeToXML(os, comment, encoding);
 	}
 
