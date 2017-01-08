@@ -209,10 +209,10 @@ public class NamedFormatter {
 				switch (patternPart.varOptionType) {
 				case Format:
 					String pattern = patternPart.varOption;
-					if (pattern != null && !pattern.isEmpty()) {
+					if (varVal != null && pattern != null && !pattern.isEmpty()) {
 						if (pattern.contains("%")) {
 							// Format with java.util.Formatter
-							if (varVal != null && varVal instanceof Date) {
+							if (varVal instanceof Date) {
 								Calendar cal = Calendar.getInstance(this.timeZone, this.locale);
 								cal.setTime((Date)varVal);
 								varVal = cal;
