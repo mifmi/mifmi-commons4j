@@ -8,7 +8,6 @@
  */
 package org.mifmi.commons4j.config;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Enumeration;
@@ -39,66 +38,8 @@ public class ResourceBundleConfig extends AbstractConfig {
 	}
 	
 	public ResourceBundleConfig(String baseName, Enumeration<Locale> locales) {
-		final List<Locale> candidateLocales = new ArrayList<Locale>();
-		if (locales != null) {
-			while (locales.hasMoreElements()) {
-				Locale locale = locales.nextElement();
-				if (locale == null) {
-					continue;
-				}
-				
-				String language = locale.getLanguage();
-				String country = locale.getCountry();
-				String variant = locale.getVariant();
-				
-				if (!country.isEmpty()) {
-					if (!variant.isEmpty()) {
-						candidateLocales.add(new Locale(language, country, variant));
-					}
-					candidateLocales.add(new Locale(language, country));
-				}
-				candidateLocales.add(new Locale(language));
-			}
-		}
-		candidateLocales.add(Locale.ROOT);
-		
-		this.resourceBundle = ResourceBundle.getBundle(
-				baseName,
-				new ResourceBundle.Control() {
-					@Override
-					public List<Locale> getCandidateLocales(String baseName, Locale locale) {
-						return candidateLocales;
-					}
-					
-					@Override
-					public Locale getFallbackLocale(String baseName, Locale locale) {
-						return null;
-					}
-				});
+		this.resourceBundle = ResourceBundle.getBundle(baseName, new MultiLocaleResourceBundleControl(locales));
 	}
-
-	/* // begin temporary code
-	public ResourceBundleConfig(String baseName, Enumeration<Locale> locales) {
-		
-		if (locales != null) {
-			while (locales.hasMoreElements()) {
-				Locale locale = locales.nextElement();
-				ResourceBundle rb = ResourceBundle.getBundle(baseName, locale);
-				if (rb != null) {
-					Locale bundleLocale = rb.getLocale();
-					if (bundleLocale.getLanguage().equals(locale.getLanguage())) {
-						this.resourceBundle = rb;
-						break;
-					}
-				}
-			}
-		}
-		if (this.resourceBundle == null) {
-			// Use Default
-			this.resourceBundle = ResourceBundle.getBundle(baseName, Locale.ROOT);
-		}
-	}
-	// end temporary code */
 
 	@Override
 	protected boolean supportsObjectValue() {
