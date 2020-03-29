@@ -607,11 +607,11 @@ public final class NumberUtilz {
 		return sb.toString().trim();
 	}
 	
-	public static BigDecimal parseEnNumShortScaleAsDec(String enNum) {
-		return parseEnNumShortScaleAsDec(enNum, RoundingMode.HALF_UP, -1);
+	public static BigDecimal parseEnNumShortScale(String enNum) {
+		return parseEnNumShortScale(enNum, RoundingMode.HALF_UP, -1);
 	}
 	
-	public static BigDecimal parseEnNumShortScaleAsDec(String enNum, RoundingMode decimalRoundingMode, int fixedDecimalScale) {
+	public static BigDecimal parseEnNumShortScale(String enNum, RoundingMode decimalRoundingMode, int fixedDecimalScale) {
 		if (enNum == null) {
 			return null;
 		}
