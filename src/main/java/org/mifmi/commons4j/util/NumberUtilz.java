@@ -10,11 +10,14 @@ package org.mifmi.commons4j.util;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.mifmi.commons4j.util.exception.NumberParseException;
 
@@ -42,6 +45,14 @@ public final class NumberUtilz {
 		} else {
 			return dec1.compareTo(dec2);
 		}
+	}
+	
+	public static int digitLength(long n) {
+		if (n == 0) {
+			return 1;
+		}
+		
+		return (int) (Math.log10(Math.abs(n)) + 1);
 	}
 	
 	public static <T extends Number> T parseNumber(String strValue, String pattern, Class<T> numberClass) {
@@ -448,6 +459,361 @@ public final class NumberUtilz {
 		return new AtomicLong(toLong(o));
 	}
 	
+	public static String toEnNumShortScale(long num, boolean fractionDec) {
+		return toEnNumShortScale(BigDecimal.valueOf(num), fractionDec);
+	}
+	
+	public static String toEnNumShortScale(double num, boolean fractionDec) {
+		return toEnNumShortScale(BigDecimal.valueOf(num), fractionDec);
+	}
+	
+	public static String toEnNumShortScale(BigInteger num, boolean fractionDec) {
+		if (num == null) {
+			return null;
+		}
+		
+		return toEnNumShortScale(new BigDecimal(num), fractionDec);
+	}
+	
+	public static String toEnNumShortScale(BigDecimal num, boolean fractionDec) {
+		if (num == null) {
+			return null;
+		}
+		
+		StringBuilder sb = new StringBuilder();
+		
+		boolean negative = (num.signum() < 0);
+		if (negative) {
+			sb.append("Negative ");
+		}
+		
+		BigInteger numInt = num.toBigInteger();
+		if (NumberUtilz.isZero(numInt)) {
+			sb.append("Zero ");
+		} else {
+			String strInt = ((negative) ? numInt.negate() : numInt).toString();
+			
+			int len = strInt.length();
+			boolean hasD1Num = false;
+			for (int i = 0; i < len; i++) {
+				char c = strInt.charAt(i);
+				int d2 = len - i - 1;
+				int d1 = d2 % 3;
+				
+				if (c != '0') {
+					if (d1 == 1) {
+						char cn = strInt.charAt(i + 1);
+						switch (c) {
+						case '1':
+							switch (cn) {
+							case '0': sb.append("Ten "); break;
+							case '1': sb.append("Eleven "); break;
+							case '2': sb.append("Twelve "); break;
+							case '3': sb.append("Thirteen "); break;
+							case '4': sb.append("Fourteen "); break;
+							case '5': sb.append("Fifteen "); break;
+							case '6': sb.append("Sixteen "); break;
+							case '7': sb.append("Seventeen "); break;
+							case '8': sb.append("Eighteen "); break;
+							case '9': sb.append("Nineteen "); break;
+							default: throw new NumberParseException("Unsupported character: " + c);
+							}
+							
+							i++;
+							break;
+						case '2': sb.append("Twenty").append((cn == '0') ? ' ' : '-'); break;
+						case '3': sb.append("Thirty").append((cn == '0') ? ' ' : '-'); break;
+						case '4': sb.append("Forty").append((cn == '0') ? ' ' : '-'); break;
+						case '5': sb.append("Fifty").append((cn == '0') ? ' ' : '-'); break;
+						case '6': sb.append("Sixty").append((cn == '0') ? ' ' : '-'); break;
+						case '7': sb.append("Seventy").append((cn == '0') ? ' ' : '-'); break;
+						case '8': sb.append("Eighty").append((cn == '0') ? ' ' : '-'); break;
+						case '9': sb.append("Ninety").append((cn == '0') ? ' ' : '-'); break;
+						default: throw new NumberParseException("Unsupported character: " + c);
+						}
+					} else { // d1 = 0 or 2
+						switch (c) {
+						case '1': sb.append("One "); break;
+						case '2': sb.append("Two "); break;
+						case '3': sb.append("Three "); break;
+						case '4': sb.append("Four "); break;
+						case '5': sb.append("Five "); break;
+						case '6': sb.append("Six "); break;
+						case '7': sb.append("Seven "); break;
+						case '8': sb.append("Eight "); break;
+						case '9': sb.append("Nine "); break;
+						default: throw new NumberParseException("Unsupported character: " + c);
+						}
+						
+						if (d1 == 2) {
+							sb.append("Hundred ");
+						}
+					}
+					
+					hasD1Num = true;
+				}
+				if (d1 == 0 && hasD1Num) {
+					switch (d2) {
+					case 0: break;
+					case 3: sb.append("Thousand "); break;
+					case 6: sb.append("Million "); break;
+					case 9: sb.append("Billion "); break;
+					case 12: sb.append("Trillion "); break;
+					case 15: sb.append("Quadrillion "); break;
+					case 18: sb.append("Quintillion "); break;
+					case 21: sb.append("Sextillion "); break;
+					case 24: sb.append("Septillion "); break;
+					default:  throw new NumberParseException("Number is too big. Scale: " + d2);
+					}
+				}
+				
+				if (d1 == 0) {
+					hasD1Num = false;
+				}
+			}
+		}
+		
+		int scale = num.scale();
+		if (0 < scale) {
+			BigInteger numDec = num.subtract(new BigDecimal(numInt)).unscaledValue();
+			String strDec = ((negative) ? numDec.negate() : numDec).toString();
+			
+			if (fractionDec) {
+				sb.append("and ").append(strDec).append("/1");
+				StringUtilz.repeat(sb, "0", scale);
+			} else {
+				sb.append("point ");
+				StringUtilz.repeat(sb, "Zero ", scale - strDec.length());
+				for (int i = 0; i < strDec.length(); i++) {
+					char c = strDec.charAt(i);
+					
+					switch (c) {
+					case '0': sb.append("Zero "); break;
+					case '1': sb.append("One "); break;
+					case '2': sb.append("Two "); break;
+					case '3': sb.append("Three "); break;
+					case '4': sb.append("Four "); break;
+					case '5': sb.append("Five "); break;
+					case '6': sb.append("Six "); break;
+					case '7': sb.append("Seven "); break;
+					case '8': sb.append("Eight "); break;
+					case '9': sb.append("Nine "); break;
+					default: throw new NumberParseException("Unsupported character: " + c);
+					}
+				}
+			}
+		}
+		
+		return sb.toString().trim();
+	}
+	
+	public static BigDecimal parseEnNumShortScaleAsDec(String enNum) {
+		return parseEnNumShortScaleAsDec(enNum, RoundingMode.HALF_UP, -1);
+	}
+	
+	public static BigDecimal parseEnNumShortScaleAsDec(String enNum, RoundingMode decimalRoundingMode, int fixedDecimalScale) {
+		if (enNum == null) {
+			return null;
+		}
+		
+		enNum = enNum.toLowerCase().trim();
+		
+		boolean negative = false;
+		if (enNum.startsWith("negative")) {
+			negative = true;
+			enNum = enNum.substring("negative".length());
+		} else if (enNum.startsWith("minus")) {
+			negative = true;
+			enNum = enNum.substring("minus".length());
+		} else if (enNum.startsWith("-")) {
+			negative = true;
+			enNum = enNum.substring("-".length());
+		}
+		
+		BigDecimal num = null;
+		
+		int pointIdx = enNum.indexOf("point");
+		if (0 < pointIdx) {
+			// Decimal : xxx point xxx
+			String iNumStr = enNum.substring(0, pointIdx);
+			String dNumStr = enNum.substring(pointIdx + "point".length());
+			
+			BigDecimal iNum = parseEnNumShortScaleUnsignedIntPart(iNumStr);
+			BigDecimal dNum = parseEnNumShortScaleUnsignedDecPart(dNumStr, fixedDecimalScale, decimalRoundingMode);
+
+			num = iNum.add(dNum);
+		} else {
+			// Decimal : xxx and xx/xxx
+			Pattern ptn = Pattern.compile("(.+)\\s+and\\s+([0-9]+)\\s*/\\s*([0-9]+)");
+			Matcher matcher = ptn.matcher(enNum);
+			if (matcher.matches()) {
+				String iNumStr = matcher.group(1);
+				String dnNumStr = matcher.group(2);
+				String ddNumStr = matcher.group(3);
+				
+				BigDecimal iNum = parseEnNumShortScaleUnsignedIntPart(iNumStr);
+				int dNumScale;
+				if (0 <= fixedDecimalScale) {
+					dNumScale = fixedDecimalScale;
+				} else {
+					dNumScale = ddNumStr.length() - 1;
+				}
+				BigDecimal dNum = new BigDecimal(dnNumStr).divide(new BigDecimal(ddNumStr), dNumScale, decimalRoundingMode);
+
+				num = iNum.add(dNum);
+			} else {
+				// Integer
+				num = parseEnNumShortScaleUnsignedIntPart(enNum);
+			}
+		}
+		
+		if (negative) {
+			num = num.negate();
+		}
+		
+		return num;
+	}
+	
+	private static BigDecimal parseEnNumShortScaleUnsignedIntPart(String enNum) {
+		return parseEnNumShortScaleUnsignedPart(enNum, false, -1, null);
+	}
+	
+	private static BigDecimal parseEnNumShortScaleUnsignedDecPart(String enNum, int fixedDecimalScale, RoundingMode decimalRoundingMode) {
+		return parseEnNumShortScaleUnsignedPart(enNum, true, fixedDecimalScale, decimalRoundingMode);
+	}
+	
+	private static BigDecimal parseEnNumShortScaleUnsignedPart(String enNum, boolean decimalPart, int fixedDecimalScale, RoundingMode decimalRoundingMode) {
+		if (enNum == null || enNum.isEmpty()) {
+			return null;
+		}
+		
+		enNum = enNum.toLowerCase().trim();
+		
+		enNum = enNum.replace(" and ", " ");
+		enNum = enNum.replace("-", " ");
+		enNum = enNum.replace(",", "");
+		
+		BigDecimal num = BigDecimal.ZERO;
+		BigDecimal n = BigDecimal.ZERO;
+		int d = -1;
+		boolean xty = false;
+		boolean prevXty = false;
+		int zeroPrefixCount = 0;
+		
+		String[] tokens = enNum.split("\\s+");
+		for (int i = 0; i < tokens.length; i++) {
+			String token = tokens[i];
+			
+			boolean isLast = (i + 1 == tokens.length);
+			
+			prevXty = xty;
+			xty = false;
+			
+			boolean parsed = false;
+			char c0 = token.charAt(0);
+			if ('0' <= c0 && c0 <= '9') {
+				try {
+					long l = NumberUtilz.toLong(token);
+					n = add(n, l, true);
+					parsed = true;
+				} catch (Exception e) {
+					// NOP
+				}
+			}
+			
+			if (!parsed) {
+				switch (token) {
+				case "zero":
+					n = add(n, 0, !prevXty);
+					if (BigDecimal.ZERO.equals(n)) {
+						zeroPrefixCount++;
+					}
+					break;
+				case "one": n = add(n, 1, !prevXty); break;
+				case "two": n = add(n, 2, !prevXty); break;
+				case "three": n = add(n, 3, !prevXty); break;
+				case "four": n = add(n, 4, !prevXty); break;
+				case "five": n = add(n, 5, !prevXty); break;
+				case "six": n = add(n, 6, !prevXty); break;
+				case "seven": n = add(n, 7, !prevXty); break;
+				case "eight": n = add(n, 8, !prevXty); break;
+				case "nine": n = add(n, 9, !prevXty); break;
+				case "ten": n = add(n, 10, !prevXty); break;
+				case "eleven": n = add(n, 11, !prevXty); break;
+				case "twelve": n = add(n, 12, !prevXty); break;
+				case "thirteen": n = add(n, 13, !prevXty); break;
+				case "fourteen": n = add(n, 14, !prevXty); break;
+				case "fifteen": n = add(n, 15, !prevXty); break;
+				case "sixteen": n = add(n, 16, !prevXty); break;
+				case "seventeen": n = add(n, 17, !prevXty); break;
+				case "eighteen": n = add(n, 18, !prevXty); break;
+				case "nineteen": n = add(n, 19, !prevXty); break;
+				case "twenty": n = add(n, 20, !prevXty); xty = true; break;
+				case "thirty": n = add(n, 30, !prevXty); xty = true; break;
+				case "forty": n = add(n, 40, !prevXty); xty = true; break;
+				case "fifty": n = add(n, 50, !prevXty); xty = true; break;
+				case "sixty": n = add(n, 60, !prevXty); xty = true; break;
+				case "seventy": n = add(n, 70, !prevXty); xty = true; break;
+				case "eighty": n = add(n, 80, !prevXty); xty = true; break;
+				case "ninety": n = add(n, 90, !prevXty); xty = true; break;
+				case "hundred": n = n.scaleByPowerOfTen(2); xty = true; break;
+				case "thousand": d = 3; break;
+				case "million": d = 6; break;
+				case "billion": d = 9; break;
+				case "trillion": d = 12; break;
+				case "quadrillion": d = 15; break;
+				case "quintillion": d = 18; break;
+				case "sextillion": d = 21; break;
+				case "septillion": d = 24; break;
+				default: throw new NumberParseException("Unsupported word: " + token);
+				}
+			}
+			
+			if (d != -1) {
+				num = num.add(n.scaleByPowerOfTen(d));
+				
+				n = BigDecimal.ZERO;
+				d = -1;
+			} else if (isLast) {
+				num = num.add(n);
+			}
+		}
+		
+		if (decimalPart) {
+			// convert to decimal part
+			int len;
+			if (0 < zeroPrefixCount && BigDecimal.ZERO.equals(num)) {
+				// avoid double count
+				len = zeroPrefixCount;
+			} else {
+				len = zeroPrefixCount + num.toPlainString().length();
+			}
+			
+
+			if (0 <= fixedDecimalScale) {
+				// fixed scale
+				if (len < fixedDecimalScale) {
+					// pad scale
+					num = num.scaleByPowerOfTen(-fixedDecimalScale);
+				} else if (fixedDecimalScale < len) {
+					// round
+					if (decimalRoundingMode == null) {
+						throw new NumberParseException("Decimal overflow. (Expected: <= " + fixedDecimalScale + ", Actual:" + len + ")");
+					}
+					num = num.scaleByPowerOfTen(-len).setScale(fixedDecimalScale, decimalRoundingMode);
+				} else {
+					// decimalFixedScale = actual scale
+					num = num.scaleByPowerOfTen(-len);
+				}
+			} else {
+				num = num.scaleByPowerOfTen(-len);
+			}
+		}
+		
+		return num;
+	}
+	
+	
 	public static String toJPNum(long num) {
 		return toJPNum(num, false, false, false);
 	}
@@ -578,11 +944,7 @@ public final class NumberUtilz {
 			case '０':
 			case '〇':
 			case '零':
-				if (n1 == null) {
-					n1 = BigInteger.ZERO;
-				} else {
-					n1 = n1.multiply(BigInteger.TEN);
-				}
+				n1 = add(n1, 0, true);
 				break;
 			case '1':
 			case '１':
@@ -590,11 +952,7 @@ public final class NumberUtilz {
 			case '壱':
 			case '壹':
 			case '弌':
-				if (n1 == null) {
-					n1 = BigInteger.ONE;
-				} else {
-					n1 = n1.multiply(BigInteger.TEN).add(BigInteger.ONE);
-				}
+				n1 = add(n1, 1, true);
 				break;
 			case '2':
 			case '２':
@@ -603,11 +961,7 @@ public final class NumberUtilz {
 			case '貳':
 			case '弍':
 			case '贰': // Chinese
-				if (n1 == null) {
-					n1 = BigInteger.valueOf(2);
-				} else {
-					n1 = n1.multiply(BigInteger.TEN).add(BigInteger.valueOf(2));
-				}
+				n1 = add(n1, 2, true);
 				break;
 			case '3':
 			case '３':
@@ -617,43 +971,27 @@ public final class NumberUtilz {
 			case '弎':
 			case '叁': // Chinese
 			case '叄': // Chinese
-				if (n1 == null) {
-					n1 = BigInteger.valueOf(3);
-				} else {
-					n1 = n1.multiply(BigInteger.TEN).add(BigInteger.valueOf(3));
-				}
+				n1 = add(n1, 3, true);
 				break;
 			case '4':
 			case '４':
 			case '四':
 			case '肆':
 			case '亖':
-				if (n1 == null) {
-					n1 = BigInteger.valueOf(4);
-				} else {
-					n1 = n1.multiply(BigInteger.TEN).add(BigInteger.valueOf(4));
-				}
+				n1 = add(n1, 4, true);
 				break;
 			case '5':
 			case '５':
 			case '五':
 			case '伍':
-				if (n1 == null) {
-					n1 = BigInteger.valueOf(5);
-				} else {
-					n1 = n1.multiply(BigInteger.TEN).add(BigInteger.valueOf(5));
-				}
+				n1 = add(n1, 5, true);
 				break;
 			case '6':
 			case '６':
 			case '六':
 			case '陸':
 			case '陆': // Chinese
-				if (n1 == null) {
-					n1 = BigInteger.valueOf(6);
-				} else {
-					n1 = n1.multiply(BigInteger.TEN).add(BigInteger.valueOf(6));
-				}
+				n1 = add(n1, 6, true);
 				break;
 			case '7':
 			case '７':
@@ -661,31 +999,19 @@ public final class NumberUtilz {
 			case '漆':
 			case '柒':
 			case '質':
-				if (n1 == null) {
-					n1 = BigInteger.valueOf(7);
-				} else {
-					n1 = n1.multiply(BigInteger.TEN).add(BigInteger.valueOf(7));
-				}
+				n1 = add(n1, 7, true);
 				break;
 			case '8':
 			case '８':
 			case '八':
 			case '捌':
-				if (n1 == null) {
-					n1 = BigInteger.valueOf(8);
-				} else {
-					n1 = n1.multiply(BigInteger.TEN).add(BigInteger.valueOf(8));
-				}
+				n1 = add(n1, 8, true);
 				break;
 			case '9':
 			case '９':
 			case '九':
 			case '玖':
-				if (n1 == null) {
-					n1 = BigInteger.valueOf(9);
-				} else {
-					n1 = n1.multiply(BigInteger.TEN).add(BigInteger.valueOf(9));
-				}
+				n1 = add(n1, 10, true);
 				break;
 			case '十':
 			case '拾':
@@ -911,5 +1237,33 @@ public final class NumberUtilz {
 		DecimalFormat df = new DecimalFormat(pattern);
 		
 		return df.format(value);
+	}
+	
+	private static BigInteger add(BigInteger baseNum, long num, boolean asDigit) {
+		BigInteger n = BigInteger.valueOf(num);
+		
+		if (baseNum == null) {
+			return n;
+		}
+		
+		if (asDigit) {
+			return baseNum.multiply(BigInteger.TEN.pow(digitLength(num))).add(n);
+		} else {
+			return baseNum.add(n);
+		}
+	}
+	
+	private static BigDecimal add(BigDecimal baseNum, long num, boolean asDigit) {
+		BigDecimal n = BigDecimal.valueOf(num);
+		
+		if (baseNum == null) {
+			return n;
+		}
+		
+		if (asDigit) {
+			return baseNum.scaleByPowerOfTen(digitLength(num)).add(n);
+		} else {
+			return baseNum.add(n);
+		}
 	}
 }

@@ -12,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 import org.junit.Test;
 import org.mifmi.commons4j.util.NumberUtilz;
@@ -215,5 +216,185 @@ public class NumberUtilzTest {
 		assertEquals((double)0, NumberUtilz.toDouble('\u0000'), DELTA);
 		assertEquals((double)Character.MIN_VALUE, NumberUtilz.toDouble(Character.MIN_VALUE), DELTA);
 		assertEquals((double)Character.MAX_VALUE, NumberUtilz.toDouble(Character.MAX_VALUE), DELTA);
+	}
+	
+	@Test
+	public void testToEnNumShortScale() throws Exception {
+		assertEquals(null, NumberUtilz.toEnNumShortScale((BigDecimal)null, false));
+		assertEquals(null, NumberUtilz.toEnNumShortScale((BigDecimal)null, true));
+		
+		assertEquals("Zero", NumberUtilz.toEnNumShortScale(new BigDecimal("0"), false));
+		assertEquals("One", NumberUtilz.toEnNumShortScale(new BigDecimal("1"), false));
+		assertEquals("Two", NumberUtilz.toEnNumShortScale(new BigDecimal("2"), false));
+		
+		assertEquals("Ten", NumberUtilz.toEnNumShortScale(new BigDecimal("10"), false));
+		assertEquals("Eleven", NumberUtilz.toEnNumShortScale(new BigDecimal("11"), false));
+		assertEquals("Twelve", NumberUtilz.toEnNumShortScale(new BigDecimal("12"), false));
+		
+		assertEquals("Twenty", NumberUtilz.toEnNumShortScale(new BigDecimal("20"), false));
+		assertEquals("Twenty-One", NumberUtilz.toEnNumShortScale(new BigDecimal("21"), false));
+
+		assertEquals("Ninety-Nine", NumberUtilz.toEnNumShortScale(new BigDecimal("99"), false));
+
+		assertEquals("One Hundred", NumberUtilz.toEnNumShortScale(new BigDecimal("100"), false));
+		assertEquals("One Hundred One", NumberUtilz.toEnNumShortScale(new BigDecimal("101"), false));
+		
+		assertEquals("One Hundred Ten", NumberUtilz.toEnNumShortScale(new BigDecimal("110"), false));
+		assertEquals("One Hundred Eleven", NumberUtilz.toEnNumShortScale(new BigDecimal("111"), false));
+		assertEquals("One Hundred Twenty", NumberUtilz.toEnNumShortScale(new BigDecimal("120"), false));
+		assertEquals("One Hundred Twenty-One", NumberUtilz.toEnNumShortScale(new BigDecimal("121"), false));
+		
+		assertEquals("Two Thousand", NumberUtilz.toEnNumShortScale(new BigDecimal("2000"), false));
+		
+		assertEquals("Twenty-Three Thousand Four Hundred Fifty-Six", NumberUtilz.toEnNumShortScale(new BigDecimal("23456"), false));
+
+		assertEquals("Nine Hundred Eighty-Seven Septillion Six Hundred Fifty-Four Sextillion Three Hundred Twenty-One Quintillion Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trillion Four Hundred Thirty-Two Billion One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three", NumberUtilz.toEnNumShortScale(new BigDecimal("987654321098765432109876543"), false));
+		
+		
+		assertEquals("Zero point Zero", NumberUtilz.toEnNumShortScale(new BigDecimal("0.0"), false));
+		assertEquals("One and 0/10", NumberUtilz.toEnNumShortScale(new BigDecimal("1.0"), true));
+		
+		assertEquals("Zero point Zero Zero", NumberUtilz.toEnNumShortScale(new BigDecimal("0.00"), false));
+		assertEquals("One and 0/100", NumberUtilz.toEnNumShortScale(new BigDecimal("1.00"), true));
+		
+		assertEquals("Zero point Zero One Two", NumberUtilz.toEnNumShortScale(new BigDecimal("0.012"), false));
+		assertEquals("One and 12/1000", NumberUtilz.toEnNumShortScale(new BigDecimal("1.012"), true));
+		
+		
+		assertEquals("Negative Nine Hundred Eighty-Seven Septillion Six Hundred Fifty-Four Sextillion Three Hundred Twenty-One Quintillion Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trillion Four Hundred Thirty-Two Billion One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three", NumberUtilz.toEnNumShortScale(new BigDecimal("-987654321098765432109876543"), false));
+		
+		
+		assertEquals("Zero point Zero", NumberUtilz.toEnNumShortScale(new BigDecimal("-0.0"), false)); // BigDecimal has not signed zero
+		assertEquals("Negative One and 0/10", NumberUtilz.toEnNumShortScale(new BigDecimal("-1.0"), true));
+		
+		assertEquals("Zero point Zero Zero", NumberUtilz.toEnNumShortScale(new BigDecimal("-0.00"), false)); // BigDecimal has not signed zero
+		assertEquals("Negative One and 0/100", NumberUtilz.toEnNumShortScale(new BigDecimal("-1.00"), true));
+		
+		assertEquals("Negative Zero point Zero One Two", NumberUtilz.toEnNumShortScale(new BigDecimal("-0.012"), false));
+		assertEquals("Negative One and 12/1000", NumberUtilz.toEnNumShortScale(new BigDecimal("-1.012"), true));
+	}
+	
+	@Test
+	public void testParseEnNumShortScale() throws Exception {
+		assertEquals(null, NumberUtilz.parseEnNumShortScale(null));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumShortScale("Zero"));
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseEnNumShortScale("One"));
+		
+		assertEquals(new BigDecimal("10"), NumberUtilz.parseEnNumShortScale("Ten"));
+		
+		assertEquals(new BigDecimal("11"), NumberUtilz.parseEnNumShortScale("Eleven"));
+		
+		assertEquals(new BigDecimal("20"), NumberUtilz.parseEnNumShortScale("Twenty"));
+		assertEquals(new BigDecimal("21"), NumberUtilz.parseEnNumShortScale("Twenty-One"));
+		
+		assertEquals(new BigDecimal("99"), NumberUtilz.parseEnNumShortScale("Ninety-Nine"));
+		
+		assertEquals(new BigDecimal("100"), NumberUtilz.parseEnNumShortScale("One Hundred"));
+		assertEquals(new BigDecimal("101"), NumberUtilz.parseEnNumShortScale("One Hundred One"));
+		
+		assertEquals(new BigDecimal("110"), NumberUtilz.parseEnNumShortScale("One Hundred Ten"));
+		assertEquals(new BigDecimal("111"), NumberUtilz.parseEnNumShortScale("One Hundred Eleven"));
+		assertEquals(new BigDecimal("120"), NumberUtilz.parseEnNumShortScale("One Hundred Twenty"));
+		assertEquals(new BigDecimal("121"), NumberUtilz.parseEnNumShortScale("One Hundred Twenty-One"));
+		
+		assertEquals(new BigDecimal("2000"), NumberUtilz.parseEnNumShortScale("Two Thousand"));
+		
+		assertEquals(new BigDecimal("23456"), NumberUtilz.parseEnNumShortScale("Twenty-Three Thousand Four Hundred Fifty-Six"));
+		
+		assertEquals(new BigDecimal("987654321098765432109876543"), NumberUtilz.parseEnNumShortScale("Nine Hundred Eighty-Seven Septillion Six Hundred Fifty-Four Sextillion Three Hundred Twenty-One Quintillion Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trillion Four Hundred Thirty-Two Billion One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three"));
+		
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumShortScale("Zero point Zero"));
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseEnNumShortScale("One and 0/10"));
+		
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumShortScale("Zero point Zero Zero"));
+		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseEnNumShortScale("One and 0/100"));
+		
+		assertEquals(new BigDecimal("0.012"), NumberUtilz.parseEnNumShortScale("Zero point Zero One Two"));
+		assertEquals(new BigDecimal("1.012"), NumberUtilz.parseEnNumShortScale("One and 12/1000"));
+		
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumShortScale("Zero point Zero Zero"));
+		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseEnNumShortScale("One and 0/100"));
+		
+		assertEquals(new BigDecimal("0.012"), NumberUtilz.parseEnNumShortScale("Zero point Zero One Two"));
+		assertEquals(new BigDecimal("1.012"), NumberUtilz.parseEnNumShortScale("One and 12/1000"));
+		
+		
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumShortScale("Zero point Zero", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumShortScale("Zero point Zero", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumShortScale("Zero point Zero", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseEnNumShortScale("Zero point Zero", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseEnNumShortScale("One and 0/10", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseEnNumShortScale("One and 0/10", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseEnNumShortScale("One and 0/10", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("1.000"), NumberUtilz.parseEnNumShortScale("One and 0/10", RoundingMode.HALF_UP, 3));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumShortScale("Zero point Zero Zero", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumShortScale("Zero point Zero Zero", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumShortScale("Zero point Zero Zero", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseEnNumShortScale("Zero point Zero Zero", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseEnNumShortScale("One and 0/100", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseEnNumShortScale("One and 0/100", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseEnNumShortScale("One and 0/100", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("1.000"), NumberUtilz.parseEnNumShortScale("One and 0/100", RoundingMode.HALF_UP, 3));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumShortScale("Zero point Zero One Two", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumShortScale("Zero point Zero One Two", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.01"), NumberUtilz.parseEnNumShortScale("Zero point Zero One Two", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.012"), NumberUtilz.parseEnNumShortScale("Zero point Zero One Two", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseEnNumShortScale("One and 12/1000", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseEnNumShortScale("One and 12/1000", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("1.01"), NumberUtilz.parseEnNumShortScale("One and 12/1000", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("1.012"), NumberUtilz.parseEnNumShortScale("One and 12/1000", RoundingMode.HALF_UP, 3));
+		
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseEnNumShortScale("Zero point Five Five Five", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.6"), NumberUtilz.parseEnNumShortScale("Zero point Five Five Five", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.56"), NumberUtilz.parseEnNumShortScale("Zero point Five Five Five", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.555"), NumberUtilz.parseEnNumShortScale("Zero point Five Five Five", RoundingMode.HALF_UP, 3));
+		
+
+		assertEquals(new BigDecimal("-987654321098765432109876543"), NumberUtilz.parseEnNumShortScale("Negative Nine Hundred Eighty-Seven Septillion Six Hundred Fifty-Four Sextillion Three Hundred Twenty-One Quintillion Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trillion Four Hundred Thirty-Two Billion One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three"));
+		
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero"));
+		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseEnNumShortScale("Negative One and 0/10"));
+		
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero Zero"));
+		assertEquals(new BigDecimal("-1.00"), NumberUtilz.parseEnNumShortScale("Negative One and 0/100"));
+		
+		assertEquals(new BigDecimal("-0.012"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero One Two"));
+		assertEquals(new BigDecimal("-1.012"), NumberUtilz.parseEnNumShortScale("Negative One and 12/1000"));
+		
+		
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("-1"), NumberUtilz.parseEnNumShortScale("Negative One and 0/10", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseEnNumShortScale("Negative One and 0/10", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-1.00"), NumberUtilz.parseEnNumShortScale("Negative One and 0/10", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-1.000"), NumberUtilz.parseEnNumShortScale("Negative One and 0/10", RoundingMode.HALF_UP, 3));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero Zero", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero Zero", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero Zero", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero Zero", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("-1"), NumberUtilz.parseEnNumShortScale("Negative One and 0/100", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseEnNumShortScale("Negative One and 0/100", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-1.00"), NumberUtilz.parseEnNumShortScale("Negative One and 0/100", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-1.000"), NumberUtilz.parseEnNumShortScale("Negative One and 0/100", RoundingMode.HALF_UP, 3));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero One Two", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero One Two", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-0.01"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero One Two", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-0.012"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero One Two", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("-1"), NumberUtilz.parseEnNumShortScale("Negative One and 12/1000", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseEnNumShortScale("Negative One and 12/1000", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-1.01"), NumberUtilz.parseEnNumShortScale("Negative One and 12/1000", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-1.012"), NumberUtilz.parseEnNumShortScale("Negative One and 12/1000", RoundingMode.HALF_UP, 3));
+		
+		assertEquals(new BigDecimal("-1"), NumberUtilz.parseEnNumShortScale("Negative Zero point Five Five Five", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("-0.6"), NumberUtilz.parseEnNumShortScale("Negative Zero point Five Five Five", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-0.56"), NumberUtilz.parseEnNumShortScale("Negative Zero point Five Five Five", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-0.555"), NumberUtilz.parseEnNumShortScale("Negative Zero point Five Five Five", RoundingMode.HALF_UP, 3));
 	}
 }
