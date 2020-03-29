@@ -1,3 +1,9 @@
+## 0.2.1 (2020-03-29)
+
+Add:
+
+  - Add NumberUtilz#toEnNumShortScale and NumberUtilz#parseEnNumShortScale methods
+
 ## 0.2.0 (2017-01-08)
 
 Add:
