@@ -1,3 +1,14 @@
+## 0.2.2 (2020-04-05)
+
+Add:
+
+  - Add decimal number parsing feature to NumberUtilz#parseEnNumShortScale
+
+Change:
+
+  - Change return type of NumberUtilz#parseJPNum, BigInteger to BigDecimal  [Breaking Change]
+  - Change Daiji option of NumberUtilz#toJPNum to strict specification  [Breaking Change]
+
 ## 0.2.1 (2020-03-29)
 
 Add:
