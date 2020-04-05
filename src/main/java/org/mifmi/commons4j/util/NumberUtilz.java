@@ -669,7 +669,7 @@ public final class NumberUtilz {
 		BigDecimal num = null;
 		
 		int pointIdx = enNumUnsigned.indexOf("point");
-		if (0 < pointIdx) {
+		if (pointIdx != -1) {
 			// Decimal : xxx point xxx
 			String iNumStr = enNumUnsigned.substring(0, pointIdx);
 			String dNumStr = enNumUnsigned.substring(pointIdx + "point".length());
@@ -823,7 +823,7 @@ public final class NumberUtilz {
 				// avoid double count
 				len = zeroPrefixCount;
 			} else {
-				len = zeroPrefixCount + num.toPlainString().length();
+				len = zeroPrefixCount + digitLength(num);
 			}
 			
 
@@ -856,7 +856,15 @@ public final class NumberUtilz {
 	}
 	
 	public static String toJPNum(long num, boolean showOne, boolean useDaiji, boolean useObsoleteDaiji) {
-		return toJPNum(String.valueOf(num), showOne, useDaiji, useObsoleteDaiji);
+		return toJPNum(BigDecimal.valueOf(num), showOne, useDaiji, useObsoleteDaiji);
+	}
+	
+	public static String toJPNum(double num) {
+		return toJPNum(num, false, false, false);
+	}
+	
+	public static String toJPNum(double num, boolean showOne, boolean useDaiji, boolean useObsoleteDaiji) {
+		return toJPNum(BigDecimal.valueOf(num), showOne, useDaiji, useObsoleteDaiji);
 	}
 	
 	public static String toJPNum(BigInteger num) {
@@ -868,94 +876,194 @@ public final class NumberUtilz {
 			return null;
 		}
 		
-		return toJPNum(num.toString(), showOne, useDaiji, useObsoleteDaiji);
+		return toJPNum(new BigDecimal(num), showOne, useDaiji, useObsoleteDaiji);
 	}
 	
-	public static String toJPNum(String num) {
+	public static String toJPNum(BigDecimal num) {
 		return toJPNum(num, false, false, false);
 	}
 	
-	public static String toJPNum(String num, boolean showOne, boolean useDaiji, boolean useObsoleteDaiji) {
+	public static String toJPNum(BigDecimal num, boolean showOne, boolean useDaiji, boolean useObsoleteDaiji) {
 		useObsoleteDaiji = useDaiji && useObsoleteDaiji;
 		
 		if (num == null) {
 			return null;
 		}
 		
-		if (num.equals("0")) {
-			return (useObsoleteDaiji) ? "零" : "〇";
+		StringBuilder sb = new StringBuilder();
+		
+		boolean negative = (num.signum() < 0);
+		if (negative) {
+			sb.append("−");
 		}
 		
-		StringBuilder jpNumSb = new StringBuilder();
-		
-		int len = num.length();
-		boolean hasD1Num = false;
-		for (int i = 0; i < len; i++) {
-			char c = num.charAt(i);
-			int d2 = len - i - 1;
-			int d1 = d2 % 4;
+		BigInteger numInt = num.toBigInteger();
+		if (NumberUtilz.isZero(numInt)) {
+			sb.append((useDaiji) ? "零" : "〇");
+		} else {
+			String strInt = ((negative) ? numInt.negate() : numInt).toString();
 			
-			if (c != '0') {
-				switch (c) {
-				case '1':
-					if (showOne || d1 == 0 || d2 == 0) {
-						jpNumSb.append((useDaiji) ? ((useObsoleteDaiji) ? '壹' : '壱') : '一');
+			int len = strInt.length();
+				
+			boolean hasD1Num = false;
+			for (int i = 0; i < len; i++) {
+				char c = strInt.charAt(i);
+				int d2 = len - i - 1;
+				int d1 = d2 % 4;
+				
+				if (c != '0') {
+					switch (c) {
+					case '1':
+						if (showOne || d1 == 0 || d2 == 0) {
+							sb.append((useDaiji) ? ((useObsoleteDaiji) ? '壹' : '壱') : '一');
+						}
+						break;
+					case '2': sb.append((useDaiji) ? ((useObsoleteDaiji) ? '貳' : '弐') : '二'); break;
+					case '3': sb.append((useDaiji) ? ((useObsoleteDaiji) ? '參' : '参') : '三'); break;
+					case '4': sb.append((useDaiji) ? '肆' : '四'); break;
+					case '5': sb.append((useDaiji) ? '伍' : '五'); break;
+					case '6': sb.append((useDaiji) ? '陸' : '六'); break;
+					case '7': sb.append((useDaiji) ? ((useObsoleteDaiji) ? '柒' : '漆') : '七'); break;
+					case '8': sb.append((useDaiji) ? '捌' : '八'); break;
+					case '9': sb.append((useDaiji) ? '玖' : '九'); break;
+					default: return null;
 					}
-					break;
-				case '2': jpNumSb.append((useDaiji) ? ((useObsoleteDaiji) ? '貳' : '弐') : '二'); break;
-				case '3': jpNumSb.append((useDaiji) ? ((useObsoleteDaiji) ? '參' : '参') : '三'); break;
-				case '4': jpNumSb.append((useObsoleteDaiji) ? '肆' : '四'); break;
-				case '5': jpNumSb.append((useObsoleteDaiji) ? '伍' : '五'); break;
-				case '6': jpNumSb.append((useObsoleteDaiji) ? '陸' : '六'); break;
-				case '7': jpNumSb.append((useObsoleteDaiji) ? '柒' : '七'); break;
-				case '8': jpNumSb.append((useObsoleteDaiji) ? '捌' : '八'); break;
-				case '9': jpNumSb.append((useObsoleteDaiji) ? '玖' : '九'); break;
-				default: return null;
+					
+					switch (d1) {
+					case 0: break;
+					case 1: sb.append((useDaiji) ? '拾' : '十'); break;
+					case 2: sb.append((useDaiji) ? '陌' : '百'); break;
+					case 3: sb.append((useDaiji) ? '阡' : '千'); break;
+					default: return null;
+					}
+					
+					hasD1Num = true;
+				}
+				if (d1 == 0 && hasD1Num) {
+					switch (d2) {
+					case 0: break;
+					case 4: sb.append((useDaiji) ? '萬' : '万'); break;
+					case 8: sb.append('億'); break;
+					case 12: sb.append('兆'); break;
+					case 16: sb.append('京'); break;
+					case 20: sb.append('垓'); break;
+					case 24: sb.append("秭"); break;
+					case 28: sb.append('穣'); break;
+					case 32: sb.append('溝'); break;
+					case 36: sb.append('澗'); break;
+					case 40: sb.append('正'); break;
+					case 44: sb.append('載'); break;
+					case 48: sb.append('極'); break;
+					case 52: sb.append("恒河沙"); break;
+					case 56: sb.append("阿僧祇"); break;
+					case 60: sb.append("那由他"); break;
+					case 64: sb.append("不可思議"); break;
+					case 68: sb.append("無量大数"); break;
+					default: return null;
+					}
 				}
 				
-				switch (d1) {
-				case 0: break;
-				case 1: jpNumSb.append((useDaiji) ? '拾' : '十'); break;
-				case 2: jpNumSb.append('百'); break;
-				case 3: jpNumSb.append((useObsoleteDaiji) ? '佰' : '千'); break;
-				default: return null;
+				if (d1 == 0) {
+					hasD1Num = false;
 				}
-				
-				hasD1Num = true;
-			}
-			if (d1 == 0 && hasD1Num) {
-				switch (d2) {
-				case 0: break;
-				case 4: jpNumSb.append((useObsoleteDaiji) ? '萬' : '万'); break;
-				case 8: jpNumSb.append('億'); break;
-				case 12: jpNumSb.append('兆'); break;
-				case 16: jpNumSb.append('京'); break;
-				case 20: jpNumSb.append('垓'); break;
-				case 24: jpNumSb.append("秭"); break;
-				case 28: jpNumSb.append('穣'); break;
-				case 32: jpNumSb.append('溝'); break;
-				case 36: jpNumSb.append('澗'); break;
-				case 40: jpNumSb.append('正'); break;
-				case 44: jpNumSb.append('載'); break;
-				case 48: jpNumSb.append('極'); break;
-				case 52: jpNumSb.append("恒河沙"); break;
-				case 56: jpNumSb.append("阿僧祇"); break;
-				case 60: jpNumSb.append("那由他"); break;
-				case 64: jpNumSb.append("不可思議"); break;
-				case 68: jpNumSb.append("無量大数"); break;
-				default: return null;
-				}
-			}
-			
-			if (d1 == 0) {
-				hasD1Num = false;
 			}
 		}
-		return jpNumSb.toString();
+		
+		int scale = num.scale();
+		if (0 < scale) {
+			BigInteger numDec = num.subtract(new BigDecimal(numInt)).unscaledValue();
+			String strDec = ((negative) ? numDec.negate() : numDec).toString();
+			
+			sb.append("・");
+			StringUtilz.repeat(sb, ((useDaiji) ? "零" : "〇"), scale - strDec.length());
+			for (int i = 0; i < strDec.length(); i++) {
+				char c = strDec.charAt(i);
+				
+				switch (c) {
+				case '0': sb.append((useDaiji) ? "零" : "〇"); break;
+				case '1': sb.append((useDaiji) ? ((useObsoleteDaiji) ? '壹' : '壱') : '一'); break;
+				case '2': sb.append((useDaiji) ? ((useObsoleteDaiji) ? '貳' : '弐') : '二'); break;
+				case '3': sb.append((useDaiji) ? ((useObsoleteDaiji) ? '參' : '参') : '三'); break;
+				case '4': sb.append((useDaiji) ? '肆' : '四'); break;
+				case '5': sb.append((useDaiji) ? '伍' : '五'); break;
+				case '6': sb.append((useDaiji) ? '陸' : '六'); break;
+				case '7': sb.append((useDaiji) ? ((useObsoleteDaiji) ? '柒' : '漆') : '七'); break;
+				case '8': sb.append((useDaiji) ? '捌' : '八'); break;
+				case '9': sb.append((useDaiji) ? '玖' : '九'); break;
+				default: throw new NumberParseException("Unsupported character: " + c);
+				}
+			}
+		}
+		
+		return sb.toString();
 	}
 	
-	public static BigInteger parseJPNum(String jpNum) {
-		if (jpNum == null || jpNum.isEmpty()) {
+	public static BigDecimal parseJPNum(String jpNum) {
+		return parseJPNum(jpNum, RoundingMode.HALF_UP, -1);
+	}
+	
+	public static BigDecimal parseJPNum(String jpNum, RoundingMode decimalRoundingMode, int fixedDecimalScale) {
+		if (jpNum == null) {
+			return null;
+		}
+		
+		jpNum = jpNum.toLowerCase().trim();
+		
+		boolean negative = false;
+		String jpNumUnsigned = jpNum;
+		if (jpNumUnsigned.startsWith("−")) {
+			negative = true;
+			jpNumUnsigned = jpNumUnsigned.substring("−".length());
+		} else if (jpNumUnsigned.startsWith("-")) {
+			negative = true;
+			jpNumUnsigned = jpNumUnsigned.substring("-".length());
+		}
+		
+		jpNumUnsigned = jpNumUnsigned.trim();
+		if (jpNumUnsigned.isEmpty()) {
+			throw new NumberParseException("Invalid value: " + jpNum);
+		}
+		
+		BigDecimal num = null;
+		
+		int pointIdx = jpNumUnsigned.indexOf("・");
+		if (pointIdx == -1) {
+			pointIdx = jpNumUnsigned.indexOf("．");
+		}
+		if (pointIdx != -1) {
+			// Decimal
+			String iNumStr = jpNumUnsigned.substring(0, pointIdx);
+			String dNumStr = jpNumUnsigned.substring(pointIdx + 1);
+			
+			BigDecimal iNum = parseJPNumUnsignedIntPart(iNumStr);
+			BigDecimal dNum = parseJPNumUnsignedDecPart(dNumStr, fixedDecimalScale, decimalRoundingMode);
+
+			num = iNum.add(dNum);
+		} else {
+			// Integer
+			num = parseJPNumUnsignedIntPart(jpNumUnsigned);
+		}
+		
+		if (num != null) {
+			if (negative) {
+				num = num.negate();
+			}
+		}
+		
+		return num;
+	}
+	
+	private static BigDecimal parseJPNumUnsignedIntPart(String jpNum) {
+		return parseJPNumUnsignedPart(jpNum, false, -1, null);
+	}
+	
+	private static BigDecimal parseJPNumUnsignedDecPart(String jpNum, int fixedDecimalScale, RoundingMode decimalRoundingMode) {
+		return parseJPNumUnsignedPart(jpNum, true, fixedDecimalScale, decimalRoundingMode);
+	}
+	
+	
+	private static BigDecimal parseJPNumUnsignedPart(String jpNum, boolean decimalPart, int fixedDecimalScale, RoundingMode decimalRoundingMode) {
+		if (jpNum == null) {
 			return null;
 		}
 		
@@ -967,13 +1075,14 @@ public final class NumberUtilz {
 		jpNum = jpNum.replace("不可思議", "不");
 		jpNum = jpNum.replace("無量大数", "無");
 		
-		BigInteger num = BigInteger.ZERO;
-		BigInteger n = BigInteger.ZERO;
-		BigInteger n1 = null;
+		BigDecimal num = BigDecimal.ZERO;
+		BigDecimal n = BigDecimal.ZERO;
+		BigDecimal n1 = null;
 		int d1 = -1;
 		int d2 = -1;
 		int prevD1 = -1;
 		int prevD2 = -1;
+		int zeroPrefixCount = 0;
 		for (int i = 0; i < jpNum.length(); i++) {
 			char c = jpNum.charAt(i);
 			switch (c) {
@@ -982,6 +1091,9 @@ public final class NumberUtilz {
 			case '〇':
 			case '零':
 				n1 = add(n1, 0, true);
+				if (BigDecimal.ZERO.equals(n1)) {
+					zeroPrefixCount++;
+				}
 				break;
 			case '1':
 			case '１':
@@ -1048,7 +1160,7 @@ public final class NumberUtilz {
 			case '９':
 			case '九':
 			case '玖':
-				n1 = add(n1, 10, true);
+				n1 = add(n1, 9, true);
 				break;
 			case '十':
 			case '拾':
@@ -1060,7 +1172,7 @@ public final class NumberUtilz {
 				if (n1 != null) {
 					return null;
 				}
-				n1 = BigInteger.valueOf(2);
+				n1 = BigDecimal.valueOf(2);
 				d1 = 1;
 				break;
 			case '卅':
@@ -1068,7 +1180,7 @@ public final class NumberUtilz {
 				if (n1 != null) {
 					return null;
 				}
-				n1 = BigInteger.valueOf(3);
+				n1 = BigDecimal.valueOf(3);
 				d1 = 1;
 				break;
 			case '百':
@@ -1163,13 +1275,13 @@ public final class NumberUtilz {
 			
 			if (d1 != -1) {
 				if (n1 == null) {
-					n1 = BigInteger.ONE;
+					n1 = BigDecimal.ONE;
 				}
 				
 				if (d1 == 0) {
 					n = n.add(n1);
 				} else {
-					n = n.add(n1.multiply(BigInteger.TEN.pow(d1)));
+					n = n.add(n1.scaleByPowerOfTen(d1));
 				}
 				
 				n1 = null;
@@ -1184,14 +1296,45 @@ public final class NumberUtilz {
 				if (d2 == 0) {
 					num = num.add(n);
 				} else {
-					num = num.add(n.multiply(BigInteger.TEN.pow(d2)));
+					num = num.add(n.scaleByPowerOfTen(d2));
 				}
 				
-				n = BigInteger.ZERO;
+				n = BigDecimal.ZERO;
 				n1 = null;
 				d1 = -1;
 				d2 = -1;
 				prevD1 = -1;
+			}
+		}
+		
+		if (decimalPart) {
+			// convert to decimal part
+			int len;
+			if (0 < zeroPrefixCount && BigDecimal.ZERO.equals(num)) {
+				// avoid double count
+				len = zeroPrefixCount;
+			} else {
+				len = zeroPrefixCount + digitLength(num);
+			}
+			
+
+			if (0 <= fixedDecimalScale) {
+				// fixed scale
+				if (len < fixedDecimalScale) {
+					// pad scale
+					num = num.scaleByPowerOfTen(-fixedDecimalScale);
+				} else if (fixedDecimalScale < len) {
+					// round
+					if (decimalRoundingMode == null) {
+						throw new NumberParseException("Decimal overflow. (Expected: <= " + fixedDecimalScale + ", Actual:" + len + ")");
+					}
+					num = num.scaleByPowerOfTen(-len).setScale(fixedDecimalScale, decimalRoundingMode);
+				} else {
+					// decimalFixedScale = actual scale
+					num = num.scaleByPowerOfTen(-len);
+				}
+			} else {
+				num = num.scaleByPowerOfTen(-len);
 			}
 		}
 		
@@ -1274,20 +1417,6 @@ public final class NumberUtilz {
 		DecimalFormat df = new DecimalFormat(pattern);
 		
 		return df.format(value);
-	}
-	
-	private static BigInteger add(BigInteger baseNum, long num, boolean asDigit) {
-		BigInteger n = BigInteger.valueOf(num);
-		
-		if (baseNum == null) {
-			return n;
-		}
-		
-		if (asDigit) {
-			return baseNum.multiply(BigInteger.TEN.pow(digitLength(num))).add(n);
-		} else {
-			return baseNum.add(n);
-		}
 	}
 	
 	private static BigDecimal add(BigDecimal baseNum, long num, boolean asDigit) {

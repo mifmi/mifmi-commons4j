@@ -315,12 +315,6 @@ public class NumberUtilzTest {
 		assertEquals(new BigDecimal("0.012"), NumberUtilz.parseEnNumShortScale("Zero point Zero One Two"));
 		assertEquals(new BigDecimal("1.012"), NumberUtilz.parseEnNumShortScale("One and 12/1000"));
 		
-		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumShortScale("Zero point Zero Zero"));
-		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseEnNumShortScale("One and 0/100"));
-		
-		assertEquals(new BigDecimal("0.012"), NumberUtilz.parseEnNumShortScale("Zero point Zero One Two"));
-		assertEquals(new BigDecimal("1.012"), NumberUtilz.parseEnNumShortScale("One and 12/1000"));
-		
 		
 		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumShortScale("Zero point Zero", RoundingMode.HALF_UP, 0));
 		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumShortScale("Zero point Zero", RoundingMode.HALF_UP, 1));
@@ -442,6 +436,246 @@ public class NumberUtilzTest {
 		
 		try {
 			NumberUtilz.parseEnNumShortScale("Two Hundreds");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+	}
+	
+	@Test
+	public void testToJPNum() throws Exception {
+		assertEquals(null, NumberUtilz.toJPNum((BigDecimal)null));
+		
+		assertEquals("〇", NumberUtilz.toJPNum(new BigDecimal("0")));
+		assertEquals("一", NumberUtilz.toJPNum(new BigDecimal("1")));
+		assertEquals("二", NumberUtilz.toJPNum(new BigDecimal("2")));
+		
+		assertEquals("十", NumberUtilz.toJPNum(new BigDecimal("10")));
+		assertEquals("十一", NumberUtilz.toJPNum(new BigDecimal("11")));
+		assertEquals("十二", NumberUtilz.toJPNum(new BigDecimal("12")));
+		
+		assertEquals("二十", NumberUtilz.toJPNum(new BigDecimal("20")));
+		assertEquals("二十一", NumberUtilz.toJPNum(new BigDecimal("21")));
+
+		assertEquals("九十九", NumberUtilz.toJPNum(new BigDecimal("99")));
+
+		assertEquals("百", NumberUtilz.toJPNum(new BigDecimal("100")));
+		assertEquals("百一", NumberUtilz.toJPNum(new BigDecimal("101")));
+		
+		assertEquals("百十", NumberUtilz.toJPNum(new BigDecimal("110")));
+		assertEquals("百十一", NumberUtilz.toJPNum(new BigDecimal("111")));
+		assertEquals("百二十", NumberUtilz.toJPNum(new BigDecimal("120")));
+		assertEquals("百二十一", NumberUtilz.toJPNum(new BigDecimal("121")));
+		
+		assertEquals("二千", NumberUtilz.toJPNum(new BigDecimal("2000")));
+		
+		assertEquals("二万三千四百五十六", NumberUtilz.toJPNum(new BigDecimal("23456")));
+		
+		assertEquals("九千八百七十六無量大数五千四百三十二不可思議千九十八那由他七千六百五十四阿僧祇三千二百十恒河沙九千八百七十六極五千四百三十三載二千百九正八千七百六十五澗四千三百二十一溝九百八十七穣六千五百四十三秭二千百九垓八千七百六十五京四千三百二十一兆九百八十七億六千五百四十三万二千百九", NumberUtilz.toJPNum(new BigDecimal("987654321098765432109876543321098765432109876543210987654321098765432109")));
+		assertEquals("玖阡捌陌漆拾陸無量大数伍阡肆陌参拾弐不可思議阡玖拾捌那由他漆阡陸陌伍拾肆阿僧祇参阡弐陌拾恒河沙玖阡捌陌漆拾陸極伍阡肆陌参拾参載弐阡陌玖正捌阡漆陌陸拾伍澗肆阡参陌弐拾壱溝玖陌捌拾漆穣陸阡伍陌肆拾参秭弐阡陌玖垓捌阡漆陌陸拾伍京肆阡参陌弐拾壱兆玖陌捌拾漆億陸阡伍陌肆拾参萬弐阡陌玖", NumberUtilz.toJPNum(new BigDecimal("987654321098765432109876543321098765432109876543210987654321098765432109"), false, true, false));
+		assertEquals("玖阡捌陌柒拾陸無量大数伍阡肆陌參拾貳不可思議阡玖拾捌那由他柒阡陸陌伍拾肆阿僧祇參阡貳陌拾恒河沙玖阡捌陌柒拾陸極伍阡肆陌參拾參載貳阡陌玖正捌阡柒陌陸拾伍澗肆阡參陌貳拾壹溝玖陌捌拾柒穣陸阡伍陌肆拾參秭貳阡陌玖垓捌阡柒陌陸拾伍京肆阡參陌貳拾壹兆玖陌捌拾柒億陸阡伍陌肆拾參萬貳阡陌玖", NumberUtilz.toJPNum(new BigDecimal("987654321098765432109876543321098765432109876543210987654321098765432109"), false, true, true));
+		assertEquals("玖阡捌陌漆拾陸無量大数伍阡肆陌参拾弐不可思議壱阡玖拾捌那由他漆阡陸陌伍拾肆阿僧祇参阡弐陌壱拾恒河沙玖阡捌陌漆拾陸極伍阡肆陌参拾参載弐阡壱陌玖正捌阡漆陌陸拾伍澗肆阡参陌弐拾壱溝玖陌捌拾漆穣陸阡伍陌肆拾参秭弐阡壱陌玖垓捌阡漆陌陸拾伍京肆阡参陌弐拾壱兆玖陌捌拾漆億陸阡伍陌肆拾参萬弐阡壱陌玖", NumberUtilz.toJPNum(new BigDecimal("987654321098765432109876543321098765432109876543210987654321098765432109"), true, true, false));
+		assertEquals("玖阡捌陌柒拾陸無量大数伍阡肆陌參拾貳不可思議壹阡玖拾捌那由他柒阡陸陌伍拾肆阿僧祇參阡貳陌壹拾恒河沙玖阡捌陌柒拾陸極伍阡肆陌參拾參載貳阡壹陌玖正捌阡柒陌陸拾伍澗肆阡參陌貳拾壹溝玖陌捌拾柒穣陸阡伍陌肆拾參秭貳阡壹陌玖垓捌阡柒陌陸拾伍京肆阡參陌貳拾壹兆玖陌捌拾柒億陸阡伍陌肆拾參萬貳阡壹陌玖", NumberUtilz.toJPNum(new BigDecimal("987654321098765432109876543321098765432109876543210987654321098765432109"), true, true, true));
+		
+		assertEquals("〇・〇", NumberUtilz.toJPNum(new BigDecimal("0.0")));
+		
+		assertEquals("〇・〇〇", NumberUtilz.toJPNum(new BigDecimal("0.00")));
+		
+		assertEquals("〇・〇一二", NumberUtilz.toJPNum(new BigDecimal("0.012")));
+		
+		
+		assertEquals("−九千八百七十六無量大数五千四百三十二不可思議千九十八那由他七千六百五十四阿僧祇三千二百十恒河沙九千八百七十六極五千四百三十三載二千百九正八千七百六十五澗四千三百二十一溝九百八十七穣六千五百四十三秭二千百九垓八千七百六十五京四千三百二十一兆九百八十七億六千五百四十三万二千百九", NumberUtilz.toJPNum(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109")));
+		assertEquals("−玖阡捌陌漆拾陸無量大数伍阡肆陌参拾弐不可思議阡玖拾捌那由他漆阡陸陌伍拾肆阿僧祇参阡弐陌拾恒河沙玖阡捌陌漆拾陸極伍阡肆陌参拾参載弐阡陌玖正捌阡漆陌陸拾伍澗肆阡参陌弐拾壱溝玖陌捌拾漆穣陸阡伍陌肆拾参秭弐阡陌玖垓捌阡漆陌陸拾伍京肆阡参陌弐拾壱兆玖陌捌拾漆億陸阡伍陌肆拾参萬弐阡陌玖", NumberUtilz.toJPNum(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109"), false, true, false));
+		assertEquals("−玖阡捌陌柒拾陸無量大数伍阡肆陌參拾貳不可思議阡玖拾捌那由他柒阡陸陌伍拾肆阿僧祇參阡貳陌拾恒河沙玖阡捌陌柒拾陸極伍阡肆陌參拾參載貳阡陌玖正捌阡柒陌陸拾伍澗肆阡參陌貳拾壹溝玖陌捌拾柒穣陸阡伍陌肆拾參秭貳阡陌玖垓捌阡柒陌陸拾伍京肆阡參陌貳拾壹兆玖陌捌拾柒億陸阡伍陌肆拾參萬貳阡陌玖", NumberUtilz.toJPNum(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109"), false, true, true));
+		assertEquals("−玖阡捌陌漆拾陸無量大数伍阡肆陌参拾弐不可思議壱阡玖拾捌那由他漆阡陸陌伍拾肆阿僧祇参阡弐陌壱拾恒河沙玖阡捌陌漆拾陸極伍阡肆陌参拾参載弐阡壱陌玖正捌阡漆陌陸拾伍澗肆阡参陌弐拾壱溝玖陌捌拾漆穣陸阡伍陌肆拾参秭弐阡壱陌玖垓捌阡漆陌陸拾伍京肆阡参陌弐拾壱兆玖陌捌拾漆億陸阡伍陌肆拾参萬弐阡壱陌玖", NumberUtilz.toJPNum(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109"), true, true, false));
+		assertEquals("−玖阡捌陌柒拾陸無量大数伍阡肆陌參拾貳不可思議壹阡玖拾捌那由他柒阡陸陌伍拾肆阿僧祇參阡貳陌壹拾恒河沙玖阡捌陌柒拾陸極伍阡肆陌參拾參載貳阡壹陌玖正捌阡柒陌陸拾伍澗肆阡參陌貳拾壹溝玖陌捌拾柒穣陸阡伍陌肆拾參秭貳阡壹陌玖垓捌阡柒陌陸拾伍京肆阡參陌貳拾壹兆玖陌捌拾柒億陸阡伍陌肆拾參萬貳阡壹陌玖", NumberUtilz.toJPNum(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109"), true, true, true));
+		
+		
+		assertEquals("〇・〇", NumberUtilz.toJPNum(new BigDecimal("-0.0"))); // BigDecimal has not signed zero
+		
+		assertEquals("〇・〇〇", NumberUtilz.toJPNum(new BigDecimal("-0.00"))); // BigDecimal has not signed zero
+		
+		assertEquals("−〇・〇一二", NumberUtilz.toJPNum(new BigDecimal("-0.012")));
+	}
+	
+	@Test
+	public void testParseJPNum() throws Exception {
+		assertEquals(null, NumberUtilz.parseJPNum(null));
+		
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("〇"));
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseJPNum("一"));
+		
+		assertEquals(new BigDecimal("10"), NumberUtilz.parseJPNum("十"));
+		
+		assertEquals(new BigDecimal("11"), NumberUtilz.parseJPNum("十一"));
+		
+		assertEquals(new BigDecimal("20"), NumberUtilz.parseJPNum("二十"));
+		assertEquals(new BigDecimal("21"), NumberUtilz.parseJPNum("二十一"));
+		
+		assertEquals(new BigDecimal("99"), NumberUtilz.parseJPNum("九十九"));
+		
+		assertEquals(new BigDecimal("100"), NumberUtilz.parseJPNum("百"));
+		assertEquals(new BigDecimal("101"), NumberUtilz.parseJPNum("百一"));
+		
+		assertEquals(new BigDecimal("110"), NumberUtilz.parseJPNum("百十"));
+		assertEquals(new BigDecimal("111"), NumberUtilz.parseJPNum("百十一"));
+		assertEquals(new BigDecimal("120"), NumberUtilz.parseJPNum("百二十"));
+		assertEquals(new BigDecimal("121"), NumberUtilz.parseJPNum("百二十一"));
+		
+		assertEquals(new BigDecimal("2000"), NumberUtilz.parseJPNum("二千"));
+		
+		assertEquals(new BigDecimal("23456"), NumberUtilz.parseJPNum("二万三千四百五十六"));
+		
+		assertEquals(new BigDecimal("987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("九千八百七十六無量大数五千四百三十二不可思議千九十八那由他七千六百五十四阿僧祇三千二百十恒河沙九千八百七十六極五千四百三十三載二千百九正八千七百六十五澗四千三百二十一溝九百八十七穣六千五百四十三秭二千百九垓八千七百六十五京四千三百二十一兆九百八十七億六千五百四十三万二千百九"));
+		assertEquals(new BigDecimal("987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("玖阡捌陌漆拾陸無量大数伍阡肆陌参拾弐不可思議阡玖拾捌那由他漆阡陸陌伍拾肆阿僧祇参阡弐陌拾恒河沙玖阡捌陌漆拾陸極伍阡肆陌参拾参載弐阡陌玖正捌阡漆陌陸拾伍澗肆阡参陌弐拾壱溝玖陌捌拾漆穣陸阡伍陌肆拾参秭弐阡陌玖垓捌阡漆陌陸拾伍京肆阡参陌弐拾壱兆玖陌捌拾漆億陸阡伍陌肆拾参萬弐阡陌玖"));
+		assertEquals(new BigDecimal("987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("玖阡捌陌柒拾陸無量大数伍阡肆陌參拾貳不可思議阡玖拾捌那由他柒阡陸陌伍拾肆阿僧祇參阡貳陌拾恒河沙玖阡捌陌柒拾陸極伍阡肆陌參拾參載貳阡陌玖正捌阡柒陌陸拾伍澗肆阡參陌貳拾壹溝玖陌捌拾柒穣陸阡伍陌肆拾參秭貳阡陌玖垓捌阡柒陌陸拾伍京肆阡參陌貳拾壹兆玖陌捌拾柒億陸阡伍陌肆拾參萬貳阡陌玖"));
+		assertEquals(new BigDecimal("987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("玖阡捌陌漆拾陸無量大数伍阡肆陌参拾弐不可思議壱阡玖拾捌那由他漆阡陸陌伍拾肆阿僧祇参阡弐陌壱拾恒河沙玖阡捌陌漆拾陸極伍阡肆陌参拾参載弐阡壱陌玖正捌阡漆陌陸拾伍澗肆阡参陌弐拾壱溝玖陌捌拾漆穣陸阡伍陌肆拾参秭弐阡壱陌玖垓捌阡漆陌陸拾伍京肆阡参陌弐拾壱兆玖陌捌拾漆億陸阡伍陌肆拾参萬弐阡壱陌玖"));
+		assertEquals(new BigDecimal("987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("玖阡捌陌柒拾陸無量大数伍阡肆陌參拾貳不可思議壹阡玖拾捌那由他柒阡陸陌伍拾肆阿僧祇參阡貳陌壹拾恒河沙玖阡捌陌柒拾陸極伍阡肆陌參拾參載貳阡壹陌玖正捌阡柒陌陸拾伍澗肆阡參陌貳拾壹溝玖陌捌拾柒穣陸阡伍陌肆拾參秭貳阡壹陌玖垓捌阡柒陌陸拾伍京肆阡參陌貳拾壹兆玖陌捌拾柒億陸阡伍陌肆拾參萬貳阡壹陌玖"));
+		
+		
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("〇・〇"));
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseJPNum("一・〇"));
+		
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseJPNum("〇・〇〇"));
+		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseJPNum("一・〇〇"));
+		
+		assertEquals(new BigDecimal("0.012"), NumberUtilz.parseJPNum("〇・〇一二"));
+		assertEquals(new BigDecimal("1.012"), NumberUtilz.parseJPNum("一・〇一二"));
+		
+		
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("〇・〇", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("〇・〇", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseJPNum("〇・〇", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseJPNum("〇・〇", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseJPNum("一・〇", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseJPNum("一・〇", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseJPNum("一・〇", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("1.000"), NumberUtilz.parseJPNum("一・〇", RoundingMode.HALF_UP, 3));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("〇・〇〇", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("〇・〇〇", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseJPNum("〇・〇〇", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseJPNum("〇・〇〇", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseJPNum("一・〇〇", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseJPNum("一・〇〇", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseJPNum("一・〇〇", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("1.000"), NumberUtilz.parseJPNum("一・〇〇", RoundingMode.HALF_UP, 3));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("〇・〇一二", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("〇・〇一二", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.01"), NumberUtilz.parseJPNum("〇・〇一二", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.012"), NumberUtilz.parseJPNum("〇・〇一二", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseJPNum("一・〇一二", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseJPNum("一・〇一二", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("1.01"), NumberUtilz.parseJPNum("一・〇一二", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("1.012"), NumberUtilz.parseJPNum("一・〇一二", RoundingMode.HALF_UP, 3));
+		
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseJPNum("〇・五五五", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.6"), NumberUtilz.parseJPNum("〇・五五五", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.56"), NumberUtilz.parseJPNum("〇・五五五", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.555"), NumberUtilz.parseJPNum("〇・五五五", RoundingMode.HALF_UP, 3));
+		
+		
+		assertEquals(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("−九千八百七十六無量大数五千四百三十二不可思議千九十八那由他七千六百五十四阿僧祇三千二百十恒河沙九千八百七十六極五千四百三十三載二千百九正八千七百六十五澗四千三百二十一溝九百八十七穣六千五百四十三秭二千百九垓八千七百六十五京四千三百二十一兆九百八十七億六千五百四十三万二千百九"));
+		assertEquals(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("−玖阡捌陌漆拾陸無量大数伍阡肆陌参拾弐不可思議阡玖拾捌那由他漆阡陸陌伍拾肆阿僧祇参阡弐陌拾恒河沙玖阡捌陌漆拾陸極伍阡肆陌参拾参載弐阡陌玖正捌阡漆陌陸拾伍澗肆阡参陌弐拾壱溝玖陌捌拾漆穣陸阡伍陌肆拾参秭弐阡陌玖垓捌阡漆陌陸拾伍京肆阡参陌弐拾壱兆玖陌捌拾漆億陸阡伍陌肆拾参萬弐阡陌玖"));
+		assertEquals(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("−玖阡捌陌柒拾陸無量大数伍阡肆陌參拾貳不可思議阡玖拾捌那由他柒阡陸陌伍拾肆阿僧祇參阡貳陌拾恒河沙玖阡捌陌柒拾陸極伍阡肆陌參拾參載貳阡陌玖正捌阡柒陌陸拾伍澗肆阡參陌貳拾壹溝玖陌捌拾柒穣陸阡伍陌肆拾參秭貳阡陌玖垓捌阡柒陌陸拾伍京肆阡參陌貳拾壹兆玖陌捌拾柒億陸阡伍陌肆拾參萬貳阡陌玖"));
+		assertEquals(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("−玖阡捌陌漆拾陸無量大数伍阡肆陌参拾弐不可思議壱阡玖拾捌那由他漆阡陸陌伍拾肆阿僧祇参阡弐陌壱拾恒河沙玖阡捌陌漆拾陸極伍阡肆陌参拾参載弐阡壱陌玖正捌阡漆陌陸拾伍澗肆阡参陌弐拾壱溝玖陌捌拾漆穣陸阡伍陌肆拾参秭弐阡壱陌玖垓捌阡漆陌陸拾伍京肆阡参陌弐拾壱兆玖陌捌拾漆億陸阡伍陌肆拾参萬弐阡壱陌玖"));
+		assertEquals(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("−玖阡捌陌柒拾陸無量大数伍阡肆陌參拾貳不可思議壹阡玖拾捌那由他柒阡陸陌伍拾肆阿僧祇參阡貳陌壹拾恒河沙玖阡捌陌柒拾陸極伍阡肆陌參拾參載貳阡壹陌玖正捌阡柒陌陸拾伍澗肆阡參陌貳拾壹溝玖陌捌拾柒穣陸阡伍陌肆拾參秭貳阡壹陌玖垓捌阡柒陌陸拾伍京肆阡參陌貳拾壹兆玖陌捌拾柒億陸阡伍陌肆拾參萬貳阡壹陌玖"));
+		
+		
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("−〇・〇"));
+		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseJPNum("−一・〇"));
+		
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseJPNum("−〇・〇〇"));
+		assertEquals(new BigDecimal("-1.00"), NumberUtilz.parseJPNum("−一・〇〇"));
+		
+		assertEquals(new BigDecimal("-0.012"), NumberUtilz.parseJPNum("−〇・〇一二"));
+		assertEquals(new BigDecimal("-1.012"), NumberUtilz.parseJPNum("−一・〇一二"));
+		
+		
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("−〇・〇", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("−〇・〇", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseJPNum("−〇・〇", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseJPNum("−〇・〇", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("-1"), NumberUtilz.parseJPNum("−一・〇", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseJPNum("−一・〇", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-1.00"), NumberUtilz.parseJPNum("−一・〇", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-1.000"), NumberUtilz.parseJPNum("−一・〇", RoundingMode.HALF_UP, 3));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("−〇・〇〇", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("−〇・〇〇", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseJPNum("−〇・〇〇", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseJPNum("−〇・〇〇", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("-1"), NumberUtilz.parseJPNum("−一・〇〇", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseJPNum("−一・〇〇", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-1.00"), NumberUtilz.parseJPNum("−一・〇〇", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-1.000"), NumberUtilz.parseJPNum("−一・〇〇", RoundingMode.HALF_UP, 3));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("−〇・〇一二", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("−〇・〇一二", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-0.01"), NumberUtilz.parseJPNum("−〇・〇一二", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-0.012"), NumberUtilz.parseJPNum("−〇・〇一二", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("-1"), NumberUtilz.parseJPNum("−一・〇一二", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseJPNum("−一・〇一二", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-1.01"), NumberUtilz.parseJPNum("−一・〇一二", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-1.012"), NumberUtilz.parseJPNum("−一・〇一二", RoundingMode.HALF_UP, 3));
+		
+		assertEquals(new BigDecimal("-1"), NumberUtilz.parseJPNum("−〇・五五五", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("-0.6"), NumberUtilz.parseJPNum("−〇・五五五", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-0.56"), NumberUtilz.parseJPNum("−〇・五五五", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-0.555"), NumberUtilz.parseJPNum("−〇・五五五", RoundingMode.HALF_UP, 3));
+		
+
+		assertEquals(new BigDecimal("25"), NumberUtilz.parseJPNum("25"));
+//		assertEquals(new BigDecimal("2.5"), NumberUtilz.parseJPNum("2.5"));
+		
+		assertEquals(new BigDecimal("250"), NumberUtilz.parseJPNum("25十"));
+//		assertEquals(new BigDecimal("25"), NumberUtilz.parseJPNum("2.5十"));
+		
+		assertEquals(new BigDecimal("2500"), NumberUtilz.parseJPNum("25百"));
+//		assertEquals(new BigDecimal("250"), NumberUtilz.parseJPNum("2.5百"));
+		
+		assertEquals(new BigDecimal("25000"), NumberUtilz.parseJPNum("25千"));
+//		assertEquals(new BigDecimal("2500"), NumberUtilz.parseJPNum("2.5千"));
+		
+		assertEquals(new BigDecimal("250000"), NumberUtilz.parseJPNum("25万"));
+//		assertEquals(new BigDecimal("25000"), NumberUtilz.parseJPNum("2.5万"));
+		
+		assertEquals(new BigDecimal("2500000"), NumberUtilz.parseJPNum("25十万"));
+//		assertEquals(new BigDecimal("250000"), NumberUtilz.parseJPNum("2.5十万"));
+		
+		assertEquals(new BigDecimal("25000000"), NumberUtilz.parseJPNum("25百万"));
+//		assertEquals(new BigDecimal("2500000"), NumberUtilz.parseJPNum("2.5百万"));
+		
+		assertEquals(new BigDecimal("250000000"), NumberUtilz.parseJPNum("25千万"));
+//		assertEquals(new BigDecimal("25000000"), NumberUtilz.parseJPNum("2.5千万"));
+		
+		assertEquals(new BigDecimal("2500000000"), NumberUtilz.parseJPNum("25億"));
+//		assertEquals(new BigDecimal("250000000"), NumberUtilz.parseJPNum("2.5億"));
+		
+		try {
+			NumberUtilz.parseJPNum("");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+		
+		try {
+			NumberUtilz.parseJPNum("−");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+		
+		try {
+			NumberUtilz.parseJPNum("あ");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+		
+		try {
+			NumberUtilz.parseJPNum("二あ");
 			assertTrue(true);
 		} catch (NumberParseException e) {
 			// NOP
