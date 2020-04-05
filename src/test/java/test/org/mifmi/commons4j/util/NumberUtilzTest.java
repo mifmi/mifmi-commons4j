@@ -9,6 +9,7 @@
 package test.org.mifmi.commons4j.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -16,6 +17,7 @@ import java.math.RoundingMode;
 
 import org.junit.Test;
 import org.mifmi.commons4j.util.NumberUtilz;
+import org.mifmi.commons4j.util.exception.NumberParseException;
 
 public class NumberUtilzTest {
 	private static final double DELTA = 1e-15;
@@ -396,5 +398,53 @@ public class NumberUtilzTest {
 		assertEquals(new BigDecimal("-0.6"), NumberUtilz.parseEnNumShortScale("Negative Zero point Five Five Five", RoundingMode.HALF_UP, 1));
 		assertEquals(new BigDecimal("-0.56"), NumberUtilz.parseEnNumShortScale("Negative Zero point Five Five Five", RoundingMode.HALF_UP, 2));
 		assertEquals(new BigDecimal("-0.555"), NumberUtilz.parseEnNumShortScale("Negative Zero point Five Five Five", RoundingMode.HALF_UP, 3));
+		
+
+		assertEquals(new BigDecimal("25"), NumberUtilz.parseEnNumShortScale("25"));
+		assertEquals(new BigDecimal("2.5"), NumberUtilz.parseEnNumShortScale("2.5"));
+		
+		assertEquals(new BigDecimal("2500"), NumberUtilz.parseEnNumShortScale("25 Hundred"));
+		assertEquals(new BigDecimal("250"), NumberUtilz.parseEnNumShortScale("2.5 Hundred"));
+		
+		assertEquals(new BigDecimal("25000"), NumberUtilz.parseEnNumShortScale("25 Thousand"));
+		assertEquals(new BigDecimal("2500"), NumberUtilz.parseEnNumShortScale("2.5 Thousand"));
+		
+		assertEquals(new BigDecimal("25000000"), NumberUtilz.parseEnNumShortScale("25 Million"));
+		assertEquals(new BigDecimal("2500000"), NumberUtilz.parseEnNumShortScale("2.5 Million"));
+		
+		try {
+			NumberUtilz.parseEnNumShortScale("");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+		
+		try {
+			NumberUtilz.parseEnNumShortScale("-");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+		
+		try {
+			NumberUtilz.parseEnNumShortScale("xxx");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+		
+		try {
+			NumberUtilz.parseEnNumShortScale("Hundred");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+		
+		try {
+			NumberUtilz.parseEnNumShortScale("Two Hundreds");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
 	}
 }

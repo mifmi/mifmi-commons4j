@@ -55,6 +55,36 @@ public final class NumberUtilz {
 		return (int) (Math.log10(Math.abs(n)) + 1);
 	}
 	
+	public static int digitLength(BigDecimal n) {
+		if (n == null) {
+			return 0;
+		}
+		
+		return n.precision();
+	}
+	
+	public static int digitLengthIntPart(BigDecimal n) {
+		if (n == null) {
+			return 0;
+		}
+
+		return n.precision() - n.scale();
+	}
+	
+	public static int digitLengthDecimalPart(BigDecimal n) {
+		if (n == null) {
+			return 0;
+		}
+
+		int scale = n.scale();
+		
+		if (scale < 0) {
+			scale = 0;
+		}
+		
+		return scale;
+	}
+	
 	public static <T extends Number> T parseNumber(String strValue, String pattern, Class<T> numberClass) {
 		if (strValue == null) {
 			return null;
@@ -619,24 +649,30 @@ public final class NumberUtilz {
 		enNum = enNum.toLowerCase().trim();
 		
 		boolean negative = false;
-		if (enNum.startsWith("negative")) {
+		String enNumUnsigned = enNum;
+		if (enNumUnsigned.startsWith("negative")) {
 			negative = true;
-			enNum = enNum.substring("negative".length());
-		} else if (enNum.startsWith("minus")) {
+			enNumUnsigned = enNumUnsigned.substring("negative".length());
+		} else if (enNumUnsigned.startsWith("minus")) {
 			negative = true;
-			enNum = enNum.substring("minus".length());
-		} else if (enNum.startsWith("-")) {
+			enNumUnsigned = enNumUnsigned.substring("minus".length());
+		} else if (enNumUnsigned.startsWith("-")) {
 			negative = true;
-			enNum = enNum.substring("-".length());
+			enNumUnsigned = enNumUnsigned.substring("-".length());
+		}
+		
+		enNumUnsigned = enNumUnsigned.trim();
+		if (enNumUnsigned.isEmpty()) {
+			throw new NumberParseException("Invalid value: " + enNum);
 		}
 		
 		BigDecimal num = null;
 		
-		int pointIdx = enNum.indexOf("point");
+		int pointIdx = enNumUnsigned.indexOf("point");
 		if (0 < pointIdx) {
 			// Decimal : xxx point xxx
-			String iNumStr = enNum.substring(0, pointIdx);
-			String dNumStr = enNum.substring(pointIdx + "point".length());
+			String iNumStr = enNumUnsigned.substring(0, pointIdx);
+			String dNumStr = enNumUnsigned.substring(pointIdx + "point".length());
 			
 			BigDecimal iNum = parseEnNumShortScaleUnsignedIntPart(iNumStr);
 			BigDecimal dNum = parseEnNumShortScaleUnsignedDecPart(dNumStr, fixedDecimalScale, decimalRoundingMode);
@@ -645,7 +681,7 @@ public final class NumberUtilz {
 		} else {
 			// Decimal : xxx and xx/xxx
 			Pattern ptn = Pattern.compile("(.+)\\s+and\\s+([0-9]+)\\s*/\\s*([0-9]+)");
-			Matcher matcher = ptn.matcher(enNum);
+			Matcher matcher = ptn.matcher(enNumUnsigned);
 			if (matcher.matches()) {
 				String iNumStr = matcher.group(1);
 				String dnNumStr = matcher.group(2);
@@ -663,12 +699,14 @@ public final class NumberUtilz {
 				num = iNum.add(dNum);
 			} else {
 				// Integer
-				num = parseEnNumShortScaleUnsignedIntPart(enNum);
+				num = parseEnNumShortScaleUnsignedIntPart(enNumUnsigned);
 			}
 		}
 		
-		if (negative) {
-			num = num.negate();
+		if (num != null) {
+			if (negative) {
+				num = num.negate();
+			}
 		}
 		
 		return num;
@@ -683,7 +721,7 @@ public final class NumberUtilz {
 	}
 	
 	private static BigDecimal parseEnNumShortScaleUnsignedPart(String enNum, boolean decimalPart, int fixedDecimalScale, RoundingMode decimalRoundingMode) {
-		if (enNum == null || enNum.isEmpty()) {
+		if (enNum == null) {
 			return null;
 		}
 		
@@ -713,8 +751,7 @@ public final class NumberUtilz {
 			char c0 = token.charAt(0);
 			if ('0' <= c0 && c0 <= '9') {
 				try {
-					long l = NumberUtilz.toLong(token);
-					n = add(n, l, true);
+					n = add(n, new BigDecimal(token), true);
 					parsed = true;
 				} catch (Exception e) {
 					// NOP
@@ -1254,16 +1291,18 @@ public final class NumberUtilz {
 	}
 	
 	private static BigDecimal add(BigDecimal baseNum, long num, boolean asDigit) {
-		BigDecimal n = BigDecimal.valueOf(num);
-		
+		return add(baseNum, BigDecimal.valueOf(num), asDigit);
+	}
+	
+	private static BigDecimal add(BigDecimal baseNum, BigDecimal num, boolean asDigit) {
 		if (baseNum == null) {
-			return n;
+			return num;
 		}
 		
 		if (asDigit) {
-			return baseNum.scaleByPowerOfTen(digitLength(num)).add(n);
+			return baseNum.scaleByPowerOfTen(digitLengthIntPart(num)).add(num);
 		} else {
-			return baseNum.add(n);
+			return baseNum.add(num);
 		}
 	}
 }
