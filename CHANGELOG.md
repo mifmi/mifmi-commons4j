@@ -1,10 +1,16 @@
+## 0.2.3 (2020-04-07)
+
+Add:
+
+  - Add DateUtilz#parseDate(String, Calendar, Locale, String...) method
+
 ## 0.2.2 (2020-04-05)
 
 Add:
 
   - Add decimal number parsing feature to NumberUtilz#parseEnNumShortScale
 
-Change:
+Changed:
 
   - Change return type of NumberUtilz#parseJPNum, BigInteger to BigDecimal  [Breaking Change]
   - Change Daiji option of NumberUtilz#toJPNum to strict specification  [Breaking Change]
