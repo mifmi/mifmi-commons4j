@@ -586,24 +586,45 @@ public final class DateUtilz {
 	 * @return a date parsed from the string
 	 */
 	public static Date parseDate(String str, boolean strict, TimeZone timeZone, Locale locale, String... parsePatterns) {
+		
+		if (locale == null) {
+			locale = Locale.US;
+		}
+		
+		if (timeZone == null) {
+			timeZone = TimeZone.getTimeZone("UTC");
+		}
+		
+		Calendar calendar = Calendar.getInstance(timeZone, locale);
+		calendar.setLenient(!strict);
+		
+		return parseDate(str, calendar, locale, parsePatterns);
+	}
+	
+	/**
+	 * Parse a date/time string with multiple patterns.
+	 * 
+	 * @param str the date/time string to be parsed
+	 * @param calendar the Calendar of date/time. Calendar.getInstance() if argument is null
+	 * @param locale the Locale of date/time. UTC if argument is null
+	 * @param parsePatterns date patterns
+	 * @return a date parsed from the string
+	 */
+	public static Date parseDate(String str, Calendar calendar, Locale locale, String... parsePatterns) {
 		if (str == null || str.isEmpty()) {
 			return null;
 		}
 		if (parsePatterns == null || parsePatterns.length == 0) {
 			throw new IllegalArgumentException();
 		}
-
-		if (locale == null) {
-			locale = Locale.US;
-		}
-		if (timeZone == null) {
-			timeZone = TimeZone.getTimeZone("UTC");
+		
+		if (calendar == null) {
+			calendar = Calendar.getInstance(locale);
 		}
 		
 		for (String parsePattern : parsePatterns) {
 			DateFormat dateFormat = new SimpleDateFormat(parsePattern, locale);
-			dateFormat.setTimeZone(timeZone);
-			dateFormat.setLenient(!strict);
+			dateFormat.setCalendar(calendar);
 			try {
 				return dateFormat.parse(str);
 			} catch (ParseException e) {

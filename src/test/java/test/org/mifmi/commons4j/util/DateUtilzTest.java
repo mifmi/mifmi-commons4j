@@ -25,12 +25,68 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 import org.junit.Test;
 import org.mifmi.commons4j.util.DateUtilz;
 
 public class DateUtilzTest {
 
+	@Test
+	public void testParseDate() throws Exception {
+		TimeZone tzUTC = TimeZone.getTimeZone("UTC");
+		TimeZone tzEST = TimeZone.getTimeZone("US/Eastern");
+		
+		Locale lcUS = Locale.US;
+		
+		Calendar calUTC = Calendar.getInstance(tzUTC, lcUS);
+		Calendar calUTC_MDIFW4 = Calendar.getInstance(tzUTC, lcUS);
+		calUTC_MDIFW4.setMinimalDaysInFirstWeek(4);
+		calUTC_MDIFW4.setFirstDayOfWeek(Calendar.MONDAY);
+		Calendar calEST = Calendar.getInstance(tzEST, lcUS);
+		
+		String[] parsePatterns = {
+				"yyyy-MM-dd'T'HH:mm:ss,SSS",
+				"yyyy-MM-dd'T'HH:mm:ss",
+				"yyyy-MM-dd",
+				"YYYY-'W'ww-u'T'HH:mm:ss,SSS",
+				"YYYY-'W'ww-u'T'HH:mm:ss",
+				"YYYY-'W'ww-u"
+		};
+		
+		// Parsing order
+		assertEquals(date(2016, 12, 31, 1, 23, 45, 678, tzUTC), DateUtilz.parseDate("2016-12-31T01:23:45,678", calUTC, lcUS, parsePatterns));
+		assertEquals(date(2017, 1, 1, 1, 23, 45, 678, tzUTC), DateUtilz.parseDate("2017-01-01T01:23:45,678", calUTC, lcUS, parsePatterns));
+		
+		assertEquals(date(2016, 12, 31, 1, 23, 45, 0, tzUTC), DateUtilz.parseDate("2016-12-31T01:23:45", calUTC, lcUS, parsePatterns));
+		assertEquals(date(2017, 1, 1, 1, 23, 45, 0, tzUTC), DateUtilz.parseDate("2017-01-01T01:23:45", calUTC, lcUS, parsePatterns));
+		
+		assertEquals(date(2016, 12, 31, 0, 0, 0, 0, tzUTC), DateUtilz.parseDate("2016-12-31", calUTC, lcUS, parsePatterns));
+		assertEquals(date(2017, 1, 1, 0, 0, 0, 0, tzUTC), DateUtilz.parseDate("2017-01-01", calUTC, lcUS, parsePatterns));
+		
+		// TimeZone
+		assertEquals(date(2016, 12, 31, 1, 23, 45, 678, tzEST), DateUtilz.parseDate("2016-12-31T01:23:45,678", calEST, lcUS, parsePatterns));
+		assertEquals(date(2017, 1, 1, 1, 23, 45, 678, tzEST), DateUtilz.parseDate("2017-01-01T01:23:45,678", calEST, lcUS, parsePatterns));
+		
+		// Calendar
+		assertEquals(date(2016, 12, 24, 1, 23, 45, 678, tzUTC), DateUtilz.parseDate("2016-W52-6T01:23:45,678", calUTC, lcUS, parsePatterns));
+		
+		assertEquals(date(2016, 12, 31, 1, 23, 45, 678, tzUTC), DateUtilz.parseDate("2016-W52-6T01:23:45,678", calUTC_MDIFW4, lcUS, parsePatterns));
+		assertEquals(date(2017, 1, 1, 1, 23, 45, 678, tzUTC), DateUtilz.parseDate("2016-W52-7T01:23:45,678", calUTC_MDIFW4, lcUS, parsePatterns));
+		assertEquals(date(2017, 1, 2, 1, 23, 45, 678, tzUTC), DateUtilz.parseDate("2017-W01-1T01:23:45,678", calUTC_MDIFW4, lcUS, parsePatterns));
+		
+		assertEquals(date(2016, 12, 31, 1, 23, 45, 0, tzUTC), DateUtilz.parseDate("2016-W52-6T01:23:45", calUTC_MDIFW4, lcUS, parsePatterns));
+		assertEquals(date(2017, 1, 1, 1, 23, 45, 0, tzUTC), DateUtilz.parseDate("2016-W52-7T01:23:45", calUTC_MDIFW4, lcUS, parsePatterns));
+		assertEquals(date(2017, 1, 2, 1, 23, 45, 0, tzUTC), DateUtilz.parseDate("2017-W01-1T01:23:45", calUTC_MDIFW4, lcUS, parsePatterns));
+		
+		assertEquals(date(2016, 12, 31, 0, 0, 0, 0, tzUTC), DateUtilz.parseDate("2016-W52-6", calUTC_MDIFW4, lcUS, parsePatterns));
+		assertEquals(date(2017, 1, 1, 0, 0, 0, 0, tzUTC), DateUtilz.parseDate("2016-W52-7", calUTC_MDIFW4, lcUS, parsePatterns));
+		assertEquals(date(2017, 1, 2, 0, 0, 0, 0, tzUTC), DateUtilz.parseDate("2017-W01-1", calUTC_MDIFW4, lcUS, parsePatterns));
+	}
+	
 	@Test
 	public void testCompareChrono() throws Exception {
 		LocalDateTime defLdt = LocalDateTime.of(2000, 2, 29, 12, 34, 56, 7891011);
@@ -142,10 +198,17 @@ public class DateUtilzTest {
 		assertEquals(2, DateUtilz.compareChrono(defLd, defLt, false));
 	}
 	
-	private TemporalAccessor[] join(TemporalAccessor[] t1, TemporalAccessor[] t2) {
+	private static TemporalAccessor[] join(TemporalAccessor[] t1, TemporalAccessor[] t2) {
 		TemporalAccessor[] t3 = new TemporalAccessor[t1.length + t2.length];
 		System.arraycopy(t1, 0, t3, 0, t1.length);
 		System.arraycopy(t2, 0, t3, t1.length, t2.length);
 		return t3;
+	}
+	
+	private static Date date(int year, int month, int date, int hourOfDay, int minute, int second, int msecond, TimeZone timeZone) {
+		Calendar cal = Calendar.getInstance(timeZone);
+		cal.set(year, month - 1, date, hourOfDay, minute, second);
+		cal.set(Calendar.MILLISECOND, msecond);
+		return cal.getTime();
 	}
 }
