@@ -926,7 +926,7 @@ public final class NumberUtilz {
 					case '7': sb.append((useDaiji) ? ((useObsoleteDaiji) ? '柒' : '漆') : '七'); break;
 					case '8': sb.append((useDaiji) ? '捌' : '八'); break;
 					case '9': sb.append((useDaiji) ? '玖' : '九'); break;
-					default: return null;
+					default: assert false;
 					}
 					
 					switch (d1) {
@@ -934,7 +934,7 @@ public final class NumberUtilz {
 					case 1: sb.append((useDaiji) ? '拾' : '十'); break;
 					case 2: sb.append((useDaiji) ? '陌' : '百'); break;
 					case 3: sb.append((useDaiji) ? '阡' : '千'); break;
-					default: return null;
+					default: assert false;
 					}
 					
 					hasD1Num = true;
@@ -959,7 +959,7 @@ public final class NumberUtilz {
 					case 60: sb.append("那由他"); break;
 					case 64: sb.append("不可思議"); break;
 					case 68: sb.append("無量大数"); break;
-					default: return null;
+					default: throw new NumberParseException("Too big number");
 					}
 				}
 				
@@ -1170,7 +1170,7 @@ public final class NumberUtilz {
 			case '廿':
 			case '念': // Chinese
 				if (n1 != null) {
-					return null;
+					throw new NumberParseException("Invalid format around '" + c + "'");
 				}
 				n1 = BigDecimal.valueOf(2);
 				d1 = 1;
@@ -1178,7 +1178,7 @@ public final class NumberUtilz {
 			case '卅':
 			case '丗':
 				if (n1 != null) {
-					return null;
+					throw new NumberParseException("Invalid format around '" + c + "'");
 				}
 				n1 = BigDecimal.valueOf(3);
 				d1 = 1;
@@ -1246,7 +1246,7 @@ public final class NumberUtilz {
 				d2 = 68;
 				break;
 			default:
-				return null;
+				throw new NumberParseException("Unsupported character: " + c);
 			}
 			
 			boolean isLast = (i + 1 == jpNum.length());
@@ -1263,12 +1263,12 @@ public final class NumberUtilz {
 			}
 
 			if (prevD1 != -1 && prevD1 < d1) {
-				return null;
+				throw new NumberParseException("Invalid format: " + jpNum);
 			}
 			prevD1 = d1;
 
 			if (prevD2 != -1 && prevD2 < d2) {
-				return null;
+				throw new NumberParseException("Invalid format: " + jpNum);
 			}
 			prevD2 = d2;
 			

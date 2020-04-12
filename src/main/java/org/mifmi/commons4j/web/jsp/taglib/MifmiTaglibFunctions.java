@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import org.mifmi.commons4j.util.StringUtilz;
+import org.mifmi.commons4j.web.util.HTMLUtilz;
 
 public class MifmiTaglibFunctions {
 	
@@ -149,55 +150,11 @@ public class MifmiTaglibFunctions {
 	}
 	
 	public static String escapeHTML(String str) {
-		if (str == null || str.isEmpty()) {
-			return str;
-		}
-		
-		StringBuilder sb = new StringBuilder(str.length() * 2);
-		for (char c : str.toCharArray()) {
-			switch (c) {
-			case '<': sb.append("&lt;"); break;
-			case '>': sb.append("&gt;"); break;
-			case '&': sb.append("&amp;"); break;
-			case '"': sb.append("&quot;"); break;
-			case '\'': sb.append("&#039;"); break;
-			default: sb.append(c); break;
-			}
-		}
-		
-		return sb.toString();
+		return HTMLUtilz.escapeBasicHTML(str, true);
 	}
 	
 	public static String br(String str) {
-		if (str == null || str.isEmpty()) {
-			return str;
-		}
-		
-		StringBuilder sb = new StringBuilder(str.length() * 2);
-		char[] chars = str.toCharArray();
-		int maxIdx = chars.length - 1;
-		for (int i = 0; i <= maxIdx; i++) {
-			char c = chars[i];
-			switch (c) {
-			case '\r':
-				sb.append("<br />");
-				if (i != maxIdx) {
-					char nc = chars[i + 1];
-					if (nc == '\n') {
-						i++;
-					}
-				}
-				break;
-			case '\n':
-				sb.append("<br />");
-				break;
-			default:
-				sb.append(c);
-				break;
-			}
-		}
-		
-		return sb.toString();
+		return HTMLUtilz.br(str);
 	}
 	
 	public static String formatDate(Date date, String pattern, TimeZone timeZone) {
