@@ -1,3 +1,13 @@
+## 0.2.4 (2020-04-11)
+
+Add:
+
+  - Add HTMLUtilz class
+
+Changed:
+  - Change NumberUtilz#toJPNum/parseJPNum methods. Throws exception if parse
+error occurred.
+
 ## 0.2.3 (2020-04-07)
 
 Add:
