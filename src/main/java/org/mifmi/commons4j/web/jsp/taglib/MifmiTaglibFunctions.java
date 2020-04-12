@@ -150,7 +150,7 @@ public class MifmiTaglibFunctions {
 	}
 	
 	public static String escapeHTML(String str) {
-		return HTMLUtilz.escapeBasicHTML(str, true);
+		return HTMLUtilz.escapeBasicHTML(str, false, true);
 	}
 	
 	public static String br(String str) {
