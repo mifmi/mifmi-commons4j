@@ -28,12 +28,46 @@ public class HTMLUtilzTest {
 		assertEquals("&#39;", HTMLUtilz.escapeBasicHTML("'", false, true));
 		
 		assertEquals(" ", HTMLUtilz.escapeBasicHTML(" "));
+		assertEquals("\u00A0", HTMLUtilz.escapeBasicHTML("\u00A0"));
 		assertEquals("&nbsp;", HTMLUtilz.escapeBasicHTML(" ", true));
+		assertEquals("&nbsp;", HTMLUtilz.escapeBasicHTML("\u00A0", true));
 		assertEquals("a", HTMLUtilz.escapeBasicHTML("a"));
 		
 		assertEquals("&amp;&amp;&amp;", HTMLUtilz.escapeBasicHTML("&&&"));
 		assertEquals("&amp;x&amp;x&amp;", HTMLUtilz.escapeBasicHTML("&x&x&"));
 		assertEquals("x&amp;x&amp;x&amp;x", HTMLUtilz.escapeBasicHTML("x&x&x&x"));
+	}
+
+	@Test
+	public void testEscapeHTML5Fully() throws Exception {
+		assertEquals(null, HTMLUtilz.escapeHTML5Fully(null));
+		assertEquals("", HTMLUtilz.escapeHTML5Fully(""));
+		
+		assertEquals("&amp;", HTMLUtilz.escapeHTML5Fully("&"));
+		assertEquals("&lt;", HTMLUtilz.escapeHTML5Fully("<"));
+		assertEquals("&gt;", HTMLUtilz.escapeHTML5Fully(">"));
+		assertEquals("&quot;", HTMLUtilz.escapeHTML5Fully("\""));
+		assertEquals("&apos;", HTMLUtilz.escapeHTML5Fully("'"));
+		assertEquals("&nbsp;", HTMLUtilz.escapeHTML5Fully("\u00A0"));
+		
+		assertEquals("&copy;", HTMLUtilz.escapeHTML5Fully("\u00A9"));
+		
+		assertEquals("&Zscr;", HTMLUtilz.escapeHTML5Fully("\uD835\uDCB5"));
+		assertEquals("&zscr;", HTMLUtilz.escapeHTML5Fully("\uD835\uDCCF"));
+		
+		assertEquals("&#x61;", HTMLUtilz.escapeHTML5Fully("a"));
+		assertEquals("&#97;", HTMLUtilz.escapeHTML5Fully("a", true));
+		
+		assertEquals("&#x1f4f1;", HTMLUtilz.escapeHTML5Fully("\uD83D\uDCF1"));
+		assertEquals("&#128241;", HTMLUtilz.escapeHTML5Fully("\uD83D\uDCF1", true));
+		
+		assertEquals("&amp;&amp;&amp;", HTMLUtilz.escapeHTML5Fully("&&&"));
+		assertEquals("&amp;&#x78;&amp;&#x78;&amp;", HTMLUtilz.escapeHTML5Fully("&x&x&"));
+		assertEquals("&#x78;&amp;&#x78;&amp;&#x78;&amp;&#x78;", HTMLUtilz.escapeHTML5Fully("x&x&x&x"));
+		
+		assertEquals("&#x61;&#x61;&#x61;", HTMLUtilz.escapeHTML5Fully("aaa"));
+		assertEquals("&#x61;&#x78;&#x61;&#x78;&#x61;", HTMLUtilz.escapeHTML5Fully("axaxa"));
+		assertEquals("&#x78;&#x61;&#x78;&#x61;&#x78;&#x61;&#x78;", HTMLUtilz.escapeHTML5Fully("xaxaxax"));
 	}
 
 	@Test
@@ -46,7 +80,7 @@ public class HTMLUtilzTest {
 		assertEquals(">", HTMLUtilz.unescapeHTML5("&gt;"));
 		assertEquals("\"", HTMLUtilz.unescapeHTML5("&quot;"));
 		assertEquals("'", HTMLUtilz.unescapeHTML5("&apos;"));
-		assertEquals(" ", HTMLUtilz.unescapeHTML5("&nbsp;"));
+		assertEquals("\u00A0", HTMLUtilz.unescapeHTML5("&nbsp;"));
 		
 		assertEquals("\u00A9", HTMLUtilz.unescapeHTML5("&copy;"));
 		assertEquals("\u00A9", HTMLUtilz.unescapeHTML5("&COPY;"));
@@ -64,6 +98,8 @@ public class HTMLUtilzTest {
 		assertEquals("a", HTMLUtilz.unescapeHTML5("&#097"));
 		assertEquals("a", HTMLUtilz.unescapeHTML5("&#x61"));
 		assertEquals("a", HTMLUtilz.unescapeHTML5("&#x0061"));
+		
+		assertEquals("\uD83D\uDCF1", HTMLUtilz.unescapeHTML5("&#x1f4f1;"));
 		
 		assertEquals(" ", HTMLUtilz.unescapeHTML5(" "));
 		assertEquals("a", HTMLUtilz.unescapeHTML5("a"));
