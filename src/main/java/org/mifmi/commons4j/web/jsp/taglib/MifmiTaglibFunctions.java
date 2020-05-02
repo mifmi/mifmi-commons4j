@@ -16,6 +16,10 @@ import org.mifmi.commons4j.util.StringUtilz;
 import org.mifmi.commons4j.web.util.HTMLUtilz;
 
 public class MifmiTaglibFunctions {
+
+	private static final char JS_STRING_ESCAPE_CHAR = '\\';
+	private static final char[] JS_STRING_TARGET_CHARS = {'\0', '\b', '\t', '\n', '\u000B', '\f', '\r', '\"', '\''};
+	private static final char[] JS_STRING_ESCAPED_CHARS = {'0', 'b', 't', 'n', 'v', 'f', 'r', '\"', '\''};
 	
 	public static String strcat(String s1, String s2) {
 		if (s1 == null && s2 == null) {
@@ -147,6 +151,15 @@ public class MifmiTaglibFunctions {
 		}
 		
 		return StringUtilz.toHalfWidth(str, true, true, false, false, false, false);
+	}
+	
+	public static String escapeJavaScriptString(String str) {
+		String s = str;
+		if (s != null) {
+			s = StringUtilz.escape(s, JS_STRING_ESCAPE_CHAR, JS_STRING_TARGET_CHARS, JS_STRING_ESCAPED_CHARS);
+			s = s.replaceAll("</", "<\\/"); // for XSS
+		}
+		return s;
 	}
 	
 	public static String escapeHTML(String str) {

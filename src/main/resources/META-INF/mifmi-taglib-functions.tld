@@ -64,6 +64,11 @@
 		<function-signature>java.lang.String halfAlNum(java.lang.String)</function-signature>
 	</function>
 	<function>
+		<name>jsstr</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>java.lang.String escapeJavaScriptString(java.lang.String)</function-signature>
+	</function>
+	<function>
 		<name>h</name>
 		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
 		<function-signature>java.lang.String escapeHTML(java.lang.String)</function-signature>
