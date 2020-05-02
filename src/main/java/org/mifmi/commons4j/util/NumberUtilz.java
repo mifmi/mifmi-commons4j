@@ -28,6 +28,10 @@ import org.mifmi.commons4j.util.exception.NumberParseException;
  */
 public final class NumberUtilz {
 	
+	private static final Pattern EN_NUM_DECIMAL_POINT_PATTERN = Pattern.compile("(.+)\\s+point\\s+(.+)");
+	
+	private static final Pattern EN_NUM_DECIMAL_AND_PATTERN = Pattern.compile("(.+)\\s+and\\s+([0-9]+)\\s*/\\s*([0-9]+)");
+	
 	private NumberUtilz() {
 		// NOP
 	}
@@ -650,12 +654,12 @@ public final class NumberUtilz {
 		
 		boolean negative = false;
 		String enNumUnsigned = enNum;
-		if (enNumUnsigned.startsWith("negative")) {
+		if (enNumUnsigned.startsWith("negative ")) {
 			negative = true;
-			enNumUnsigned = enNumUnsigned.substring("negative".length());
-		} else if (enNumUnsigned.startsWith("minus")) {
+			enNumUnsigned = enNumUnsigned.substring("negative ".length());
+		} else if (enNumUnsigned.startsWith("minus ")) {
 			negative = true;
-			enNumUnsigned = enNumUnsigned.substring("minus".length());
+			enNumUnsigned = enNumUnsigned.substring("minus ".length());
 		} else if (enNumUnsigned.startsWith("-")) {
 			negative = true;
 			enNumUnsigned = enNumUnsigned.substring("-".length());
@@ -668,11 +672,11 @@ public final class NumberUtilz {
 		
 		BigDecimal num = null;
 		
-		int pointIdx = enNumUnsigned.indexOf("point");
-		if (pointIdx != -1) {
+		Matcher matcherDecPoint = EN_NUM_DECIMAL_POINT_PATTERN.matcher(enNumUnsigned);
+		if (matcherDecPoint.matches()) {
 			// Decimal : xxx point xxx
-			String iNumStr = enNumUnsigned.substring(0, pointIdx);
-			String dNumStr = enNumUnsigned.substring(pointIdx + "point".length());
+			String iNumStr = matcherDecPoint.group(1);
+			String dNumStr = matcherDecPoint.group(2);
 			
 			BigDecimal iNum = parseEnNumShortScaleUnsignedIntPart(iNumStr);
 			BigDecimal dNum = parseEnNumShortScaleUnsignedDecPart(dNumStr, fixedDecimalScale, decimalRoundingMode);
@@ -680,12 +684,11 @@ public final class NumberUtilz {
 			num = iNum.add(dNum);
 		} else {
 			// Decimal : xxx and xx/xxx
-			Pattern ptn = Pattern.compile("(.+)\\s+and\\s+([0-9]+)\\s*/\\s*([0-9]+)");
-			Matcher matcher = ptn.matcher(enNumUnsigned);
-			if (matcher.matches()) {
-				String iNumStr = matcher.group(1);
-				String dnNumStr = matcher.group(2);
-				String ddNumStr = matcher.group(3);
+			Matcher matcherDecAnd = EN_NUM_DECIMAL_AND_PATTERN.matcher(enNumUnsigned);
+			if (matcherDecAnd.matches()) {
+				String iNumStr = matcherDecAnd.group(1);
+				String dnNumStr = matcherDecAnd.group(2);
+				String ddNumStr = matcherDecAnd.group(3);
 				
 				BigDecimal iNum = parseEnNumShortScaleUnsignedIntPart(iNumStr);
 				int dNumScale;
