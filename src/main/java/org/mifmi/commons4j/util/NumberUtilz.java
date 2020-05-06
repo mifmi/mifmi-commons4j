@@ -1303,6 +1303,7 @@ public final class NumberUtilz {
 				
 				n1 = null;
 				d1 = -1;
+				decimalPart = false;
 			}
 			
 			if (d2 != -1) {
@@ -1321,6 +1322,7 @@ public final class NumberUtilz {
 				d1 = -1;
 				d2 = -1;
 				prevD1 = -1;
+				decimalPart = false;
 			}
 		}
 		

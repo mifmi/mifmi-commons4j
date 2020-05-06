@@ -675,6 +675,10 @@ public class NumberUtilzTest {
 		assertEquals(new BigDecimal("2500000000"), NumberUtilz.parseJPNum("25億"));
 		assertEquals(new BigDecimal("250000000"), NumberUtilz.parseJPNum("2.5億"));
 		
+		
+		assertEquals(new BigDecimal("277502525"), NumberUtilz.parseJPNum("2.5億2.5千2.5百万2.5千2.5十"));
+		
+		
 		try {
 			NumberUtilz.parseJPNum("");
 			assertTrue(true);
