@@ -21,7 +21,95 @@ import org.mifmi.commons4j.util.exception.NumberParseException;
 
 public class NumberUtilzTest {
 	private static final double DELTA = 1e-15;
-
+	
+	@Test
+	public void testDigitLength() throws Exception {
+		assertEquals(0, NumberUtilz.digitLength(null));
+		
+		assertEquals(1, NumberUtilz.digitLength(new BigDecimal("0")));
+		assertEquals(1, NumberUtilz.digitLength(new BigDecimal("1")));
+		assertEquals(1, NumberUtilz.digitLength(new BigDecimal("9")));
+		assertEquals(2, NumberUtilz.digitLength(new BigDecimal("10")));
+		assertEquals(2, NumberUtilz.digitLength(new BigDecimal("99")));
+		assertEquals(3, NumberUtilz.digitLength(new BigDecimal("100")));
+		
+		assertEquals(2, NumberUtilz.digitLength(new BigDecimal("0.0")));
+		assertEquals(2, NumberUtilz.digitLength(new BigDecimal("0.1")));
+		assertEquals(2, NumberUtilz.digitLength(new BigDecimal("0.9")));
+		assertEquals(3, NumberUtilz.digitLength(new BigDecimal("0.10")));
+		assertEquals(3, NumberUtilz.digitLength(new BigDecimal("0.99")));
+		assertEquals(4, NumberUtilz.digitLength(new BigDecimal("0.100")));
+		assertEquals(5, NumberUtilz.digitLength(new BigDecimal("0.0100")));
+		
+		assertEquals(2, NumberUtilz.digitLength(new BigDecimal("1.0")));
+		assertEquals(2, NumberUtilz.digitLength(new BigDecimal("1.1")));
+		assertEquals(2, NumberUtilz.digitLength(new BigDecimal("9.9")));
+		assertEquals(4, NumberUtilz.digitLength(new BigDecimal("10.10")));
+		assertEquals(4, NumberUtilz.digitLength(new BigDecimal("99.99")));
+		assertEquals(6, NumberUtilz.digitLength(new BigDecimal("100.100")));
+		assertEquals(7, NumberUtilz.digitLength(new BigDecimal("100.0100")));
+	}
+	
+	@Test
+	public void testDigitLengthIntegerPart() throws Exception {
+		assertEquals(0, NumberUtilz.digitLengthIntegerPart(null));
+		
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("0")));
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("1")));
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("9")));
+		assertEquals(2, NumberUtilz.digitLengthIntegerPart(new BigDecimal("10")));
+		assertEquals(2, NumberUtilz.digitLengthIntegerPart(new BigDecimal("99")));
+		assertEquals(3, NumberUtilz.digitLengthIntegerPart(new BigDecimal("100")));
+		
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("0.0")));
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("0.1")));
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("0.9")));
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("0.10")));
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("0.99")));
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("0.100")));
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("0.0100")));
+		
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("1.0")));
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("1.1")));
+		assertEquals(1, NumberUtilz.digitLengthIntegerPart(new BigDecimal("9.9")));
+		assertEquals(2, NumberUtilz.digitLengthIntegerPart(new BigDecimal("10.10")));
+		assertEquals(3, NumberUtilz.digitLengthIntegerPart(new BigDecimal("100.10")));
+		assertEquals(2, NumberUtilz.digitLengthIntegerPart(new BigDecimal("99.99")));
+		assertEquals(3, NumberUtilz.digitLengthIntegerPart(new BigDecimal("990.99")));
+		assertEquals(3, NumberUtilz.digitLengthIntegerPart(new BigDecimal("100.100")));
+		assertEquals(3, NumberUtilz.digitLengthIntegerPart(new BigDecimal("100.0100")));
+	}
+	
+	@Test
+	public void testDigitLengthDecimalPart() throws Exception {
+		assertEquals(0, NumberUtilz.digitLengthDecimalPart(null));
+		
+		assertEquals(0, NumberUtilz.digitLengthDecimalPart(new BigDecimal("0")));
+		assertEquals(0, NumberUtilz.digitLengthDecimalPart(new BigDecimal("1")));
+		assertEquals(0, NumberUtilz.digitLengthDecimalPart(new BigDecimal("9")));
+		assertEquals(0, NumberUtilz.digitLengthDecimalPart(new BigDecimal("10")));
+		assertEquals(0, NumberUtilz.digitLengthDecimalPart(new BigDecimal("99")));
+		assertEquals(0, NumberUtilz.digitLengthDecimalPart(new BigDecimal("100")));
+		
+		assertEquals(1, NumberUtilz.digitLengthDecimalPart(new BigDecimal("0.0")));
+		assertEquals(1, NumberUtilz.digitLengthDecimalPart(new BigDecimal("0.1")));
+		assertEquals(1, NumberUtilz.digitLengthDecimalPart(new BigDecimal("0.9")));
+		assertEquals(2, NumberUtilz.digitLengthDecimalPart(new BigDecimal("0.10")));
+		assertEquals(2, NumberUtilz.digitLengthDecimalPart(new BigDecimal("0.99")));
+		assertEquals(3, NumberUtilz.digitLengthDecimalPart(new BigDecimal("0.100")));
+		assertEquals(4, NumberUtilz.digitLengthDecimalPart(new BigDecimal("0.0100")));
+		
+		assertEquals(1, NumberUtilz.digitLengthDecimalPart(new BigDecimal("1.0")));
+		assertEquals(1, NumberUtilz.digitLengthDecimalPart(new BigDecimal("1.1")));
+		assertEquals(1, NumberUtilz.digitLengthDecimalPart(new BigDecimal("9.9")));
+		assertEquals(2, NumberUtilz.digitLengthDecimalPart(new BigDecimal("10.10")));
+		assertEquals(3, NumberUtilz.digitLengthDecimalPart(new BigDecimal("10.100")));
+		assertEquals(2, NumberUtilz.digitLengthDecimalPart(new BigDecimal("99.99")));
+		assertEquals(3, NumberUtilz.digitLengthDecimalPart(new BigDecimal("99.990")));
+		assertEquals(3, NumberUtilz.digitLengthDecimalPart(new BigDecimal("100.100")));
+		assertEquals(4, NumberUtilz.digitLengthDecimalPart(new BigDecimal("100.0100")));
+	}
+	
 	@Test
 	public void testIsZero() throws Exception {
 		assertEquals(true, NumberUtilz.isZero(0));
@@ -543,39 +631,6 @@ public class NumberUtilzTest {
 		assertEquals(new BigDecimal("1.012"), NumberUtilz.parseJPNum("一・〇一二"));
 		
 		
-		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("〇・〇", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("〇・〇", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseJPNum("〇・〇", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseJPNum("〇・〇", RoundingMode.HALF_UP, 3));
-		assertEquals(new BigDecimal("1"), NumberUtilz.parseJPNum("一・〇", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseJPNum("一・〇", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseJPNum("一・〇", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("1.000"), NumberUtilz.parseJPNum("一・〇", RoundingMode.HALF_UP, 3));
-
-		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("〇・〇〇", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("〇・〇〇", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseJPNum("〇・〇〇", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseJPNum("〇・〇〇", RoundingMode.HALF_UP, 3));
-		assertEquals(new BigDecimal("1"), NumberUtilz.parseJPNum("一・〇〇", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseJPNum("一・〇〇", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseJPNum("一・〇〇", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("1.000"), NumberUtilz.parseJPNum("一・〇〇", RoundingMode.HALF_UP, 3));
-
-		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("〇・〇一二", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("〇・〇一二", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("0.01"), NumberUtilz.parseJPNum("〇・〇一二", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("0.012"), NumberUtilz.parseJPNum("〇・〇一二", RoundingMode.HALF_UP, 3));
-		assertEquals(new BigDecimal("1"), NumberUtilz.parseJPNum("一・〇一二", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseJPNum("一・〇一二", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("1.01"), NumberUtilz.parseJPNum("一・〇一二", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("1.012"), NumberUtilz.parseJPNum("一・〇一二", RoundingMode.HALF_UP, 3));
-		
-		assertEquals(new BigDecimal("1"), NumberUtilz.parseJPNum("〇・五五五", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("0.6"), NumberUtilz.parseJPNum("〇・五五五", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("0.56"), NumberUtilz.parseJPNum("〇・五五五", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("0.555"), NumberUtilz.parseJPNum("〇・五五五", RoundingMode.HALF_UP, 3));
-		
-		
 		assertEquals(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("−九千八百七十六無量大数五千四百三十二不可思議千九十八那由他七千六百五十四阿僧祇三千二百十恒河沙九千八百七十六極五千四百三十三載二千百九正八千七百六十五澗四千三百二十一溝九百八十七穣六千五百四十三秭二千百九垓八千七百六十五京四千三百二十一兆九百八十七億六千五百四十三万二千百九"));
 		assertEquals(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("−玖阡捌陌漆拾陸無量大数伍阡肆陌参拾弐不可思議阡玖拾捌那由他漆阡陸陌伍拾肆阿僧祇参阡弐陌拾恒河沙玖阡捌陌漆拾陸極伍阡肆陌参拾参載弐阡陌玖正捌阡漆陌陸拾伍澗肆阡参陌弐拾壱溝玖陌捌拾漆穣陸阡伍陌肆拾参秭弐阡陌玖垓捌阡漆陌陸拾伍京肆阡参陌弐拾壱兆玖陌捌拾漆億陸阡伍陌肆拾参萬弐阡陌玖"));
 		assertEquals(new BigDecimal("-987654321098765432109876543321098765432109876543210987654321098765432109"), NumberUtilz.parseJPNum("−玖阡捌陌柒拾陸無量大数伍阡肆陌參拾貳不可思議阡玖拾捌那由他柒阡陸陌伍拾肆阿僧祇參阡貳陌拾恒河沙玖阡捌陌柒拾陸極伍阡肆陌參拾參載貳阡陌玖正捌阡柒陌陸拾伍澗肆阡參陌貳拾壹溝玖陌捌拾柒穣陸阡伍陌肆拾參秭貳阡陌玖垓捌阡柒陌陸拾伍京肆阡參陌貳拾壹兆玖陌捌拾柒億陸阡伍陌肆拾參萬貳阡陌玖"));
@@ -592,66 +647,33 @@ public class NumberUtilzTest {
 		assertEquals(new BigDecimal("-0.012"), NumberUtilz.parseJPNum("−〇・〇一二"));
 		assertEquals(new BigDecimal("-1.012"), NumberUtilz.parseJPNum("−一・〇一二"));
 		
-		
-		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("−〇・〇", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("−〇・〇", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseJPNum("−〇・〇", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseJPNum("−〇・〇", RoundingMode.HALF_UP, 3));
-		assertEquals(new BigDecimal("-1"), NumberUtilz.parseJPNum("−一・〇", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseJPNum("−一・〇", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("-1.00"), NumberUtilz.parseJPNum("−一・〇", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("-1.000"), NumberUtilz.parseJPNum("−一・〇", RoundingMode.HALF_UP, 3));
-
-		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("−〇・〇〇", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("−〇・〇〇", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseJPNum("−〇・〇〇", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseJPNum("−〇・〇〇", RoundingMode.HALF_UP, 3));
-		assertEquals(new BigDecimal("-1"), NumberUtilz.parseJPNum("−一・〇〇", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseJPNum("−一・〇〇", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("-1.00"), NumberUtilz.parseJPNum("−一・〇〇", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("-1.000"), NumberUtilz.parseJPNum("−一・〇〇", RoundingMode.HALF_UP, 3));
-
-		assertEquals(new BigDecimal("0"), NumberUtilz.parseJPNum("−〇・〇一二", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseJPNum("−〇・〇一二", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("-0.01"), NumberUtilz.parseJPNum("−〇・〇一二", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("-0.012"), NumberUtilz.parseJPNum("−〇・〇一二", RoundingMode.HALF_UP, 3));
-		assertEquals(new BigDecimal("-1"), NumberUtilz.parseJPNum("−一・〇一二", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseJPNum("−一・〇一二", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("-1.01"), NumberUtilz.parseJPNum("−一・〇一二", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("-1.012"), NumberUtilz.parseJPNum("−一・〇一二", RoundingMode.HALF_UP, 3));
-		
-		assertEquals(new BigDecimal("-1"), NumberUtilz.parseJPNum("−〇・五五五", RoundingMode.HALF_UP, 0));
-		assertEquals(new BigDecimal("-0.6"), NumberUtilz.parseJPNum("−〇・五五五", RoundingMode.HALF_UP, 1));
-		assertEquals(new BigDecimal("-0.56"), NumberUtilz.parseJPNum("−〇・五五五", RoundingMode.HALF_UP, 2));
-		assertEquals(new BigDecimal("-0.555"), NumberUtilz.parseJPNum("−〇・五五五", RoundingMode.HALF_UP, 3));
-		
 
 		assertEquals(new BigDecimal("25"), NumberUtilz.parseJPNum("25"));
-//		assertEquals(new BigDecimal("2.5"), NumberUtilz.parseJPNum("2.5"));
+		assertEquals(new BigDecimal("2.5"), NumberUtilz.parseJPNum("2.5"));
 		
 		assertEquals(new BigDecimal("250"), NumberUtilz.parseJPNum("25十"));
-//		assertEquals(new BigDecimal("25"), NumberUtilz.parseJPNum("2.5十"));
+		assertEquals(new BigDecimal("25"), NumberUtilz.parseJPNum("2.5十"));
 		
 		assertEquals(new BigDecimal("2500"), NumberUtilz.parseJPNum("25百"));
-//		assertEquals(new BigDecimal("250"), NumberUtilz.parseJPNum("2.5百"));
+		assertEquals(new BigDecimal("250"), NumberUtilz.parseJPNum("2.5百"));
 		
 		assertEquals(new BigDecimal("25000"), NumberUtilz.parseJPNum("25千"));
-//		assertEquals(new BigDecimal("2500"), NumberUtilz.parseJPNum("2.5千"));
+		assertEquals(new BigDecimal("2500"), NumberUtilz.parseJPNum("2.5千"));
 		
 		assertEquals(new BigDecimal("250000"), NumberUtilz.parseJPNum("25万"));
-//		assertEquals(new BigDecimal("25000"), NumberUtilz.parseJPNum("2.5万"));
+		assertEquals(new BigDecimal("25000"), NumberUtilz.parseJPNum("2.5万"));
 		
 		assertEquals(new BigDecimal("2500000"), NumberUtilz.parseJPNum("25十万"));
-//		assertEquals(new BigDecimal("250000"), NumberUtilz.parseJPNum("2.5十万"));
+		assertEquals(new BigDecimal("250000"), NumberUtilz.parseJPNum("2.5十万"));
 		
 		assertEquals(new BigDecimal("25000000"), NumberUtilz.parseJPNum("25百万"));
-//		assertEquals(new BigDecimal("2500000"), NumberUtilz.parseJPNum("2.5百万"));
+		assertEquals(new BigDecimal("2500000"), NumberUtilz.parseJPNum("2.5百万"));
 		
 		assertEquals(new BigDecimal("250000000"), NumberUtilz.parseJPNum("25千万"));
-//		assertEquals(new BigDecimal("25000000"), NumberUtilz.parseJPNum("2.5千万"));
+		assertEquals(new BigDecimal("25000000"), NumberUtilz.parseJPNum("2.5千万"));
 		
 		assertEquals(new BigDecimal("2500000000"), NumberUtilz.parseJPNum("25億"));
-//		assertEquals(new BigDecimal("250000000"), NumberUtilz.parseJPNum("2.5億"));
+		assertEquals(new BigDecimal("250000000"), NumberUtilz.parseJPNum("2.5億"));
 		
 		try {
 			NumberUtilz.parseJPNum("");
@@ -680,5 +702,68 @@ public class NumberUtilzTest {
 		} catch (NumberParseException e) {
 			// NOP
 		}
+	}
+	
+	@Test
+	public void testAddDigit() throws Exception {
+		assertEquals(null, NumberUtilz.addDigit(null, null));
+		assertEquals(new BigDecimal("0"), NumberUtilz.addDigit(null, new BigDecimal("0")));
+		assertEquals(new BigDecimal("0"), NumberUtilz.addDigit(new BigDecimal("0"), null));
+		
+		assertEquals(new BigDecimal("0"), NumberUtilz.addDigit(new BigDecimal("0"), new BigDecimal("0")));
+		assertEquals(new BigDecimal("1"), NumberUtilz.addDigit(new BigDecimal("0"), new BigDecimal("1")));
+		assertEquals(new BigDecimal("12"), NumberUtilz.addDigit(new BigDecimal("0"), new BigDecimal("12")));
+		
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.addDigit(new BigDecimal("0"), new BigDecimal("0"), true));
+		assertEquals(new BigDecimal("0.1"), NumberUtilz.addDigit(new BigDecimal("0"), new BigDecimal("1"), true));
+		assertEquals(new BigDecimal("0.12"), NumberUtilz.addDigit(new BigDecimal("0"), new BigDecimal("12"), true));
+		
+		assertEquals(new BigDecimal("10"), NumberUtilz.addDigit(new BigDecimal("1"), new BigDecimal("0")));
+		assertEquals(new BigDecimal("11"), NumberUtilz.addDigit(new BigDecimal("1"), new BigDecimal("1")));
+		assertEquals(new BigDecimal("112"), NumberUtilz.addDigit(new BigDecimal("1"), new BigDecimal("12")));
+		
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.addDigit(new BigDecimal("1"), new BigDecimal("0"), true));
+		assertEquals(new BigDecimal("1.1"), NumberUtilz.addDigit(new BigDecimal("1"), new BigDecimal("1"), true));
+		assertEquals(new BigDecimal("1.12"), NumberUtilz.addDigit(new BigDecimal("1"), new BigDecimal("12"), true));
+		
+		assertEquals(new BigDecimal("120"), NumberUtilz.addDigit(new BigDecimal("12"), new BigDecimal("0")));
+		assertEquals(new BigDecimal("121"), NumberUtilz.addDigit(new BigDecimal("12"), new BigDecimal("1")));
+		assertEquals(new BigDecimal("1212"), NumberUtilz.addDigit(new BigDecimal("12"), new BigDecimal("12")));
+
+		assertEquals(new BigDecimal("12.0"), NumberUtilz.addDigit(new BigDecimal("12"), new BigDecimal("0"), true));
+		assertEquals(new BigDecimal("12.1"), NumberUtilz.addDigit(new BigDecimal("12"), new BigDecimal("1"), true));
+		assertEquals(new BigDecimal("12.12"), NumberUtilz.addDigit(new BigDecimal("12"), new BigDecimal("12"), true));
+		
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.addDigit(new BigDecimal("0.0"), new BigDecimal("0")));
+		assertEquals(new BigDecimal("0.01"), NumberUtilz.addDigit(new BigDecimal("0.0"), new BigDecimal("1")));
+		assertEquals(new BigDecimal("0.012"), NumberUtilz.addDigit(new BigDecimal("0.0"), new BigDecimal("12")));
+
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.addDigit(new BigDecimal("0.0"), new BigDecimal("0"), true));
+		assertEquals(new BigDecimal("0.01"), NumberUtilz.addDigit(new BigDecimal("0.0"), new BigDecimal("1"), true));
+		assertEquals(new BigDecimal("0.012"), NumberUtilz.addDigit(new BigDecimal("0.0"), new BigDecimal("12"), true));
+
+		assertEquals(new BigDecimal("0.10"), NumberUtilz.addDigit(new BigDecimal("0.1"), new BigDecimal("0")));
+		assertEquals(new BigDecimal("0.11"), NumberUtilz.addDigit(new BigDecimal("0.1"), new BigDecimal("1")));
+		assertEquals(new BigDecimal("0.112"), NumberUtilz.addDigit(new BigDecimal("0.1"), new BigDecimal("12")));
+
+		assertEquals(new BigDecimal("0.120"), NumberUtilz.addDigit(new BigDecimal("0.12"), new BigDecimal("0")));
+		assertEquals(new BigDecimal("0.121"), NumberUtilz.addDigit(new BigDecimal("0.12"), new BigDecimal("1")));
+		assertEquals(new BigDecimal("0.1212"), NumberUtilz.addDigit(new BigDecimal("0.12"), new BigDecimal("12")));
+
+		assertEquals(new BigDecimal("0.12012"), NumberUtilz.addDigit(new BigDecimal("0.12"), new BigDecimal("0.12")));
+		assertEquals(new BigDecimal("0.12123"), NumberUtilz.addDigit(new BigDecimal("0.12"), new BigDecimal("1.23")));
+		assertEquals(new BigDecimal("0.121234"), NumberUtilz.addDigit(new BigDecimal("0.12"), new BigDecimal("12.34")));
+		
+		assertEquals(new BigDecimal("12.00"), NumberUtilz.addDigit(new BigDecimal("12.0"), new BigDecimal("0")));
+		assertEquals(new BigDecimal("12.01"), NumberUtilz.addDigit(new BigDecimal("12.0"), new BigDecimal("1")));
+		assertEquals(new BigDecimal("12.012"), NumberUtilz.addDigit(new BigDecimal("12.0"), new BigDecimal("12")));
+
+		assertEquals(new BigDecimal("12.10"), NumberUtilz.addDigit(new BigDecimal("12.1"), new BigDecimal("0")));
+		assertEquals(new BigDecimal("12.11"), NumberUtilz.addDigit(new BigDecimal("12.1"), new BigDecimal("1")));
+		assertEquals(new BigDecimal("12.112"), NumberUtilz.addDigit(new BigDecimal("12.1"), new BigDecimal("12")));
+
+		assertEquals(new BigDecimal("12.120"), NumberUtilz.addDigit(new BigDecimal("12.12"), new BigDecimal("0")));
+		assertEquals(new BigDecimal("12.121"), NumberUtilz.addDigit(new BigDecimal("12.12"), new BigDecimal("1")));
+		assertEquals(new BigDecimal("12.1212"), NumberUtilz.addDigit(new BigDecimal("12.12"), new BigDecimal("12")));
 	}
 }

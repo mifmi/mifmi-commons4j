@@ -51,6 +51,22 @@ public final class NumberUtilz {
 		}
 	}
 	
+	public static BigInteger getIntegerPart(BigDecimal bigDecimal) {
+		if (bigDecimal == null) {
+			return null;
+		}
+		
+		return bigDecimal.toBigInteger();
+	}
+	
+	public static BigDecimal getDecimalPart(BigDecimal bigDecimal) {
+		if (bigDecimal == null) {
+			return null;
+		}
+		
+		return bigDecimal.subtract(new BigDecimal(bigDecimal.toBigInteger()));
+	}
+	
 	public static int digitLength(long n) {
 		if (n == 0) {
 			return 1;
@@ -64,15 +80,22 @@ public final class NumberUtilz {
 			return 0;
 		}
 		
-		return n.precision();
+		int len = digitLengthIntegerPart(n) + digitLengthDecimalPart(n);
+		
+		return len;
 	}
 	
-	public static int digitLengthIntPart(BigDecimal n) {
+	public static int digitLengthIntegerPart(BigDecimal n) {
 		if (n == null) {
 			return 0;
 		}
+		
+		int len = n.precision() - n.scale();
+		if (len < 1) {
+			len = 1;
+		}
 
-		return n.precision() - n.scale();
+		return len;
 	}
 	
 	public static int digitLengthDecimalPart(BigDecimal n) {
@@ -769,33 +792,33 @@ public final class NumberUtilz {
 						zeroPrefixCount++;
 					}
 					break;
-				case "one": n = add(n, 1, !prevXty); break;
-				case "two": n = add(n, 2, !prevXty); break;
-				case "three": n = add(n, 3, !prevXty); break;
-				case "four": n = add(n, 4, !prevXty); break;
-				case "five": n = add(n, 5, !prevXty); break;
-				case "six": n = add(n, 6, !prevXty); break;
-				case "seven": n = add(n, 7, !prevXty); break;
-				case "eight": n = add(n, 8, !prevXty); break;
-				case "nine": n = add(n, 9, !prevXty); break;
-				case "ten": n = add(n, 10, !prevXty); break;
-				case "eleven": n = add(n, 11, !prevXty); break;
-				case "twelve": n = add(n, 12, !prevXty); break;
-				case "thirteen": n = add(n, 13, !prevXty); break;
-				case "fourteen": n = add(n, 14, !prevXty); break;
-				case "fifteen": n = add(n, 15, !prevXty); break;
-				case "sixteen": n = add(n, 16, !prevXty); break;
-				case "seventeen": n = add(n, 17, !prevXty); break;
-				case "eighteen": n = add(n, 18, !prevXty); break;
-				case "nineteen": n = add(n, 19, !prevXty); break;
-				case "twenty": n = add(n, 20, !prevXty); xty = true; break;
-				case "thirty": n = add(n, 30, !prevXty); xty = true; break;
-				case "forty": n = add(n, 40, !prevXty); xty = true; break;
-				case "fifty": n = add(n, 50, !prevXty); xty = true; break;
-				case "sixty": n = add(n, 60, !prevXty); xty = true; break;
-				case "seventy": n = add(n, 70, !prevXty); xty = true; break;
-				case "eighty": n = add(n, 80, !prevXty); xty = true; break;
-				case "ninety": n = add(n, 90, !prevXty); xty = true; break;
+				case "one": n = add(n, 1L, !prevXty); break;
+				case "two": n = add(n, 2L, !prevXty); break;
+				case "three": n = add(n, 3L, !prevXty); break;
+				case "four": n = add(n, 4L, !prevXty); break;
+				case "five": n = add(n, 5L, !prevXty); break;
+				case "six": n = add(n, 6L, !prevXty); break;
+				case "seven": n = add(n, 7L, !prevXty); break;
+				case "eight": n = add(n, 8L, !prevXty); break;
+				case "nine": n = add(n, 9L, !prevXty); break;
+				case "ten": n = add(n, 10L, !prevXty); break;
+				case "eleven": n = add(n, 11L, !prevXty); break;
+				case "twelve": n = add(n, 12L, !prevXty); break;
+				case "thirteen": n = add(n, 13L, !prevXty); break;
+				case "fourteen": n = add(n, 14L, !prevXty); break;
+				case "fifteen": n = add(n, 15L, !prevXty); break;
+				case "sixteen": n = add(n, 16L, !prevXty); break;
+				case "seventeen": n = add(n, 17L, !prevXty); break;
+				case "eighteen": n = add(n, 18L, !prevXty); break;
+				case "nineteen": n = add(n, 19L, !prevXty); break;
+				case "twenty": n = add(n, 20L, !prevXty); xty = true; break;
+				case "thirty": n = add(n, 30L, !prevXty); xty = true; break;
+				case "forty": n = add(n, 40L, !prevXty); xty = true; break;
+				case "fifty": n = add(n, 50L, !prevXty); xty = true; break;
+				case "sixty": n = add(n, 60L, !prevXty); xty = true; break;
+				case "seventy": n = add(n, 70L, !prevXty); xty = true; break;
+				case "eighty": n = add(n, 80L, !prevXty); xty = true; break;
+				case "ninety": n = add(n, 90L, !prevXty); xty = true; break;
 				case "hundred": n = n.scaleByPowerOfTen(2); xty = true; break;
 				case "thousand": d = 3; break;
 				case "million": d = 6; break;
@@ -851,6 +874,25 @@ public final class NumberUtilz {
 		}
 		
 		return num;
+	}
+	
+	private static BigDecimal add(BigDecimal baseNum, long num, boolean asDigit) {
+		return add(baseNum, BigDecimal.valueOf(num), asDigit);
+	}
+	
+	private static BigDecimal add(BigDecimal baseNum, BigDecimal num, boolean asDigit) {
+		if (baseNum == null) {
+			return num;
+		}
+		if (num == null) {
+			return baseNum;
+		}
+		
+		if (asDigit) {
+			return addDigit(baseNum, num);
+		} else {
+			return baseNum.add(num);
+		}
 	}
 	
 	
@@ -1002,10 +1044,6 @@ public final class NumberUtilz {
 	}
 	
 	public static BigDecimal parseJPNum(String jpNum) {
-		return parseJPNum(jpNum, RoundingMode.HALF_UP, -1);
-	}
-	
-	public static BigDecimal parseJPNum(String jpNum, RoundingMode decimalRoundingMode, int fixedDecimalScale) {
 		if (jpNum == null) {
 			return null;
 		}
@@ -1027,25 +1065,7 @@ public final class NumberUtilz {
 			throw new NumberParseException("Invalid value: " + jpNum);
 		}
 		
-		BigDecimal num = null;
-		
-		int pointIdx = jpNumUnsigned.indexOf("・");
-		if (pointIdx == -1) {
-			pointIdx = jpNumUnsigned.indexOf("．");
-		}
-		if (pointIdx != -1) {
-			// Decimal
-			String iNumStr = jpNumUnsigned.substring(0, pointIdx);
-			String dNumStr = jpNumUnsigned.substring(pointIdx + 1);
-			
-			BigDecimal iNum = parseJPNumUnsignedIntPart(iNumStr);
-			BigDecimal dNum = parseJPNumUnsignedDecPart(dNumStr, fixedDecimalScale, decimalRoundingMode);
-
-			num = iNum.add(dNum);
-		} else {
-			// Integer
-			num = parseJPNumUnsignedIntPart(jpNumUnsigned);
-		}
+		BigDecimal num = parseJPNumUnsignedPart(jpNumUnsigned);
 		
 		if (num != null) {
 			if (negative) {
@@ -1056,16 +1076,7 @@ public final class NumberUtilz {
 		return num;
 	}
 	
-	private static BigDecimal parseJPNumUnsignedIntPart(String jpNum) {
-		return parseJPNumUnsignedPart(jpNum, false, -1, null);
-	}
-	
-	private static BigDecimal parseJPNumUnsignedDecPart(String jpNum, int fixedDecimalScale, RoundingMode decimalRoundingMode) {
-		return parseJPNumUnsignedPart(jpNum, true, fixedDecimalScale, decimalRoundingMode);
-	}
-	
-	
-	private static BigDecimal parseJPNumUnsignedPart(String jpNum, boolean decimalPart, int fixedDecimalScale, RoundingMode decimalRoundingMode) {
+	private static BigDecimal parseJPNumUnsignedPart(String jpNum) {
 		if (jpNum == null) {
 			return null;
 		}
@@ -1085,7 +1096,7 @@ public final class NumberUtilz {
 		int d2 = -1;
 		int prevD1 = -1;
 		int prevD2 = -1;
-		int zeroPrefixCount = 0;
+		boolean decimalPart = false;
 		for (int i = 0; i < jpNum.length(); i++) {
 			char c = jpNum.charAt(i);
 			switch (c) {
@@ -1093,10 +1104,7 @@ public final class NumberUtilz {
 			case '０':
 			case '〇':
 			case '零':
-				n1 = add(n1, 0, true);
-				if (BigDecimal.ZERO.equals(n1)) {
-					zeroPrefixCount++;
-				}
+				n1 = addDigit(n1, 0L, decimalPart);
 				break;
 			case '1':
 			case '１':
@@ -1104,7 +1112,7 @@ public final class NumberUtilz {
 			case '壱':
 			case '壹':
 			case '弌':
-				n1 = add(n1, 1, true);
+				n1 = addDigit(n1, 1L, decimalPart);
 				break;
 			case '2':
 			case '２':
@@ -1113,7 +1121,7 @@ public final class NumberUtilz {
 			case '貳':
 			case '弍':
 			case '贰': // Chinese
-				n1 = add(n1, 2, true);
+				n1 = addDigit(n1, 2L, decimalPart);
 				break;
 			case '3':
 			case '３':
@@ -1123,27 +1131,27 @@ public final class NumberUtilz {
 			case '弎':
 			case '叁': // Chinese
 			case '叄': // Chinese
-				n1 = add(n1, 3, true);
+				n1 = addDigit(n1, 3L, decimalPart);
 				break;
 			case '4':
 			case '４':
 			case '四':
 			case '肆':
 			case '亖':
-				n1 = add(n1, 4, true);
+				n1 = addDigit(n1, 4L, decimalPart);
 				break;
 			case '5':
 			case '５':
 			case '五':
 			case '伍':
-				n1 = add(n1, 5, true);
+				n1 = addDigit(n1, 5L, decimalPart);
 				break;
 			case '6':
 			case '６':
 			case '六':
 			case '陸':
 			case '陆': // Chinese
-				n1 = add(n1, 6, true);
+				n1 = addDigit(n1, 6L, decimalPart);
 				break;
 			case '7':
 			case '７':
@@ -1151,19 +1159,19 @@ public final class NumberUtilz {
 			case '漆':
 			case '柒':
 			case '質':
-				n1 = add(n1, 7, true);
+				n1 = addDigit(n1, 7L, decimalPart);
 				break;
 			case '8':
 			case '８':
 			case '八':
 			case '捌':
-				n1 = add(n1, 8, true);
+				n1 = addDigit(n1, 8L, decimalPart);
 				break;
 			case '9':
 			case '９':
 			case '九':
 			case '玖':
-				n1 = add(n1, 9, true);
+				n1 = addDigit(n1, 9L, decimalPart);
 				break;
 			case '十':
 			case '拾':
@@ -1175,7 +1183,7 @@ public final class NumberUtilz {
 				if (n1 != null) {
 					throw new NumberParseException("Invalid format around '" + c + "'");
 				}
-				n1 = BigDecimal.valueOf(2);
+				n1 = BigDecimal.valueOf(2L);
 				d1 = 1;
 				break;
 			case '卅':
@@ -1183,7 +1191,7 @@ public final class NumberUtilz {
 				if (n1 != null) {
 					throw new NumberParseException("Invalid format around '" + c + "'");
 				}
-				n1 = BigDecimal.valueOf(3);
+				n1 = BigDecimal.valueOf(3L);
 				d1 = 1;
 				break;
 			case '百':
@@ -1248,6 +1256,12 @@ public final class NumberUtilz {
 			case '無':
 				d2 = 68;
 				break;
+			case '･':
+			case '.':
+			case '・':
+			case '．':
+				decimalPart = true;
+				break;
 			default:
 				throw new NumberParseException("Unsupported character: " + c);
 			}
@@ -1307,37 +1321,6 @@ public final class NumberUtilz {
 				d1 = -1;
 				d2 = -1;
 				prevD1 = -1;
-			}
-		}
-		
-		if (decimalPart) {
-			// convert to decimal part
-			int len;
-			if (0 < zeroPrefixCount && BigDecimal.ZERO.equals(num)) {
-				// avoid double count
-				len = zeroPrefixCount;
-			} else {
-				len = zeroPrefixCount + digitLength(num);
-			}
-			
-
-			if (0 <= fixedDecimalScale) {
-				// fixed scale
-				if (len < fixedDecimalScale) {
-					// pad scale
-					num = num.scaleByPowerOfTen(-fixedDecimalScale);
-				} else if (fixedDecimalScale < len) {
-					// round
-					if (decimalRoundingMode == null) {
-						throw new NumberParseException("Decimal overflow. (Expected: <= " + fixedDecimalScale + ", Actual:" + len + ")");
-					}
-					num = num.scaleByPowerOfTen(-len).setScale(fixedDecimalScale, decimalRoundingMode);
-				} else {
-					// decimalFixedScale = actual scale
-					num = num.scaleByPowerOfTen(-len);
-				}
-			} else {
-				num = num.scaleByPowerOfTen(-len);
 			}
 		}
 		
@@ -1412,6 +1395,34 @@ public final class NumberUtilz {
 		}
 	}
 	
+	public static BigDecimal addDigit(BigDecimal baseNum, long num) {
+		return addDigit(baseNum, num, false);
+	}
+	
+	public static BigDecimal addDigit(BigDecimal baseNum, long num, boolean decimalPart) {
+		return addDigit(baseNum, BigDecimal.valueOf(num), decimalPart);
+	}
+	
+	public static BigDecimal addDigit(BigDecimal baseNum, BigDecimal num) {
+		return addDigit(baseNum, num, false);
+	}
+	
+	public static BigDecimal addDigit(BigDecimal baseNum, BigDecimal num, boolean decimalPart) {
+		if (baseNum == null) {
+			return num;
+		}
+		if (num == null) {
+			return baseNum;
+		}
+		
+		int fLen = digitLengthDecimalPart(baseNum);
+		if (decimalPart || 0 < fLen) {
+			return baseNum.add(num.scaleByPowerOfTen(-fLen - digitLengthIntegerPart(num)));
+		} else {
+			return baseNum.scaleByPowerOfTen(digitLength(num)).add(num);
+		}
+	}
+	
 	public static String toString(Number value, String pattern) {
 		if (value == null) {
 			return null;
@@ -1420,21 +1431,5 @@ public final class NumberUtilz {
 		DecimalFormat df = new DecimalFormat(pattern);
 		
 		return df.format(value);
-	}
-	
-	private static BigDecimal add(BigDecimal baseNum, long num, boolean asDigit) {
-		return add(baseNum, BigDecimal.valueOf(num), asDigit);
-	}
-	
-	private static BigDecimal add(BigDecimal baseNum, BigDecimal num, boolean asDigit) {
-		if (baseNum == null) {
-			return num;
-		}
-		
-		if (asDigit) {
-			return baseNum.scaleByPowerOfTen(digitLengthIntPart(num)).add(num);
-		} else {
-			return baseNum.add(num);
-		}
 	}
 }
