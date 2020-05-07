@@ -9,6 +9,7 @@
 package test.org.mifmi.commons4j.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.mifmi.commons4j.util.StringUtilz;
@@ -81,40 +82,117 @@ public class StringUtilzTest {
 
 	@Test
 	public void testStartsWithStringArray() throws Exception {
-		assertEquals(null, StringUtilz.startsWith(null, "a", "b", "c"));
-		assertEquals(null, StringUtilz.startsWith("", "a", "b", "c"));
+		assertEquals(-1, StringUtilz.startsWith(null, "a", "b", "c"));
+		assertEquals(-1, StringUtilz.startsWith("", "a", "b", "c"));
 
-		assertEquals(null, StringUtilz.startsWith("a", (String[])null));
-		assertEquals(null, StringUtilz.startsWith("a", new String[]{null}));
-		assertEquals("", StringUtilz.startsWith("a", new String[]{""}));
+		assertEquals(-1, StringUtilz.startsWith("a", (String[])null));
+		assertEquals(0, StringUtilz.startsWith("a", new String[]{null}));
+		assertEquals(0, StringUtilz.startsWith("a", new String[]{""}));
 		
-		assertEquals("a", StringUtilz.startsWith("a", "a", "b", "c"));
-		assertEquals("b", StringUtilz.startsWith("b", "a", "b", "c"));
-		assertEquals("c", StringUtilz.startsWith("c", "a", "b", "c"));
-		assertEquals(null, StringUtilz.startsWith("d", "a", "b", "c"));
+		assertEquals(0, StringUtilz.startsWith("a", "a", "b", "c"));
+		assertEquals(1, StringUtilz.startsWith("b", "a", "b", "c"));
+		assertEquals(2, StringUtilz.startsWith("c", "a", "b", "c"));
+		assertEquals(-1, StringUtilz.startsWith("d", "a", "b", "c"));
 
-		assertEquals("a", StringUtilz.startsWith("abc", "x", "a", "ab", "abc"));
-		assertEquals("ab", StringUtilz.startsWith("abc", "x", "ab", "abc", "a"));
-		assertEquals("abc", StringUtilz.startsWith("abc", "x", "abc", "a", "ab"));
+		assertEquals(1, StringUtilz.startsWith("abc", "x", "a", "ab", "abc"));
+		assertEquals(1, StringUtilz.startsWith("abc", "x", "ab", "abc", "a"));
+		assertEquals(1, StringUtilz.startsWith("abc", "x", "abc", "a", "ab"));
+
+		assertEquals(2, StringUtilz.startsWith("abc", new String[] {"x", "c", "bc", "abc"}, 1));
+		assertEquals(1, StringUtilz.startsWith("abc", new String[] {"x", "bc", "abc", "c"}, 1));
+		assertEquals(3, StringUtilz.startsWith("abc", new String[] {"x", "abc", "c", "bc"}, 1));
 	}
 
 	@Test
 	public void testEndsWithStringArray() throws Exception {
-		assertEquals(null, StringUtilz.endsWith(null, "a", "b", "c"));
-		assertEquals(null, StringUtilz.endsWith("", "a", "b", "c"));
+		assertEquals(-1, StringUtilz.endsWith(null, "a", "b", "c"));
+		assertEquals(-1, StringUtilz.endsWith("", "a", "b", "c"));
 
-		assertEquals(null, StringUtilz.endsWith("a", (String[])null));
-		assertEquals(null, StringUtilz.endsWith("a", new String[]{null}));
-		assertEquals("", StringUtilz.endsWith("a", new String[]{""}));
+		assertEquals(-1, StringUtilz.endsWith("a", (String[])null));
+		assertEquals(0, StringUtilz.endsWith("a", new String[]{null}));
+		assertEquals(0, StringUtilz.endsWith("a", new String[]{""}));
 		
-		assertEquals("a", StringUtilz.endsWith("a", "a", "b", "c"));
-		assertEquals("b", StringUtilz.endsWith("b", "a", "b", "c"));
-		assertEquals("c", StringUtilz.endsWith("c", "a", "b", "c"));
-		assertEquals(null, StringUtilz.endsWith("d", "a", "b", "c"));
+		assertEquals(0, StringUtilz.endsWith("a", "a", "b", "c"));
+		assertEquals(1, StringUtilz.endsWith("b", "a", "b", "c"));
+		assertEquals(2, StringUtilz.endsWith("c", "a", "b", "c"));
+		assertEquals(-1, StringUtilz.endsWith("d", "a", "b", "c"));
 
-		assertEquals("c", StringUtilz.endsWith("abc", "x", "c", "bc", "abc"));
-		assertEquals("bc", StringUtilz.endsWith("abc", "x", "bc", "abc", "c"));
-		assertEquals("abc", StringUtilz.endsWith("abc", "x", "abc", "c", "bc"));
+		assertEquals(1, StringUtilz.endsWith("abc", "x", "c", "bc", "abc"));
+		assertEquals(1, StringUtilz.endsWith("abc", "x", "bc", "abc", "c"));
+		assertEquals(1, StringUtilz.endsWith("abc", "x", "abc", "c", "bc"));
+
+		assertEquals(2, StringUtilz.endsWith("abc", new String[] {"x", "a", "ab", "abc"}, 1));
+		assertEquals(1, StringUtilz.endsWith("abc", new String[] {"x", "ab", "abc", "a"}, 1));
+		assertEquals(3, StringUtilz.endsWith("abc", new String[] {"x", "abc", "a", "ab"}, 1));
+	}
+
+	@Test
+	public void testReplaceAllCharArray() throws Exception {
+		assertEquals(null, StringUtilz.replaceAll((String)null, new char[] {'a', 'm', 'z'}, new char[] {'A', 'M', 'Z'}));
+		assertEquals("abcdefghijklmnopqrstuvwxyz", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", null, new char[] {'A', 'M', 'Z'}));
+		assertEquals("bcdefghijklnopqrstuvwxy", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new char[] {'a', 'm', 'z'}, null));
+		
+		assertEquals("abcdefghijklmnopqrstuvwxyz", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new char[] {}, new char[] {}));
+		
+		assertEquals("AbcdefghijklMnopqrstuvwxyZ", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new char[] {'a', 'm', 'z'}, new char[] {'A', 'M', 'Z'}));
+
+		assertEquals("AbcdefghijklMnopqrstuvwxyZ", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new char[] {'a', 'm', 'z'}, new char[] {'A', 'M', 'Z', 'X'}));
+
+		assertEquals("AbcdefghijklMnopqrstuvwxyM", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new char[] {'a', 'm', 'z'}, new char[] {'A', 'M'}));
+		assertEquals("AbcdefghijklAnopqrstuvwxyA", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new char[] {'a', 'm', 'z'}, new char[] {'A'}));
+		assertEquals("bcdefghijklnopqrstuvwxy", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new char[] {'a', 'm', 'z'}, new char[] {}));
+	}
+
+	@Test
+	public void testReplaceAllStringBuilderCharArray() throws Exception {
+		assertEquals(null, StringUtilz.replaceAll((StringBuilder)null, new char[] {'a', 'm', 'z'}, new char[] {'A', 'M', 'Z'}));
+		assertEquals("abcdefghijklmnopqrstuvwxyz", StringUtilz.replaceAll(new StringBuilder("abcdefghijklmnopqrstuvwxyz"), null, new char[] {'A', 'M', 'Z'}).toString());
+		assertEquals("bcdefghijklnopqrstuvwxy", StringUtilz.replaceAll(new StringBuilder("abcdefghijklmnopqrstuvwxyz"), new char[] {'a', 'm', 'z'}, null).toString());
+		
+		assertEquals("abcdefghijklmnopqrstuvwxyz", StringUtilz.replaceAll(new StringBuilder("abcdefghijklmnopqrstuvwxyz"), new char[] {}, new char[] {}).toString());
+		
+		assertEquals("AbcdefghijklMnopqrstuvwxyZ", StringUtilz.replaceAll(new StringBuilder("abcdefghijklmnopqrstuvwxyz"), new char[] {'a', 'm', 'z'}, new char[] {'A', 'M', 'Z'}).toString());
+
+		assertEquals("AbcdefghijklMnopqrstuvwxyZ", StringUtilz.replaceAll(new StringBuilder("abcdefghijklmnopqrstuvwxyz"), new char[] {'a', 'm', 'z'}, new char[] {'A', 'M', 'Z', 'X'}).toString());
+
+		assertEquals("AbcdefghijklMnopqrstuvwxyM", StringUtilz.replaceAll(new StringBuilder("abcdefghijklmnopqrstuvwxyz"), new char[] {'a', 'm', 'z'}, new char[] {'A', 'M'}).toString());
+		assertEquals("AbcdefghijklAnopqrstuvwxyA", StringUtilz.replaceAll(new StringBuilder("abcdefghijklmnopqrstuvwxyz"), new char[] {'a', 'm', 'z'}, new char[] {'A'}).toString());
+		assertEquals("bcdefghijklnopqrstuvwxy", StringUtilz.replaceAll(new StringBuilder("abcdefghijklmnopqrstuvwxyz"), new char[] {'a', 'm', 'z'}, new char[] {}).toString());
+	}
+
+	@Test
+	public void testReplaceAllStringArray() throws Exception {
+		assertEquals(null, StringUtilz.replaceAll(null, new String[] {"abc", "lmn", "xyz"}, new String[] {"A-B-C", "L-M-N", "X-Y-Z"}));
+		assertEquals("abcdefghijklmnopqrstuvwxyz", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", null, new String[] {"A-B-C", "L-M-N", "X-Y-Z"}));
+		assertEquals("defghijkopqrstuvw", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new String[] {"abc", "lmn", "xyz"}, (String[])null));
+		
+		assertEquals("abcdefghijklmnopqrstuvwxyz", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new String[] {}, new String[] {}));
+
+		try {
+			assertEquals("abcdefghijklmnopqrstuvwxyz", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new String[] {null}, new String[] {"x"}));
+			assertTrue(false);
+		} catch (IllegalArgumentException e) {
+			// NOP
+		}
+		
+		try {
+			assertEquals("abcdefghijklmnopqrstuvwxyz", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new String[] {""}, new String[] {"x"}));
+			assertTrue(false);
+		} catch (IllegalArgumentException e) {
+			// NOP
+		}
+		
+		assertEquals("A-B-CdefghijkL-M-NopqrstuvwX-Y-Z", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new String[] {"abc", "lmn", "xyz"}, new String[] {"A-B-C", "L-M-N", "X-Y-Z"}));
+		assertEquals("AdefghijkMopqrstuvwZ", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new String[] {"abc", "lmn", "xyz"}, new String[] {"A", "M", "Z"}));
+		assertEquals("defghijkopqrstuvw", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new String[] {"abc", "lmn", "xyz"}, new String[] {"", "", ""}));
+		assertEquals("defghijkopqrstuvw", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new String[] {"abc", "lmn", "xyz"}, new String[] {null, null, null}));
+		
+		
+		assertEquals("A-B-CdefghijkL-M-NopqrstuvwX-Y-Z", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new String[] {"abc", "lmn", "xyz"}, new String[] {"A-B-C", "L-M-N", "X-Y-Z", "XXX"}));
+		
+		assertEquals("A-B-CdefghijkL-M-NopqrstuvwL-M-N", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new String[] {"abc", "lmn", "xyz"}, new String[] {"A-B-C", "L-M-N"}));
+		assertEquals("A-B-CdefghijkA-B-CopqrstuvwA-B-C", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new String[] {"abc", "lmn", "xyz"}, new String[] {"A-B-C"}));
+		assertEquals("defghijkopqrstuvw", StringUtilz.replaceAll("abcdefghijklmnopqrstuvwxyz", new String[] {"abc", "lmn", "xyz"}, new String[] {}));
 	}
 
 	@Test

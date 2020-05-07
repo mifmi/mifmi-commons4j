@@ -75,6 +75,64 @@ public final class StringUtilz {
 		char firstCh = str.charAt(0);
 		return (firstCh == prefix);
 	}
+
+	public static boolean startsWith(CharSequence str, CharSequence prefix) {
+		return startsWith(str, prefix, 0);
+	}
+	
+	public static boolean startsWith(CharSequence str, CharSequence prefix, int startIndex) {
+		if (str == null) {
+			return false;
+		}
+		
+		if (prefix == null || prefix.length() == 0) {
+			return true;
+		}
+		
+		if (startIndex < 0) {
+			startIndex = 0;
+		}
+		
+		int len = prefix.length();
+		
+		if (str.length() < startIndex + len) {
+			return false;
+		}
+
+		for (int i = 0; i < len; i++) {
+			char ch = str.charAt(startIndex + i);
+			char prefixCh = prefix.charAt(i);
+			
+			if (ch != prefixCh) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	public static int startsWith(CharSequence str, CharSequence... prefixes) {
+		return startsWith(str, prefixes, -1);
+	}
+	
+	public static int startsWith(CharSequence str, CharSequence[] prefixes, int startIndex) {
+		if (str == null) {
+			return -1;
+		}
+		
+		if (prefixes == null || prefixes.length == 0) {
+			return -1;
+		}
+		
+		for (int i = 0; i < prefixes.length; i++) {
+			CharSequence prefix = prefixes[i];
+			if (startsWith(str, prefix, startIndex)) {
+				return i;
+			}
+		}
+		
+		return -1;
+	}
 	
 	public static boolean endsWith(CharSequence str, char suffix) {
 		if (str == null) {
@@ -88,35 +146,12 @@ public final class StringUtilz {
 		char lastCh = str.charAt(str.length() - 1);
 		return (lastCh == suffix);
 	}
-	
-	public static boolean startsWith(CharSequence str, CharSequence prefix) {
-		if (str == null) {
-			return false;
-		}
-		
-		if (prefix == null || prefix.length() == 0) {
-			return true;
-		}
-		
-		int len = prefix.length();
-		
-		if (str.length() < len) {
-			return false;
-		}
 
-		for (int i = 0; i < len; i++) {
-			char ch = str.charAt(i);
-			char prefixCh = prefix.charAt(i);
-			
-			if (ch != prefixCh) {
-				return false;
-			}
-		}
-		
-		return true;
+	public static boolean endsWith(CharSequence str, CharSequence suffix) {
+		return endsWith(str, suffix, -1);
 	}
 	
-	public static boolean endsWith(CharSequence str, CharSequence suffix) {
+	public static boolean endsWith(CharSequence str, CharSequence suffix, int endIndex) {
 		if (str == null) {
 			return false;
 		}
@@ -125,8 +160,12 @@ public final class StringUtilz {
 			return true;
 		}
 		
+		if (endIndex < 0) {
+			endIndex = str.length() - 1;
+		}
+		
 		int len = suffix.length();
-		int offset = str.length() - len;
+		int offset = endIndex + 1 - len;
 		
 		if (offset < 0) {
 			return false;
@@ -143,41 +182,28 @@ public final class StringUtilz {
 		
 		return true;
 	}
-	
-	public static CharSequence startsWith(CharSequence str, CharSequence... prefixes) {
-		if (str == null) {
-			return null;
-		}
-		
-		if (prefixes == null || prefixes.length == 0) {
-			return null;
-		}
-		
-		for (CharSequence prefix : prefixes) {
-			if (startsWith(str, prefix)) {
-				return prefix;
-			}
-		}
-		
-		return null;
+
+	public static int endsWith(CharSequence str, CharSequence... suffixes) {
+		return endsWith(str, suffixes, -1);
 	}
 	
-	public static CharSequence endsWith(CharSequence str, CharSequence... suffixes) {
+	public static int endsWith(CharSequence str, CharSequence[] suffixes, int endIndex) {
 		if (str == null) {
-			return null;
+			return -1;
 		}
 		
 		if (suffixes == null || suffixes.length == 0) {
-			return null;
+			return -1;
 		}
 		
-		for (CharSequence suffix : suffixes) {
-			if (endsWith(str, suffix)) {
-				return suffix;
+		for (int i = 0; i < suffixes.length; i++) {
+			CharSequence suffix = suffixes[i];
+			if (endsWith(str, suffix, endIndex)) {
+				return i;
 			}
 		}
 		
-		return null;
+		return -1;
 	}
 
 	public static boolean surroundsWith(CharSequence str, char prefix, char suffix) {
@@ -440,7 +466,11 @@ public final class StringUtilz {
 		return sb;
 	}
 	
-	public static String replaceAll(String str, char newChar, char... oldChars) {
+	public static String replaceAll(String str, char[] oldChars, char newChar) {
+		return replaceAll(str, oldChars, new char[] {newChar});
+	}
+	
+	public static String replaceAll(String str, char[] oldChars, char[] newChars) {
 		if (str == null) {
 			return null;
 		}
@@ -464,21 +494,80 @@ public final class StringUtilz {
 			return str;
 		}
 		
-		char[] chars = str.toCharArray();
-		for (int i = idx; i < len; i++) {
-			char ch = chars[i];
-			for (char oldChar : oldChars) {
+		StringBuilder sb = new StringBuilder(str.length());
+		sb.append(str, 0, idx);
+		
+		outer: for (int i = idx; i < len; i++) {
+			char ch = str.charAt(i);
+			
+			for (int j = 0; j < oldChars.length; j++) {
+				char oldChar = oldChars[j];
 				if (ch == oldChar) {
-					chars[i] = newChar;
-					break;
+					if (newChars == null || newChars.length == 0) {
+						// NOP
+					} else if (newChars.length <= j) {
+						sb.append(newChars[newChars.length - 1]);
+					} else {
+						sb.append(newChars[j]);
+					}
+					
+					continue outer;
 				}
+			}
+			
+			sb.append(ch);
+		}
+		
+		return sb.toString();
+	}
+
+	public static String replaceAll(String str, String[] oldStrs, String newStr) {
+		return replaceAll(str, oldStrs, new String[] {newStr});
+	}
+	
+	public static String replaceAll(String str, String[] oldStrs, String[] newStrs) {
+		if (str == null) {
+			return null;
+		}
+		if (oldStrs == null || oldStrs.length == 0) {
+			return str;
+		}
+		
+		for (String oldStr : oldStrs) {
+			if (oldStr == null || oldStr.length() == 0) {
+				throw new IllegalArgumentException();
 			}
 		}
 		
-		return new String(chars);
+		int len = str.length();
+		
+		StringBuilder sb = new StringBuilder(len);
+		for (int i = 0; i < len; i++) {
+			int idx = startsWith(str, oldStrs, i);
+			
+			if (0 <= idx) {
+				if (newStrs == null || newStrs.length == 0) {
+					// NOP
+				} else if (newStrs.length <= idx) {
+					sb.append(null2Str(newStrs[newStrs.length - 1]));
+				} else {
+					sb.append(null2Str(newStrs[idx]));
+				}
+				
+				i += oldStrs[idx].length() - 1;
+			} else {
+				sb.append(str.charAt(i));
+			}
+		}
+		
+		return sb.toString();
 	}
 	
-	public static StringBuilder replaceAll(StringBuilder sb, char newChar, char... oldChars) {
+	public static StringBuilder replaceAll(StringBuilder sb, char[] oldChars, char newChar) {
+		return replaceAll(sb, oldChars, new char[] {newChar});
+	}
+	
+	public static StringBuilder replaceAll(StringBuilder sb, char[] oldChars, char[] newChars) {
 		if (sb == null) {
 			return null;
 		}
@@ -486,14 +575,20 @@ public final class StringUtilz {
 			return sb;
 		}
 		
-		int len = sb.length();
-		
-		for (int i = 0; i < len; i++) {
+		for (int i = 0; i < sb.length(); i++) {
 			char ch = sb.charAt(i);
-			for (char oldChar : oldChars) {
+			
+			for (int j = 0; j < oldChars.length; j++) {
+				char oldChar = oldChars[j];
 				if (ch == oldChar) {
-					sb.setCharAt(i, newChar);
-					break;
+					if (newChars == null || newChars.length == 0) {
+						sb.deleteCharAt(i);
+						i--;
+					} else if (newChars.length <= j) {
+						sb.setCharAt(i, newChars[newChars.length - 1]);
+					} else {
+						sb.setCharAt(i, newChars[j]);
+					}
 				}
 			}
 		}

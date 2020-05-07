@@ -1081,13 +1081,11 @@ public final class NumberUtilz {
 			return null;
 		}
 		
-		jpNum = jpNum.replace("秭", "杼");
-		jpNum = jpNum.replace("恒河沙", "恒");
-		jpNum = jpNum.replace("阿僧祇", "阿");
-		jpNum = jpNum.replace("那由他", "那");
-		jpNum = jpNum.replace("那由多", "那");
-		jpNum = jpNum.replace("不可思議", "不");
-		jpNum = jpNum.replace("無量大数", "無");
+		jpNum = StringUtilz.replaceAll(
+				jpNum,
+				new String[] { "秭", "恒河沙", "阿僧祇", "那由他", "那由多", "不可思議", "無量大数" },
+				new String[] { "杼", "恒", "阿", "那", "那", "不", "無" }
+				);
 		
 		BigDecimal num = BigDecimal.ZERO;
 		BigDecimal n = BigDecimal.ZERO;
