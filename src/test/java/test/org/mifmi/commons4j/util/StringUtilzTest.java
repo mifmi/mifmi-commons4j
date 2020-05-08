@@ -17,6 +17,61 @@ import org.mifmi.commons4j.util.StringUtilz;
 public class StringUtilzTest {
 
 	@Test
+	public void testCountChar() throws Exception {
+		assertEquals(0, StringUtilz.count(null, 'a'));
+		assertEquals(0, StringUtilz.count("", 'a'));
+		
+		assertEquals(0, StringUtilz.count("aaabbbcccaaabbbccc", (char[])null));
+
+		assertEquals(0, StringUtilz.count("aaabbbcccaaabbbccc", 'x'));
+		
+		assertEquals(6, StringUtilz.count("aaabbbcccaaabbbccc", 'a'));
+		assertEquals(6, StringUtilz.count("aaabbbcccaaabbbccc", 'b'));
+		assertEquals(6, StringUtilz.count("aaabbbcccaaabbbccc", 'c'));
+		
+		assertEquals(18, StringUtilz.count("aaabbbcccaaabbbccc", 'a', 'b', 'c'));
+	}
+
+	@Test
+	public void testCountString() throws Exception {
+		assertEquals(0, StringUtilz.count(null, "a"));
+		assertEquals(0, StringUtilz.count("", "a"));
+		
+		try {
+			assertEquals(0, StringUtilz.count("aaabbbcccaaabbbccc", (String)null));
+			assertTrue(false);
+		} catch (IllegalArgumentException e) {
+			// NOP
+		}
+
+		try {
+			assertEquals(0, StringUtilz.count("aaabbbcccaaabbbccc", ""));
+			assertTrue(false);
+		} catch (IllegalArgumentException e) {
+			// NOP
+		}
+		
+		assertEquals(0, StringUtilz.count("aaabbbcccaaabbbccc", (String[])null));
+
+		assertEquals(0, StringUtilz.count("aaabbbcccaaabbbccc", "x"));
+		
+		assertEquals(6, StringUtilz.count("aaabbbcccaaabbbccc", "a"));
+		assertEquals(6, StringUtilz.count("aaabbbcccaaabbbccc", "b"));
+		assertEquals(6, StringUtilz.count("aaabbbcccaaabbbccc", "c"));
+
+		assertEquals(18, StringUtilz.count("aaabbbcccaaabbbccc", "a", "b", "c"));
+		
+		assertEquals(2, StringUtilz.count("aaabbbcccaaabbbccc", "aa"));
+		assertEquals(2, StringUtilz.count("aaabbbcccaaabbbccc", "bb"));
+		assertEquals(2, StringUtilz.count("aaabbbcccaaabbbccc", "cc"));
+
+		assertEquals(6, StringUtilz.count("aaabbbcccaaabbbccc", "aa", "bb", "cc"));
+		
+		assertEquals(4, StringUtilz.count("aaabbbcccaaabbbccc", "aaa", "ab", "bbb"));
+		assertEquals(6, StringUtilz.count("aaabbbcccaaabbbccc", "aaa", "ab", "bbb", "bc", "ccc"));
+	}
+
+	@Test
 	public void testStartsWithChar() throws Exception {
 		assertEquals(false, StringUtilz.startsWith(null, 'a'));
 		assertEquals(false, StringUtilz.startsWith("", 'a'));

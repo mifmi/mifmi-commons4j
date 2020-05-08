@@ -47,16 +47,51 @@ public final class StringUtilz {
 		// NOP
 	}
 	
-	public static int count(CharSequence str, char ch) {
-		if (str == null) {
+	public static int count(CharSequence str, char... chs) {
+		if (str == null || str.length() == 0) {
+			return 0;
+		}
+		
+		if (chs == null || chs.length == 0) {
 			return 0;
 		}
 		
 		int count = 0;
 		int len = str.length();
 		for (int i = 0; i < len; i++) {
-			if (str.charAt(i) == ch) {
+			for (char ch : chs) {
+				if (str.charAt(i) == ch) {
+					count++;
+					break;
+				}
+			}
+		}
+		
+		return count;
+	}
+	
+	public static int count(CharSequence str, String... strs) {
+		if (str == null || str.length() == 0) {
+			return 0;
+		}
+		
+		if (strs == null || strs.length == 0) {
+			return 0;
+		}
+		
+		for (String s : strs) {
+			if (s == null || s.length() == 0) {
+				throw new IllegalArgumentException();
+			}
+		}
+		
+		int count = 0;
+		int len = str.length();
+		for (int i = 0; i < len; i++) {
+			int idx = startsWith(str, strs, i);
+			if (0 <= idx) {
 				count++;
+				i += strs[idx].length() - 1;
 			}
 		}
 		
