@@ -11,6 +11,8 @@ package test.org.mifmi.commons4j.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.function.Predicate;
+
 import org.junit.Test;
 import org.mifmi.commons4j.util.StringUtilz;
 
@@ -288,4 +290,75 @@ public class StringUtilzTest {
 		assertEquals(false, StringUtilz.surroundsWith("abc", "a", "b"));
 	}
 
+	@Test
+	public void testSwapCase() throws Exception {
+		assertEquals(null, StringUtilz.swapCase(null));
+		assertEquals("", StringUtilz.swapCase(""));
+		
+		assertEquals("AB-CD", StringUtilz.swapCase("ab-cd"));
+		assertEquals("ab-cd", StringUtilz.swapCase("AB-CD"));
+		assertEquals("aB-Cd", StringUtilz.swapCase("Ab-cD"));
+	}
+
+	@Test
+	public void testCapitalize() throws Exception {
+		assertEquals(null, StringUtilz.capitalize(null));
+		assertEquals("", StringUtilz.capitalize(""));
+		
+		assertEquals("The Quick Brown Fox Jumps Over The Lazy Dog", StringUtilz.capitalize("the quick brown fox jumps over the lazy dog"));
+		
+		assertEquals(" The Quick Brown Fox  Jumps  Over The Lazy Dog ", StringUtilz.capitalize(" the quick brown fox  jumps  over the lazy dog "));
+		
+		assertEquals("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG", StringUtilz.capitalize("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG"));
+		assertEquals("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG", StringUtilz.capitalize("tHE qUICK bROWN fOX jUMPS oVER tHE lAZY dOG"));
+		
+		assertEquals("The Quick Brown Fox Jumps Over The Lazy Dog", StringUtilz.capitalize("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG", true));
+		assertEquals("The Quick Brown Fox Jumps Over The Lazy Dog", StringUtilz.capitalize("tHE qUICK bROWN fOX jUMPS oVER tHE lAZY dOG", true));
+		
+		assertEquals("The Quick Brown Fox\r\nJumps\tOver The Lazy Dog", StringUtilz.capitalize("the quick brown fox\r\njumps\tover the lazy dog"));
+
+		assertEquals("THE qUICK-BROWN-FOX,JUMPS.OVER tHE lAZY dOG", StringUtilz.capitalize("tHE qUICK-bROWN-fOX,jUMPS.oVER tHE lAZY dOG", '-', ',', '.'));
+		assertEquals("The quick-Brown-Fox,Jumps.Over the lazy dog", StringUtilz.capitalize("tHE qUICK-bROWN-fOX,jUMPS.oVER tHE lAZY dOG", true, '-', ',', '.'));
+		
+		assertEquals("THE qUICK-BROWN-FOX,JUMPS.OVER tHE lAZY dOG", StringUtilz.capitalize("tHE qUICK-bROWN-fOX,jUMPS.oVER tHE lAZY dOG", new Predicate<Integer>() {
+			@Override
+			public boolean test(Integer t) {
+				int cp = t.intValue();
+				return (cp == '-' || cp == ',' || cp == '.');
+			}
+		}));
+
+		assertEquals("The quick-Brown-Fox,Jumps.Over the lazy dog", StringUtilz.capitalize("tHE qUICK-bROWN-fOX,jUMPS.oVER tHE lAZY dOG", true, new Predicate<Integer>() {
+			@Override
+			public boolean test(Integer t) {
+				int cp = t.intValue();
+				return (cp == '-' || cp == ',' || cp == '.');
+			}
+		}));
+	}
+
+	@Test
+	public void testInitials() throws Exception {
+		assertEquals(null, StringUtilz.initials(null));
+		assertEquals("", StringUtilz.initials(""));
+		
+		assertEquals("tqbfjotld", StringUtilz.initials("the quick brown fox jumps over the lazy dog"));
+		
+		assertEquals("tqbfjotld", StringUtilz.initials(" the quick brown fox  jumps  over the lazy dog "));
+		
+		assertEquals("TQBFJOTLD", StringUtilz.initials("THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG"));
+		assertEquals("tqbfjotld", StringUtilz.initials("tHE qUICK bROWN fOX jUMPS oVER tHE lAZY dOG"));
+		
+		assertEquals("tqbfjotld", StringUtilz.initials("the quick brown fox\r\njumps\tover the lazy dog"));
+
+		assertEquals("tbfjo", StringUtilz.initials("the quick-brown-fox,jumps.over the lazy dog", '-', ',', '.'));
+
+		assertEquals("tbfjo", StringUtilz.initials("the quick-brown-fox,jumps.over the lazy dog", new Predicate<Integer>() {
+			@Override
+			public boolean test(Integer t) {
+				int cp = t.intValue();
+				return (cp == '-' || cp == ',' || cp == '.');
+			}
+		}));
+	}
 }

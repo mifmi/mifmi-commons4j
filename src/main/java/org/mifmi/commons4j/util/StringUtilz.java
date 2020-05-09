@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -1075,6 +1076,150 @@ public final class StringUtilz {
 		}
 		
 		return varMap;
+	}
+
+	public static String swapCase(String str) {
+		if (str == null || str.length() == 0) {
+			return str;
+		}
+		
+		boolean first = true;
+		int len = str.length();
+		StringBuilder sb = new StringBuilder(len);
+		for (int i = 0; i < len; ) {
+			int cp = str.codePointAt(i);
+			
+			if (Character.isWhitespace(cp)) {
+				first = true;
+			} else {
+				first = false;
+				
+				if (Character.isLowerCase(cp)) {
+					if (first) {
+						cp = Character.toTitleCase(cp);
+					} else {
+						cp = Character.toUpperCase(cp);
+					}
+				} else if (Character.isUpperCase(cp) || Character.isTitleCase(cp)) {
+					cp = Character.toLowerCase(cp);
+				} else {
+					// NOP
+				}
+			}
+			
+			sb.appendCodePoint(cp);
+			
+			i += Character.charCount(cp);
+		}
+		
+		return sb.toString();
+	}
+	
+	public static String capitalize(String str, int... delimiterCodePoints) {
+		return capitalize(str, false, delimiterCodePoints);
+	}
+	
+	public static String capitalize(String str, boolean fully, int... delimiterCodePoints) {
+		Predicate<Integer> delimiterFn = null;
+		if (delimiterCodePoints != null && 0 < delimiterCodePoints.length) {
+			delimiterFn = new Predicate<Integer>() {
+				@Override
+				public boolean test(Integer t) {
+					for (int d : delimiterCodePoints) {
+						if (t.intValue() == d) {
+							return true;
+						}
+					}
+					return false;
+				}
+			};
+		}
+		
+		return capitalize(str, fully, delimiterFn);
+	}
+	
+	public static String capitalize(String str, Predicate<Integer> delimiterFn) {
+		return capitalize(str, false, delimiterFn);
+	}
+	
+	public static String capitalize(String str, boolean fully, Predicate<Integer> delimiterFn) {
+		if (str == null || str.length() == 0) {
+			return str;
+		}
+		
+		boolean first = true;
+		int len = str.length();
+		StringBuilder sb = new StringBuilder(len);
+		for (int i = 0; i < len; ) {
+			int cp = str.codePointAt(i);
+			
+			if (first) {
+				sb.appendCodePoint(Character.toTitleCase(cp));
+			} else if (fully) {
+				sb.appendCodePoint(Character.toLowerCase(cp));
+			} else {
+				sb.appendCodePoint(cp);
+			}
+			
+			if (delimiterFn == null) {
+				first = Character.isWhitespace(cp);
+			} else {
+				first = delimiterFn.test(Integer.valueOf(cp));
+			}
+			
+			i += Character.charCount(cp);
+		}
+		
+		return sb.toString();
+	}
+	
+	public static String initials(String str, int... delimiterCodePoints) {
+		Predicate<Integer> delimiterFn = null;
+		if (delimiterCodePoints != null && 0 < delimiterCodePoints.length) {
+			delimiterFn = new Predicate<Integer>() {
+				@Override
+				public boolean test(Integer t) {
+					for (int d : delimiterCodePoints) {
+						if (t.intValue() == d) {
+							return true;
+						}
+					}
+					return false;
+				}
+			};
+		}
+		
+		return initials(str, delimiterFn);
+	}
+	
+	public static String initials(String str, Predicate<Integer> delimiterFn) {
+	
+		if (str == null || str.length() == 0) {
+			return str;
+		}
+		
+		boolean first = true;
+		int len = str.length();
+		StringBuilder sb = new StringBuilder(len / 2 + 1);
+		for (int i = 0; i < len; ) {
+			int cp = str.codePointAt(i);
+			
+			boolean nextFirst;
+			if (delimiterFn == null) {
+				nextFirst = Character.isWhitespace(cp);
+			} else {
+				nextFirst = delimiterFn.test(Integer.valueOf(cp));
+			}
+
+			if (first && !nextFirst) {
+				sb.appendCodePoint(cp);
+			}
+			
+			first = nextFirst;
+			i += Character.charCount(cp);
+		}
+		
+		return sb.toString();
 	}
 	
 	public static String toHalfWidth(String str, boolean alpha, boolean num, boolean symbols, boolean space, boolean kana, boolean hangul) {
