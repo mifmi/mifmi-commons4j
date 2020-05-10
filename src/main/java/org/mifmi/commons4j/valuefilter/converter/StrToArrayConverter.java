@@ -12,11 +12,11 @@ import org.mifmi.commons4j.util.StringUtilz;
 
 public class StrToArrayConverter extends AbstractConverter<CharSequence, String[]> {
 
-	private String separatorRegex;
+	private String separator;
 	private boolean trim;
 	
-	public StrToArrayConverter(String separatorRegex, boolean trim) {
-		this.separatorRegex = separatorRegex;
+	public StrToArrayConverter(String separator, boolean trim) {
+		this.separator = separator;
 		this.trim = trim;
 	}
 
@@ -45,7 +45,7 @@ public class StrToArrayConverter extends AbstractConverter<CharSequence, String[
 		}
 		
 		String strValue = value.toString();
-		String[] array = StringUtilz.split(strValue, this.separatorRegex, this.trim);
+		String[] array = StringUtilz.split(strValue, this.separator, this.trim);
 		
 		return array;
 	}

@@ -609,7 +609,7 @@ public class HttpReqRes {
 			return defaultValue;
 		}
 		
-		String[] pathParams = StringUtilz.split("/", pathParam);
+		String[] pathParams = StringUtilz.split(pathParam, '/');
 		
 		return pathParams;
 	}

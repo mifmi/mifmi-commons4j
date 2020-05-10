@@ -317,7 +317,11 @@ public final class StringUtilz {
 	}
 
 	public static String[] split(String str, char separator) {
-		return split(str, separator, false, -1, -1, false);
+		return split(str, separator, false);
+	}
+
+	public static String[] split(String str, char separator, boolean trim) {
+		return split(str, separator, trim, -1, -1, false);
 	}
 	
 	public static String[] split(String str, char separator, boolean trim, int maxCount, int escapeChar, boolean unescape) {
@@ -368,27 +372,106 @@ public final class StringUtilz {
 		return list.toArray(new String[list.size()]);
 	}
 	
-	public static String[] split(String str, String separatorRegex) {
-		return split(str, separatorRegex, false);
+	public static String[] split(String str, String separator) {
+		return split(str, separator, false);
 	}
 	
-	public static String[] split(String str, String separatorRegex, boolean trim) {
+	public static String[] split(String str, String separator, boolean trim) {
+		return split(str, new String[] {separator}, trim);
+	}
+
+	public static String[] split(String str, String[] separators) {
+		return split(str, separators, false);
+	}
+	
+	public static String[] split(String str, String[] separators, boolean trim) {
 		if (str == null) {
 			return null;
 		}
-		if (separatorRegex == null) {
+		if (separators == null) {
 			throw new NullPointerException();
 		}
+		if (separators.length == 0) {
+			throw new IllegalArgumentException();
+		}
+		for (String separator : separators) {
+			if (separator == null) {
+				throw new NullPointerException();
+			}
+			if (separator.isEmpty()) {
+				throw new IllegalArgumentException();
+			}
+		}
+		
+		if (str.isEmpty()) {
+			return new String[0];
+		}
+
+		int strLen = str.length();
+		List<String> list = new ArrayList<>();
+		int idx = 0;
+		for (int i = 0; i < strLen; i++) {
+			for (String separator : separators) {
+				if (startsWith(str, separator, i)) {
+					String val = str.substring(idx, i);
+					if (trim) {
+						val = val.trim();
+					}
+					list.add(val);
+					
+					idx = i + separator.length();
+					break;
+				}
+			}
+		}
+		
+		String lastVal = str.substring(idx);
 		if (trim) {
-			str = str.trim();
-			separatorRegex = "\\s*" + separatorRegex + "\\s*";
+			lastVal = lastVal.trim();
+		}
+		list.add(lastVal);
+		
+		return list.toArray(new String[list.size()]);
+	}
+	
+	public static String[] split(String str, Pattern separator) {
+		return split(str, separator, false);
+	}
+	
+	public static String[] split(String str, Pattern separator, boolean trim) {
+		if (str == null) {
+			return null;
+		}
+		if (separator == null) {
+			throw new NullPointerException();
 		}
 		
 		if (str.isEmpty()) {
 			return new String[0];
 		}
 		
-		return str.split(separatorRegex, -1);
+		List<String> list = new ArrayList<>();
+		int idx = 0;
+		Matcher m = separator.matcher(str);
+		while (m.find()) {
+			String val = str.substring(idx, m.start());
+			
+			if (trim) {
+				val = val.trim();
+			}
+			
+			list.add(val);
+			
+			idx = m.end();
+		}
+		
+		String lastVal = str.substring(idx);
+		if (trim) {
+			lastVal = lastVal.trim();
+		}
+		list.add(lastVal);
+		
+		return list.toArray(new String[list.size()]);
 	}
 	
 	public static String join(String separator, Object... values) {

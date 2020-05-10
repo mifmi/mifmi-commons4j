@@ -8,10 +8,12 @@
  */
 package test.org.mifmi.commons4j.util;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.function.Predicate;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 import org.mifmi.commons4j.util.StringUtilz;
@@ -181,6 +183,55 @@ public class StringUtilzTest {
 		assertEquals(2, StringUtilz.endsWith("abc", new String[] {"x", "a", "ab", "abc"}, 1));
 		assertEquals(1, StringUtilz.endsWith("abc", new String[] {"x", "ab", "abc", "a"}, 1));
 		assertEquals(3, StringUtilz.endsWith("abc", new String[] {"x", "abc", "a", "ab"}, 1));
+	}
+
+	@Test
+	public void testSplit_Char() throws Exception {
+		assertArrayEquals(null, StringUtilz.split(null, ','));
+		assertArrayEquals(new String[] {}, StringUtilz.split("", ','));
+		
+		assertArrayEquals(new String[] {"", ""}, StringUtilz.split(",", ','));
+		assertArrayEquals(new String[] {"", "", "", ""}, StringUtilz.split(",,,", ','));
+		
+		assertArrayEquals(new String[] {" Foo", " Bar", " Baz "}, StringUtilz.split(" Foo, Bar, Baz ", ','));
+		assertArrayEquals(new String[] {"Foo", "Bar", "Baz"}, StringUtilz.split(" Foo, Bar, Baz ", ',', true));
+	}
+
+	@Test
+	public void testSplit_Str() throws Exception {
+		assertArrayEquals(null, StringUtilz.split(null, ","));
+		assertArrayEquals(new String[] {}, StringUtilz.split("", ","));
+		
+		assertArrayEquals(new String[] {"", ""}, StringUtilz.split(",", ","));
+		assertArrayEquals(new String[] {"", "", "", ""}, StringUtilz.split(",,,", ","));
+		
+		assertArrayEquals(new String[] {" Foo", " Bar", " Baz "}, StringUtilz.split(" Foo, Bar, Baz ", ","));
+		assertArrayEquals(new String[] {"Foo", "Bar", "Baz"}, StringUtilz.split(" Foo, Bar, Baz ", ",", true));
+	}
+
+	@Test
+	public void testSplit_StrArr() throws Exception {
+		assertArrayEquals(null, StringUtilz.split(null, new String[] {",", "SPLIT", "SPL"}));
+		assertArrayEquals(new String[] {}, StringUtilz.split("", new String[] {",", "SPLIT", "SPL"}));
+		
+		assertArrayEquals(new String[] {"", ""}, StringUtilz.split(",", new String[] {",", "SPLIT", "SPL"}));
+		assertArrayEquals(new String[] {"", "", "", ""}, StringUtilz.split(",SPLSPLIT", new String[] {",", "SPLIT", "SPL"}));
+		assertArrayEquals(new String[] {"", "", "", "IT"}, StringUtilz.split(",SPLSPLIT", new String[] {",", "SPL", "SPLIT"}));
+		
+		assertArrayEquals(new String[] {" Foo", " Bar", " Baz "}, StringUtilz.split(" Foo, BarSPLIT Baz ", new String[] {",", "SPLIT", "SPL"}));
+		assertArrayEquals(new String[] {"Foo", "Bar", "Baz"}, StringUtilz.split(" Foo, BarSPLIT Baz ", new String[] {",", "SPLIT", "SPL"}, true));
+	}
+
+	@Test
+	public void testSplit_Pattern() throws Exception {
+		assertArrayEquals(null, StringUtilz.split(null, Pattern.compile("[,:|]")));
+		assertArrayEquals(new String[] {}, StringUtilz.split("", Pattern.compile("[,:|]")));
+		
+		assertArrayEquals(new String[] {"", ""}, StringUtilz.split(",", Pattern.compile("[,:|]")));
+		assertArrayEquals(new String[] {"", "", "", ""}, StringUtilz.split(",:|", Pattern.compile("[,:|]")));
+		
+		assertArrayEquals(new String[] {" Foo", " Bar", " Baz "}, StringUtilz.split(" Foo, Bar: Baz ", Pattern.compile("[,:|]")));
+		assertArrayEquals(new String[] {"Foo", "Bar", "Baz"}, StringUtilz.split(" Foo, Bar: Baz ", Pattern.compile("[,:|]"), true));
 	}
 
 	@Test
