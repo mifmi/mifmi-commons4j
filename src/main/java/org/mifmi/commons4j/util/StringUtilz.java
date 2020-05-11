@@ -81,7 +81,7 @@ public final class StringUtilz {
 		}
 		
 		for (String s : strs) {
-			if (s == null || s.length() == 0) {
+			if (s == null || s.isEmpty()) {
 				throw new IllegalArgumentException();
 			}
 		}
@@ -653,7 +653,7 @@ public final class StringUtilz {
 		}
 		
 		for (String oldStr : oldStrs) {
-			if (oldStr == null || oldStr.length() == 0) {
+			if (oldStr == null || oldStr.isEmpty()) {
 				throw new IllegalArgumentException();
 			}
 		}
@@ -1162,7 +1162,7 @@ public final class StringUtilz {
 	}
 
 	public static String swapCase(String str) {
-		if (str == null || str.length() == 0) {
+		if (str == null || str.isEmpty()) {
 			return str;
 		}
 		
@@ -1226,7 +1226,7 @@ public final class StringUtilz {
 	}
 	
 	public static String capitalize(String str, boolean fully, Predicate<Integer> delimiterFn) {
-		if (str == null || str.length() == 0) {
+		if (str == null || str.isEmpty()) {
 			return str;
 		}
 		
@@ -1276,8 +1276,7 @@ public final class StringUtilz {
 	}
 	
 	public static String initials(String str, Predicate<Integer> delimiterFn) {
-	
-		if (str == null || str.length() == 0) {
+		if (str == null || str.isEmpty()) {
 			return str;
 		}
 		
