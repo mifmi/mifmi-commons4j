@@ -1,3 +1,19 @@
+## 0.2.5 (2020-05-10)
+
+Add:
+
+  - Add HTMLUtilz.escapeHTML5Fully(String) method
+  - Add JavaScript escaping feature to JSP TagLib
+  - Add NumberUtilz#getIntegerPart, #getDecimalPart, #addDigit method
+  - Add StringUtils#count(String, String...) method
+  - Add StringUtilz#swapCase, #capitalize, #initials method
+
+Changed:
+
+  - Update TimeZone mappings of DateUtilz#localeToTimeZone(Locale)
+  - Remove NumberUtilz#parseJPNum(String jpNum, RoundingMode decimalRoundingMode, int fixedDecimalScale)
+  - Change StringUtilz#replaceAll, #startsWith, #endsWith, #split method signature
+
 ## 0.2.4 (2020-04-11)
 
 Add:
@@ -5,8 +21,8 @@ Add:
   - Add HTMLUtilz class
 
 Changed:
-  - Change NumberUtilz#toJPNum/parseJPNum methods. Throws exception if parse
-error occurred.
+
+  - Change NumberUtilz#toJPNum/parseJPNum methods. Throws exception if parse error occurred.
 
 ## 0.2.3 (2020-04-07)
 
