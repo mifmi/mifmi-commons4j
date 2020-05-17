@@ -19,7 +19,7 @@ public class BooleanUtilzTest {
 	public void testToBoolean() throws Exception {
 		assertEquals(false, BooleanUtilz.toBoolean(null));
 		assertEquals(false, BooleanUtilz.toBoolean(""));
-		assertEquals(false, BooleanUtilz.toBoolean("¥0"));
+		assertEquals(false, BooleanUtilz.toBoolean("\0"));
 		assertEquals(false, BooleanUtilz.toBoolean("false"));
 		assertEquals(false, BooleanUtilz.toBoolean("on"));
 		assertEquals(false, BooleanUtilz.toBoolean("off"));
@@ -41,7 +41,7 @@ public class BooleanUtilzTest {
 	public void testToBooleanObject() throws Exception {
 		assertEquals(null, BooleanUtilz.toBooleanObject(null));
 		assertEquals(Boolean.FALSE, BooleanUtilz.toBooleanObject(""));
-		assertEquals(Boolean.FALSE, BooleanUtilz.toBooleanObject("¥0"));
+		assertEquals(Boolean.FALSE, BooleanUtilz.toBooleanObject("\0"));
 		assertEquals(Boolean.FALSE, BooleanUtilz.toBooleanObject("false"));
 		assertEquals(Boolean.FALSE, BooleanUtilz.toBooleanObject("on"));
 		assertEquals(Boolean.FALSE, BooleanUtilz.toBooleanObject("off"));
