@@ -474,37 +474,58 @@ public final class StringUtilz {
 		return list.toArray(new String[list.size()]);
 	}
 	
+	public static <T> String join(String separator, Collection<T> values) {
+		return join(new StringBuilder(), separator, values).toString();
+	}
+	
 	public static String join(String separator, Object... values) {
 		return join(new StringBuilder(), separator, values).toString();
 	}
+	
+	public static <T> StringBuilder join(StringBuilder sb, String separator, Collection<T> values) {
+		if (values == null || values.isEmpty()) {
+			return sb;
+		}
+		
+		return join(sb, separator, values.toArray(new Object[values.size()]));
+	}
+	
 	public static StringBuilder join(StringBuilder sb, String separator, Object... values) {
 		if (values == null || values.length == 0) {
 			return sb;
 		}
 		
+		if (separator == null) {
+			separator = "";
+		}
+		
+		int valuesLen = values.length;
+		int len = separator.length() * (valuesLen - 1);
+		String[] strValues = new String[valuesLen];
+		for (int i = 0; i < valuesLen; i++) {
+			Object val = values[i];
+			
+			String strVal = (val == null) ? "" : val.toString();
+			
+			strValues[i] = strVal;
+			len += strVal.length();
+		}
+		
+		if (sb.capacity() < sb.length() + len) {
+			sb.ensureCapacity(sb.length() + len);
+		}
+		
 		boolean isFirst = true;
-		for (Object value : values) {
+		for (String value : strValues) {
 			if (isFirst) {
 				isFirst = false;
 			} else {
 				sb.append(separator);
 			}
-			if (value != null) {
-				sb.append(value.toString());
-			}
+			sb.append(value);
 		}
 		
 		return sb;
-	}
-	
-	public static <T> String join(String separator, Collection<T> values) {
-		return join(new StringBuilder(), separator, values).toString();
-	}
-	public static <T> StringBuilder join(StringBuilder sb, String separator, Collection<T> values) {
-		if (values == null || values.isEmpty()) {
-			return sb;
-		}
-		return join(sb, separator, values.toArray(new Object[values.size()]));
 	}
 	
 	public static String paddingLeft(String str, int len, char paddingChar) {

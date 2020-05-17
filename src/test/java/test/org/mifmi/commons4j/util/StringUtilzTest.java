@@ -12,6 +12,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
@@ -232,6 +234,54 @@ public class StringUtilzTest {
 		
 		assertArrayEquals(new String[] {" Foo", " Bar", " Baz "}, StringUtilz.split(" Foo, Bar: Baz ", Pattern.compile("[,:|]")));
 		assertArrayEquals(new String[] {"Foo", "Bar", "Baz"}, StringUtilz.split(" Foo, Bar: Baz ", Pattern.compile("[,:|]"), true));
+	}
+
+	@Test
+	public void testJoin() throws Exception {
+		assertEquals("FooBarBaz", StringUtilz.join((String)null, "Foo", "Bar", "Baz"));
+		assertEquals("FooBarBaz", StringUtilz.join((String)null, Arrays.asList("Foo", "Bar", "Baz")));
+		
+		assertEquals("FooBarBaz", StringUtilz.join("", "Foo", "Bar", "Baz"));
+		assertEquals("FooBarBaz", StringUtilz.join("", Arrays.asList("Foo", "Bar", "Baz")));
+
+		assertEquals("", StringUtilz.join(", ", (Object[])null));
+		assertEquals("", StringUtilz.join(", ", (Collection<?>)null));
+		
+		assertEquals("", StringUtilz.join(", "));
+		assertEquals("", StringUtilz.join(", ", Arrays.asList()));
+
+		assertEquals("Foo/Bar/Baz", StringUtilz.join("/", "Foo", "Bar", "Baz"));
+		assertEquals("Foo/Bar/Baz", StringUtilz.join("/", Arrays.asList("Foo", "Bar", "Baz")));
+		
+		assertEquals("Foo", StringUtilz.join(", ", "Foo"));
+		assertEquals("Foo", StringUtilz.join(", ", Arrays.asList("Foo")));
+		
+		assertEquals("Foo, Bar, Baz", StringUtilz.join(", ", "Foo", "Bar", "Baz"));
+		assertEquals("Foo, Bar, Baz", StringUtilz.join(", ", Arrays.asList("Foo", "Bar", "Baz")));
+	}
+
+	@Test
+	public void testJoin_StringBuilder() throws Exception {
+		assertEquals("FooBarBaz", StringUtilz.join(new StringBuilder(), (String)null, "Foo", "Bar", "Baz").toString());
+		assertEquals("FooBarBaz", StringUtilz.join((String)null, Arrays.asList("Foo", "Bar", "Baz")).toString());
+		
+		assertEquals("FooBarBaz", StringUtilz.join(new StringBuilder(), "", "Foo", "Bar", "Baz").toString());
+		assertEquals("FooBarBaz", StringUtilz.join(new StringBuilder(), "", Arrays.asList("Foo", "Bar", "Baz")).toString());
+
+		assertEquals("", StringUtilz.join(new StringBuilder(), ", ", (Object[])null).toString());
+		assertEquals("", StringUtilz.join(new StringBuilder(), ", ", (Collection<?>)null).toString());
+		
+		assertEquals("", StringUtilz.join(new StringBuilder(), ", ").toString());
+		assertEquals("", StringUtilz.join(new StringBuilder(), ", ", Arrays.asList()).toString());
+
+		assertEquals("Foo/Bar/Baz", StringUtilz.join(new StringBuilder(), "/", "Foo", "Bar", "Baz").toString());
+		assertEquals("Foo/Bar/Baz", StringUtilz.join(new StringBuilder(), "/", Arrays.asList("Foo", "Bar", "Baz")).toString());
+		
+		assertEquals("Foo", StringUtilz.join(new StringBuilder(), ", ", "Foo").toString());
+		assertEquals("Foo", StringUtilz.join(new StringBuilder(), ", ", Arrays.asList("Foo")).toString());
+		
+		assertEquals("Foo, Bar, Baz", StringUtilz.join(new StringBuilder(), ", ", "Foo", "Bar", "Baz").toString());
+		assertEquals("Foo, Bar, Baz", StringUtilz.join(new StringBuilder(), ", ", Arrays.asList("Foo", "Bar", "Baz")).toString());
 	}
 
 	@Test
