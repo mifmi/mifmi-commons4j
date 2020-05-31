@@ -329,8 +329,12 @@ public final class StringUtilz {
 			return null;
 		}
 		
-		if (str.isEmpty() || maxCount == 0) {
+		if (maxCount == 0) {
 			return new String[0];
+		}
+		
+		if (str.isEmpty()) {
+			return new String[]{str};
 		}
 		
 		int sepCnt = count(str, separator);
@@ -404,7 +408,7 @@ public final class StringUtilz {
 		}
 		
 		if (str.isEmpty()) {
-			return new String[0];
+			return new String[]{str};
 		}
 
 		int strLen = str.length();
@@ -447,7 +451,7 @@ public final class StringUtilz {
 		}
 		
 		if (str.isEmpty()) {
-			return new String[0];
+			return new String[]{str};
 		}
 		
 		List<String> list = new ArrayList<>();

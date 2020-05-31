@@ -190,7 +190,7 @@ public class StringUtilzTest {
 	@Test
 	public void testSplit_Char() throws Exception {
 		assertArrayEquals(null, StringUtilz.split(null, ','));
-		assertArrayEquals(new String[] {}, StringUtilz.split("", ','));
+		assertArrayEquals(new String[] {""}, StringUtilz.split("", ','));
 		
 		assertArrayEquals(new String[] {"", ""}, StringUtilz.split(",", ','));
 		assertArrayEquals(new String[] {"", "", "", ""}, StringUtilz.split(",,,", ','));
@@ -202,7 +202,7 @@ public class StringUtilzTest {
 	@Test
 	public void testSplit_Str() throws Exception {
 		assertArrayEquals(null, StringUtilz.split(null, ","));
-		assertArrayEquals(new String[] {}, StringUtilz.split("", ","));
+		assertArrayEquals(new String[] {""}, StringUtilz.split("", ","));
 		
 		assertArrayEquals(new String[] {"", ""}, StringUtilz.split(",", ","));
 		assertArrayEquals(new String[] {"", "", "", ""}, StringUtilz.split(",,,", ","));
@@ -214,7 +214,7 @@ public class StringUtilzTest {
 	@Test
 	public void testSplit_StrArr() throws Exception {
 		assertArrayEquals(null, StringUtilz.split(null, new String[] {",", "SPLIT", "SPL"}));
-		assertArrayEquals(new String[] {}, StringUtilz.split("", new String[] {",", "SPLIT", "SPL"}));
+		assertArrayEquals(new String[] {""}, StringUtilz.split("", new String[] {",", "SPLIT", "SPL"}));
 		
 		assertArrayEquals(new String[] {"", ""}, StringUtilz.split(",", new String[] {",", "SPLIT", "SPL"}));
 		assertArrayEquals(new String[] {"", "", "", ""}, StringUtilz.split(",SPLSPLIT", new String[] {",", "SPLIT", "SPL"}));
@@ -227,7 +227,7 @@ public class StringUtilzTest {
 	@Test
 	public void testSplit_Pattern() throws Exception {
 		assertArrayEquals(null, StringUtilz.split(null, Pattern.compile("[,:|]")));
-		assertArrayEquals(new String[] {}, StringUtilz.split("", Pattern.compile("[,:|]")));
+		assertArrayEquals(new String[] {""}, StringUtilz.split("", Pattern.compile("[,:|]")));
 		
 		assertArrayEquals(new String[] {"", ""}, StringUtilz.split(",", Pattern.compile("[,:|]")));
 		assertArrayEquals(new String[] {"", "", "", ""}, StringUtilz.split(",:|", Pattern.compile("[,:|]")));
