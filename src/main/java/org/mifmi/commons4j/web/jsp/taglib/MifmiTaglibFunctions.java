@@ -157,7 +157,7 @@ public class MifmiTaglibFunctions {
 		String s = str;
 		if (s != null) {
 			s = StringUtilz.escape(s, JS_STRING_ESCAPE_CHAR, JS_STRING_TARGET_CHARS, JS_STRING_ESCAPED_CHARS);
-			s = s.replaceAll("</", "<\\/"); // for XSS
+			s = s.replaceAll("</", "<\\\\/"); // for XSS
 		}
 		return s;
 	}
