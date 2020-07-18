@@ -1,3 +1,16 @@
+## 0.2.6 (2020-07-18)
+
+Add:
+  - Add Unicode escape sequence u{XXXXXX} pattern to unescape method
+
+Changed:
+
+  - Change return spec. Return [""] if StringUtilz#split() param is empty string
+
+Fixed:
+
+  - Fix bug of tag escaping in JSP TagLib
+
 ## 0.2.5 (2020-05-10)
 
 Add:
