@@ -1048,27 +1048,45 @@ public final class StringUtilz {
 					}
 					if (targetIdx == -1) {
 						if (useUnicodeEscape && ch == 'u') {
-							i++;
-							String codePointHexStr = str.substring(i, Math.min(i + 4, len));
-							i += 3;
-							try {
-								sb.append((char)Integer.parseInt(codePointHexStr, 16));
-							} catch (NumberFormatException e) {
-								// parse failed
-								sb.append('u');
-								sb.append(codePointHexStr);
+							char nch = str.charAt(i + 1);
+							if (nch == '{') {
+								// u{HHHH}
+								
+								int endIdx = str.indexOf('}', i + 2);
+								if (endIdx == -1) {
+									// parse failed
+									sb.append('u');
+								} else {
+									String codePointHexStr = str.substring(i + 2, Math.min(endIdx, len));
+									try {
+										sb.appendCodePoint(Integer.parseInt(codePointHexStr, 16));
+										i = endIdx;
+									} catch (NumberFormatException e) {
+										// parse failed
+										sb.append('u');
+									}
+								}
+							} else {
+								// uHHHH
+								
+								String codePointHexStr = str.substring(i + 1, Math.min(i + 5, len));
+								try {
+									sb.append((char)Integer.parseInt(codePointHexStr, 16));
+									i += 4;
+								} catch (NumberFormatException e) {
+									// parse failed
+									sb.append('u');
+								}
 							}
 						} else if (useUnicodeEscape && ch == 'U') {
-							i++;
-							String codePointHexStr = str.substring(i, Math.min(i + 8, len));
-							i += 7;
+							String codePointHexStr = str.substring(i + 1, Math.min(i + 9, len));
 							try {
 								int codePoint = (int)Long.parseLong(codePointHexStr, 16);
 								sb.appendCodePoint(codePoint);
+								i += 8;
 							} catch (IllegalArgumentException e) {
 								// parse failed
 								sb.append('U');
-								sb.append(codePointHexStr);
 							}
 						} else {
 							sb.append(ch);

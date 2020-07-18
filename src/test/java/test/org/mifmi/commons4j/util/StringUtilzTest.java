@@ -462,4 +462,32 @@ public class StringUtilzTest {
 			}
 		}));
 	}
+	
+	@Test
+	public void testUnescape() throws Exception {
+		assertEquals(null, StringUtilz.unescape(null, '\\', null, null, false));
+		assertEquals(null, StringUtilz.unescape(null, '\\', new char[] {'\t'}, new char[] {'t'}, false));
+		assertEquals(null, StringUtilz.unescape(null, '\\', null, null, true));
+		
+		assertEquals("", StringUtilz.unescape("", '\\', null, null, false));
+		assertEquals("", StringUtilz.unescape("", '\\', new char[] {'\t'}, new char[] {'t'}, false));
+		assertEquals("", StringUtilz.unescape("", '\\', null, null, true));
+		
+		assertEquals("\t", StringUtilz.unescape("\\t", '\\', new char[] {'\t'}, new char[] {'t'}, false));
+		assertEquals("A\tA", StringUtilz.unescape("A\\tA", '\\', new char[] {'\t'}, new char[] {'t'}, false));
+		assertEquals("A\t\tA", StringUtilz.unescape("A\\t\\tA", '\\', new char[] {'\t'}, new char[] {'t'}, false));
+		assertEquals("A\tA\tA", StringUtilz.unescape("A\\tA\\tA", '\\', new char[] {'\t'}, new char[] {'t'}, false));
+		
+		assertEquals("X", StringUtilz.unescape("\\X", '\\', new char[] {'\t'}, new char[] {'t'}, false));
+		assertEquals("AXA", StringUtilz.unescape("A\\XA", '\\', new char[] {'\t'}, new char[] {'t'}, false));
+		
+		assertEquals("😀", StringUtilz.unescape("\\uD83D\\uDE00", '\\', null, null, true));
+		assertEquals("😀", StringUtilz.unescape("\\u{1F600}", '\\', null, null, true));
+		assertEquals("😀", StringUtilz.unescape("\\U0001F600", '\\', null, null, true));
+		
+		assertEquals("uD83XuDE0X", StringUtilz.unescape("\\uD83X\\uDE0X", '\\', null, null, true));
+		assertEquals("u{1F60X}", StringUtilz.unescape("\\u{1F60X}", '\\', null, null, true));
+		assertEquals("u{1F600", StringUtilz.unescape("\\u{1F600", '\\', null, null, true));
+		assertEquals("U0001F60X", StringUtilz.unescape("\\U0001F60X", '\\', null, null, true));
+	}
 }
