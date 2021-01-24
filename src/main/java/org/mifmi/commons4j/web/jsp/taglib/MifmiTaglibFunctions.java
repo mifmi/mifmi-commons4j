@@ -182,4 +182,8 @@ public class MifmiTaglibFunctions {
 	public static long fileLastModified(String filePath) {
 		return new File(filePath).lastModified();
 	}
+	
+	public static boolean fileExists(String filePath) {
+		return new File(filePath).exists();
+	}
 }
