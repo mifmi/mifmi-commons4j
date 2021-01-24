@@ -1,3 +1,14 @@
+## 0.2.7 (2021-01-24)
+
+Add:
+  - Add AnyLocaleResourceBundleControl
+  - Add #fileLastModified to JSP TagLib
+  - Add #fileExists to JSP TagLib
+
+Fixed:
+
+  - Fix bug of NumberUtilz#toEnNumShortScale
+
 ## 0.2.6 (2020-07-18)
 
 Add:
