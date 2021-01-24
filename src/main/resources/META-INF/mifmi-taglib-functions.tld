@@ -83,4 +83,9 @@
 		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
 		<function-signature>java.lang.String formatDate(java.util.Date, java.lang.String, java.util.TimeZone)</function-signature>
 	</function>
+	<function>
+		<name>fileLastModified</name>
+		<function-class>org.mifmi.commons4j.web.jsp.taglib.MifmiTaglibFunctions</function-class>
+		<function-signature>long fileLastModified(java.lang.String)</function-signature>
+	</function>
 </taglib>

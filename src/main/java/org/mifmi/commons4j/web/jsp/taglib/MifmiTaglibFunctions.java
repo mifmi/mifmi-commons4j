@@ -8,6 +8,7 @@
  */
 package org.mifmi.commons4j.web.jsp.taglib;
 
+import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -176,5 +177,9 @@ public class MifmiTaglibFunctions {
 			format.setTimeZone(timeZone);
 		}
 		return format.format(date);
+	}
+	
+	public static long fileLastModified(String filePath) {
+		return new File(filePath).lastModified();
 	}
 }
