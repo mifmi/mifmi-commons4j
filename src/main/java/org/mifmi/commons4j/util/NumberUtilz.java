@@ -577,6 +577,9 @@ public final class NumberUtilz {
 							}
 							
 							i++;
+							
+							d2--;
+							d1 = d2 % 3;
 							break;
 						case '2': sb.append("Twenty").append((cn == '0') ? ' ' : '-'); break;
 						case '3': sb.append("Thirty").append((cn == '0') ? ' ' : '-'); break;

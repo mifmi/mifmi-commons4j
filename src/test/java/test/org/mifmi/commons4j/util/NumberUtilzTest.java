@@ -337,7 +337,12 @@ public class NumberUtilzTest {
 		assertEquals("Two Thousand", NumberUtilz.toEnNumShortScale(new BigDecimal("2000"), false));
 		
 		assertEquals("Twenty-Three Thousand Four Hundred Fifty-Six", NumberUtilz.toEnNumShortScale(new BigDecimal("23456"), false));
-
+		
+		assertEquals("Twelve Thousand Three Hundred Forty-Five", NumberUtilz.toEnNumShortScale(new BigDecimal("12345"), false));
+		assertEquals("One Hundred Twenty-Three Thousand Four Hundred Fifty-Six", NumberUtilz.toEnNumShortScale(new BigDecimal("123456"), false));
+		assertEquals("One Million Two Hundred Thirty-Four Thousand Five Hundred Sixty-Seven", NumberUtilz.toEnNumShortScale(new BigDecimal("1234567"), false));
+		assertEquals("Twelve Million Three Hundred Forty-Five Thousand Six Hundred Seventy-Eight", NumberUtilz.toEnNumShortScale(new BigDecimal("12345678"), false));
+		
 		assertEquals("Nine Hundred Eighty-Seven Septillion Six Hundred Fifty-Four Sextillion Three Hundred Twenty-One Quintillion Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trillion Four Hundred Thirty-Two Billion One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three", NumberUtilz.toEnNumShortScale(new BigDecimal("987654321098765432109876543"), false));
 		
 		
