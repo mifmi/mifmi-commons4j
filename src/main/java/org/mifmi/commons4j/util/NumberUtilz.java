@@ -771,6 +771,10 @@ public final class NumberUtilz {
 		for (int i = 0; i < tokens.length; i++) {
 			String token = tokens[i];
 			
+			if (token.isEmpty()) {
+				continue;
+			}
+			
 			boolean isLast = (i + 1 == tokens.length);
 			
 			prevXty = xty;
