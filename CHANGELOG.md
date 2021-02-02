@@ -1,3 +1,9 @@
+## 0.2.8 (2021-02-01)
+
+Fixed:
+
+  - Fix bug of NumberUtilz#parseEnNumShortScaleUnsignedPart
+
 ## 0.2.7 (2021-01-24)
 
 Add:
