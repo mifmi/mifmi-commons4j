@@ -2329,7 +2329,7 @@ public final class HTMLUtilz {
 			if (Character.isHighSurrogate(c)) {
 				// Surrogate Pair
 				
-				if (i < len) {
+				if (i + 1 < len) {
 					char nc = str.charAt(i + 1);
 					if (Character.isLowSurrogate(nc)) {
 						int v = (((int)c) << 16) | nc;
@@ -2352,7 +2352,7 @@ public final class HTMLUtilz {
 					}
 				}
 			} else {
-				if (i < len && HTML5_NAMED_REFS_2DIG.contains(c)) {
+				if (i + 1 < len && HTML5_NAMED_REFS_2DIG.contains(c)) {
 					char nc = str.charAt(i);
 					
 					int v = (((int)c) << 16) | nc;
