@@ -11,10 +11,19 @@ package org.mifmi.commons4j.util;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.MonthDay;
 import java.time.OffsetDateTime;
 import java.time.OffsetTime;
+import java.time.Year;
+import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.chrono.ChronoLocalDate;
+import java.time.chrono.ChronoLocalDateTime;
 import java.time.temporal.ChronoField;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalField;
@@ -1531,28 +1540,28 @@ public final class DateUtilz {
 
 
 	/**
-	 * Parse COUNTRY_TZ_MAP date/time string with multiple patterns.
+	 * Parse date/time string with multiple patterns.
 	 * Locale is used Locale.US.
 	 * TimeZone is used UTC.
 	 * 
 	 * @param str the date/time string to be parsed
 	 * @param strict when true, parsing is strict
 	 * @param parsePatterns date patterns
-	 * @return COUNTRY_TZ_MAP date parsed from the string
+	 * @return date parsed from the string
 	 */
 	public static Date parseDate(String str, boolean strict, String... parsePatterns) {
 		return parseDate(str, strict, null, null, parsePatterns);
 	}
 	
 	/**
-	 * Parse COUNTRY_TZ_MAP date/time string with multiple patterns.
+	 * Parse date/time string with multiple patterns.
 	 * 
 	 * @param str the date/time string to be parsed
 	 * @param strict when true, parsing is strict
 	 * @param timeZone the TimeZone of date/time. Locale.US if argument is null
 	 * @param locale the Locale of date/time. UTC if argument is null
 	 * @param parsePatterns date patterns
-	 * @return COUNTRY_TZ_MAP date parsed from the string
+	 * @return date parsed from the string
 	 */
 	public static Date parseDate(String str, boolean strict, TimeZone timeZone, Locale locale, String... parsePatterns) {
 		
@@ -1571,13 +1580,13 @@ public final class DateUtilz {
 	}
 	
 	/**
-	 * Parse COUNTRY_TZ_MAP date/time string with multiple patterns.
+	 * Parse date/time string with multiple patterns.
 	 * 
 	 * @param str the date/time string to be parsed
 	 * @param calendar the Calendar of date/time. Calendar.getInstance() if argument is null
 	 * @param locale the Locale of date/time. UTC if argument is null
 	 * @param parsePatterns date patterns
-	 * @return COUNTRY_TZ_MAP date parsed from the string
+	 * @return date parsed from the string
 	 */
 	public static Date parseDate(String str, Calendar calendar, Locale locale, String... parsePatterns) {
 		if (str == null || str.isEmpty()) {
@@ -1730,5 +1739,48 @@ public final class DateUtilz {
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Convert TemporalAccessor to Instant.
+	 * 
+	 * @param temporal temporal
+	 * @param defaultZone default zone
+	 * @param defaultYear default year
+	 * @param defaultMonth default month
+	 * @param defaultDay default day
+	 * @return instant
+	 */
+	public static Instant toInstant(TemporalAccessor temporal, ZoneId defaultZone, int defaultYear, Month defaultMonth, int defaultDay) {
+		if (temporal == null) {
+			return null;
+		}
+		
+		Instant instant;
+		if (temporal instanceof ZonedDateTime) {
+			instant = ((ZonedDateTime)temporal).toInstant();
+		} else if (temporal instanceof OffsetDateTime) {
+			instant = ((OffsetDateTime)temporal).toInstant();
+		} else if (temporal instanceof OffsetTime) {
+			instant = ((OffsetTime)temporal).atDate(LocalDate.of(defaultYear, defaultMonth, defaultDay)).toInstant();
+		} else if (temporal instanceof ChronoLocalDateTime) {
+			instant = ((ChronoLocalDateTime<?>)temporal).atZone(defaultZone).toInstant();
+		} else if (temporal instanceof ChronoLocalDate) {
+			instant = ((LocalDate)temporal).atTime(LocalTime.MIDNIGHT).atZone(defaultZone).toInstant();
+		} else if (temporal instanceof LocalTime) {
+			instant = ((LocalTime)temporal).atDate(LocalDate.of(defaultYear, defaultMonth, defaultDay)).atZone(defaultZone).toInstant();
+		} else if (temporal instanceof Year) {
+			instant = ((Year)temporal).atMonth(defaultMonth).atDay(defaultDay).atStartOfDay(defaultZone).toInstant();
+		} else if (temporal instanceof YearMonth) {
+			instant = ((YearMonth)temporal).atDay(defaultDay).atStartOfDay(defaultZone).toInstant();
+		} else if (temporal instanceof Month) {
+			instant = LocalDate.of(defaultYear, (Month)temporal, defaultDay).atStartOfDay(defaultZone).toInstant();
+		} else if (temporal instanceof MonthDay) {
+			instant = ((MonthDay)temporal).atYear(defaultYear).atStartOfDay(defaultZone).toInstant();
+		} else {
+			instant = Instant.from(temporal);
+		}
+		
+		return instant;
 	}
 }

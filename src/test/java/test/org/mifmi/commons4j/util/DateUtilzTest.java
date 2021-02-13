@@ -11,6 +11,7 @@ package test.org.mifmi.commons4j.util;
 import static org.junit.Assert.assertEquals;
 
 import java.time.DayOfWeek;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -352,6 +353,66 @@ public class DateUtilzTest {
 
 		assertEquals(2, DateUtilz.compareChrono(defLd, defLt, false));
 	}
+	
+	@Test
+	public void testToInstance() throws Exception {
+		assertEquals(null, DateUtilz.toInstant(null, ZoneId.of("UTC"), 1970, Month.JANUARY, 1));
+		
+		assertEquals(Instant.ofEpochMilli(0), DateUtilz.toInstant(ZonedDateTime.ofInstant(Instant.ofEpochMilli(0), ZoneId.of("UTC")), ZoneId.of("UTC"), 1970, Month.JANUARY, 1));
+		assertEquals(Instant.ofEpochMilli(1), DateUtilz.toInstant(ZonedDateTime.ofInstant(Instant.ofEpochMilli(1), ZoneId.of("UTC")), ZoneId.of("UTC"), 1970, Month.JANUARY, 1));
+		
+		// ZonedDateTime
+		// 2020-01-23T01:23:45.678Z = 1579742625678
+		assertEquals(Instant.ofEpochMilli(1579742625678L), DateUtilz.toInstant(ZonedDateTime.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneId.of("UTC")), ZoneId.of("UTC"), 1970, Month.JANUARY, 1));
+		assertEquals(Instant.ofEpochMilli(1579742625678L), DateUtilz.toInstant(ZonedDateTime.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneId.of("Asia/Tokyo")), ZoneId.of("UTC"), 1970, Month.JANUARY, 1));
+		assertEquals(Instant.ofEpochMilli(1579742625678L), DateUtilz.toInstant(OffsetDateTime.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneOffset.of("Z")), ZoneId.of("UTC"), 1970, Month.JANUARY, 1));
+		assertEquals(Instant.ofEpochMilli(1579742625678L), DateUtilz.toInstant(OffsetDateTime.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneOffset.of("+09:00")), ZoneId.of("UTC"), 1970, Month.JANUARY, 1));
+		
+		// OffsetTime
+		// 2020-01-23T01:23:45.678Z = 1579742625678
+		// 1989-02-03T01:23:45.678Z = 602472225678
+		assertEquals(Instant.ofEpochMilli(602472225678L), DateUtilz.toInstant(OffsetTime.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneOffset.of("Z")), ZoneId.of("UTC"), 1989, Month.FEBRUARY, 3));
+		assertEquals(Instant.ofEpochMilli(602472225678L), DateUtilz.toInstant(OffsetTime.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneOffset.of("+09:00")), ZoneId.of("UTC"), 1989, Month.FEBRUARY, 3));
+		
+		// LocalDateTime
+		// 2020-01-23T01:23:45.678Z = 1579742625678
+		// 2020-01-23T10:23:45.678Z = 1579775025678
+		assertEquals(Instant.ofEpochMilli(1579742625678L), DateUtilz.toInstant(LocalDateTime.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneId.of("UTC")), ZoneId.of("UTC"), 1989, Month.FEBRUARY, 3));
+		assertEquals(Instant.ofEpochMilli(1579775025678L), DateUtilz.toInstant(LocalDateTime.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneId.of("Asia/Tokyo")), ZoneId.of("UTC"), 1989, Month.FEBRUARY, 3));
+		assertEquals(Instant.ofEpochMilli(1579742625678L), DateUtilz.toInstant(LocalDateTime.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneId.of("Asia/Tokyo")), ZoneId.of("Asia/Tokyo"), 1989, Month.FEBRUARY, 3));
+		
+		// LocalDate
+		// 2020-01-23T00:00:00.000Z = 1579737600000
+		// 2020-01-23T00:00:00.000+09:00 = 1579705200000
+		assertEquals(Instant.ofEpochMilli(1579737600000L), DateUtilz.toInstant(LocalDate.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneId.of("UTC")), ZoneId.of("UTC"), 1989, Month.FEBRUARY, 3));
+		assertEquals(Instant.ofEpochMilli(1579737600000L), DateUtilz.toInstant(LocalDate.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneId.of("Asia/Tokyo")), ZoneId.of("UTC"), 1989, Month.FEBRUARY, 3));
+		assertEquals(Instant.ofEpochMilli(1579705200000L), DateUtilz.toInstant(LocalDate.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneId.of("Asia/Tokyo")), ZoneId.of("Asia/Tokyo"), 1989, Month.FEBRUARY, 3));
+		
+		// LocalTime
+		// 1989-02-03T01:23:45.678Z = 602472225678
+		// 1989-02-03T10:23:45.678Z = 602504625678
+		assertEquals(Instant.ofEpochMilli(602472225678L), DateUtilz.toInstant(LocalTime.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneId.of("UTC")), ZoneId.of("UTC"), 1989, Month.FEBRUARY, 3));
+		assertEquals(Instant.ofEpochMilli(602504625678L), DateUtilz.toInstant(LocalTime.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneId.of("Asia/Tokyo")), ZoneId.of("UTC"), 1989, Month.FEBRUARY, 3));
+		assertEquals(Instant.ofEpochMilli(602472225678L), DateUtilz.toInstant(LocalTime.ofInstant(Instant.ofEpochMilli(1579742625678L), ZoneId.of("Asia/Tokyo")), ZoneId.of("Asia/Tokyo"), 1989, Month.FEBRUARY, 3));
+		
+		// Year
+		// 2012-02-03T00:00:00.000Z = 602472225678
+		assertEquals(Instant.ofEpochMilli(1328227200000L), DateUtilz.toInstant(Year.of(2012), ZoneId.of("UTC"), 1989, Month.FEBRUARY, 3));
+		
+		// YearMonth
+		// 2012-03-03T00:00:00.000Z = 602472225678
+		assertEquals(Instant.ofEpochMilli(1330732800000L), DateUtilz.toInstant(YearMonth.of(2012, Month.MARCH), ZoneId.of("UTC"), 1989, Month.FEBRUARY, 3));
+		
+		// Month
+		// 1989-03-03T00:00:00.000Z = 604886400000
+		assertEquals(Instant.ofEpochMilli(604886400000L), DateUtilz.toInstant(Month.MARCH, ZoneId.of("UTC"), 1989, Month.FEBRUARY, 3));
+		
+		// MonthDay
+		// 1989-03-04T00:00:00.000Z = 604972800000
+		assertEquals(Instant.ofEpochMilli(604972800000L), DateUtilz.toInstant(MonthDay.of(Month.MARCH, 4), ZoneId.of("UTC"), 1989, Month.FEBRUARY, 3));
+		
+	}
+	
 	
 	private static TemporalAccessor[] join(TemporalAccessor[] t1, TemporalAccessor[] t2) {
 		TemporalAccessor[] t3 = new TemporalAccessor[t1.length + t2.length];
