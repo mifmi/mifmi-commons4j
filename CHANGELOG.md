@@ -1,3 +1,14 @@
+
+## 0.2.9 (2021-02-13)
+Add:
+
+  - Add ExceptionUtilz class
+  - Add DateUtilz#toInstant method
+
+Fixed:
+
+  - Fix bug of HTMLUtilz#escapeHTML5Fully
+
 ## 0.2.8 (2021-02-01)
 
 Fixed:
