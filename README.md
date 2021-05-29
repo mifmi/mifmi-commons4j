@@ -1,7 +1,6 @@
 # mifmi-commons4j
 
-[![Build Status](https://travis-ci.org/mifmi/mifmi-commons4j.svg?branch=master)](https://travis-ci.org/mifmi/mifmi-commons4j)
-[![Download](https://api.bintray.com/packages/mifmi/maven/mifmi-commons4j/images/download.svg)](https://bintray.com/mifmi/maven/mifmi-commons4j/_latestVersion)
+[![](https://jitpack.io/v/mifmi/mifmi-commons4j.svg)](https://jitpack.io/#mifmi/mifmi-commons4j)
 
 The mifmi-commons4j presents basic utility classes for Java development. 
 
