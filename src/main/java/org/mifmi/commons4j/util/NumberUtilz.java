@@ -32,6 +32,11 @@ public final class NumberUtilz {
 	
 	private static final Pattern EN_NUM_DECIMAL_AND_PATTERN = Pattern.compile("(.+)\\s+and\\s+([0-9]+)\\s*/\\s*([0-9]+)");
 	
+	private static final Pattern EN_NUM_MULTI_ILLI_PATTERN = Pattern.compile("(.+?)lli(on$|ard$)?");
+	
+	private static final Pattern EN_NUM_MULTI_ILLI_PART_PATTERN = Pattern.compile("(ni|mi|bi|tri|quadri|quinti|sexti|septi|octi|noni|un|duo|tre(?!centi)(?:s)?|quattuor|quin(?:qua)?|se(?:s(?!centi)|x)?|septe(?:n|m)?|octo|nove(?:n|m)?)?(deci|viginti|trigint(?:a|i)|quadragint(?:a|i)|quinquagint(?:a|i)|sexagint(?:a|i)|septuagint(?:a|i)|octogint(?:a|i)|nonagint(?:a|i))?(centi|ducenti|trecenti|quadringenti|quingenti|sescenti|septingenti|octingenti|nongenti)?");
+	
+	
 	private NumberUtilz() {
 		// NOP
 	}
@@ -517,14 +522,26 @@ public final class NumberUtilz {
 	}
 	
 	public static String toEnNumShortScale(long num, boolean fractionDec) {
+		return toEnNumShortScale(num, fractionDec, false);
+	}
+	
+	public static String toEnNumShortScale(long num, boolean fractionDec, boolean useConwayWechslerSystem) {
 		return toEnNumShortScale(BigDecimal.valueOf(num), fractionDec);
 	}
 	
 	public static String toEnNumShortScale(double num, boolean fractionDec) {
+		return toEnNumShortScale(num, fractionDec, false);
+	}
+	
+	public static String toEnNumShortScale(double num, boolean fractionDec, boolean useConwayWechslerSystem) {
 		return toEnNumShortScale(BigDecimal.valueOf(num), fractionDec);
 	}
 	
 	public static String toEnNumShortScale(BigInteger num, boolean fractionDec) {
+		return toEnNumShortScale(num, fractionDec, false);
+	}
+	
+	public static String toEnNumShortScale(BigInteger num, boolean fractionDec, boolean useConwayWechslerSystem) {
 		if (num == null) {
 			return null;
 		}
@@ -533,6 +550,58 @@ public final class NumberUtilz {
 	}
 	
 	public static String toEnNumShortScale(BigDecimal num, boolean fractionDec) {
+		return toEnNumShortScale(num, fractionDec, false);
+	}
+	
+	public static String toEnNumShortScale(BigDecimal num, boolean fractionDec, boolean useConwayWechslerSystem) {
+		if (num == null) {
+			return null;
+		}
+
+		return toEnNum(num, fractionDec, false, false, useConwayWechslerSystem);
+	}
+	
+	public static String toEnNumLongScale(long num, boolean fractionDec, boolean useIlliard) {
+		return toEnNumLongScale(num, fractionDec, useIlliard, false);
+	}
+	
+	public static String toEnNumLongScale(long num, boolean fractionDec, boolean useIlliard, boolean useConwayWechslerSystem) {
+		return toEnNumLongScale(BigDecimal.valueOf(num), fractionDec, useIlliard, useConwayWechslerSystem);
+	}
+	
+	public static String toEnNumLongScale(double num, boolean fractionDec, boolean useIlliard) {
+		return toEnNumLongScale(num, fractionDec, useIlliard, false);
+	}
+	
+	public static String toEnNumLongScale(double num, boolean fractionDec, boolean useIlliard, boolean useConwayWechslerSystem) {
+		return toEnNumLongScale(BigDecimal.valueOf(num), fractionDec, useIlliard, useConwayWechslerSystem);
+	}
+	
+	public static String toEnNumLongScale(BigInteger num, boolean fractionDec, boolean useIlliard) {
+		return toEnNumLongScale(num, fractionDec, useIlliard, false);
+	}
+	
+	public static String toEnNumLongScale(BigInteger num, boolean fractionDec, boolean useIlliard, boolean useConwayWechslerSystem) {
+		if (num == null) {
+			return null;
+		}
+		
+		return toEnNumLongScale(new BigDecimal(num), fractionDec, useIlliard, useConwayWechslerSystem);
+	}
+	
+	public static String toEnNumLongScale(BigDecimal num, boolean fractionDec, boolean useIlliard) {
+		return toEnNumLongScale(num, fractionDec, useIlliard, false);
+	}
+	
+	public static String toEnNumLongScale(BigDecimal num, boolean fractionDec, boolean useIlliard, boolean useConwayWechslerSystem) {
+		if (num == null) {
+			return null;
+		}
+		
+		return toEnNum(num, fractionDec, true, useIlliard, useConwayWechslerSystem);
+	}
+	
+	private static String toEnNum(BigDecimal num, boolean fractionDec, boolean longScale, boolean useIlliard, boolean useConwayWechslerSystem) {
 		if (num == null) {
 			return null;
 		}
@@ -604,31 +673,40 @@ public final class NumberUtilz {
 						case '9': sb.append("Nine "); break;
 						default: throw new NumberParseException("Unsupported character: " + c);
 						}
-						
-						if (d1 == 2) {
-							sb.append("Hundred ");
-						}
+					}
+
+					if (d1 == 2) {
+						sb.append("Hundred ");
 					}
 					
 					hasD1Num = true;
 				}
-				if (d1 == 0 && hasD1Num) {
-					switch (d2) {
-					case 0: break;
-					case 3: sb.append("Thousand "); break;
-					case 6: sb.append("Million "); break;
-					case 9: sb.append("Billion "); break;
-					case 12: sb.append("Trillion "); break;
-					case 15: sb.append("Quadrillion "); break;
-					case 18: sb.append("Quintillion "); break;
-					case 21: sb.append("Sextillion "); break;
-					case 24: sb.append("Septillion "); break;
-					default:  throw new NumberParseException("Number is too big. Scale: " + d2);
-					}
-				}
 				
-				if (d1 == 0) {
-					hasD1Num = false;
+				if (hasD1Num) {
+					if (d1 == 0) {
+						
+						if (d2 == 0) {
+							// NOP
+						} else if (d2 == 3) {
+							sb.append("Thousand ");
+							hasD1Num = false;
+						} else {
+							int n = (longScale) ? d2 / 6 : d2 / 3 - 1;
+							boolean illiardDigit = (longScale && d2 % 6 == 3);
+							
+							if (illiardDigit && !useIlliard) {
+								sb.append("Thousand ");
+								
+								hasD1Num = true;
+							} else {
+								appendEnNumIlli(sb, n, illiardDigit && useIlliard, useConwayWechslerSystem);
+								
+								sb.append(' ');
+								
+								hasD1Num = false;
+							}
+						}
+					}
 				}
 			}
 		}
@@ -667,11 +745,210 @@ public final class NumberUtilz {
 		return sb.toString().trim();
 	}
 	
+	private static void appendEnNumIlli(StringBuilder sb, int n, boolean illiard, boolean useConwayWechslerSystem) {
+		assert (0 < n);
+		
+		int startIdx = sb.length();
+		
+		if (n <= 999) {
+			appendEnNumIlliPart(sb, n, useConwayWechslerSystem);
+		} else {
+			// 1000 <= n
+			StringBuilder subSB = new StringBuilder();
+			int num = n;
+			do {
+				int numUnder999 = num % 1000;
+				subSB.setLength(0);
+				appendEnNumIlliPart(subSB, numUnder999, useConwayWechslerSystem);
+				
+				sb.insert(startIdx, subSB);
+				
+				num = num / 1000;
+			} while (num != 0);
+		}
+		
+		// Capitalize
+		sb.setCharAt(startIdx, Character.toUpperCase(sb.charAt(startIdx)));
+		
+		sb.append((illiard) ? "ard" : "on");
+	}
+	
+	private static void appendEnNumIlliPart(StringBuilder sb, int n, boolean useConwayWechslerSystem) {
+		assert (0 <= n && n < 1000);
+		
+		int n1 = n % 10;
+		
+		if (n < 10) {
+			switch (n1) {
+			case 0: sb.append("n"); break; // for over n=1000 only
+			case 1: sb.append("m"); break;
+			case 2: sb.append("b"); break;
+			case 3: sb.append("tr"); break;
+			case 4: sb.append("quadr"); break;
+			case 5: sb.append("quint"); break;
+			case 6: sb.append("sext"); break;
+			case 7: sb.append("sept"); break;
+			case 8: sb.append("oct"); break;
+			case 9: sb.append("non"); break;
+			default: assert false;
+			}
+		} else {
+			int n2 = (n / 10) % 10;
+			int n3 = (n / 100);
+			
+			if (useConwayWechslerSystem) {
+				// Conway-Wechsler system
+				
+				switch (n1) {
+				case 0: /* NOP */ break;
+				case 1: sb.append("un"); break;
+				case 2: sb.append("duo"); break;
+				case 3:
+					sb.append("tre");
+					if (n2 == 0) {
+						if (3 <= n3 && n3 <= 5) {
+							sb.append('s');
+						} else if (n3 == 1 || n3 == 8) {
+							// x -> s
+							sb.append('s');
+						}
+					} else {
+						if (2 <= n2 && n2 <= 5) {
+							sb.append('s');
+						} else if (n2 == 8) {
+							// x -> s
+							sb.append('s');
+						}
+					}
+					break;
+				case 4: sb.append("quattuor"); break;
+				case 5: sb.append("quin"); break; // The original Conway-Wechsler system specifies "quinqua" for 5, not "quin".
+				case 6:
+					sb.append("se");
+					if (n2 == 0) {
+						if (3 <= n3 && n3 <= 5) {
+							sb.append('s');
+						} else if (n3 == 1 || n3 == 8) {
+							sb.append('x');
+						}
+					} else {
+						if (2 <= n2 && n2 <= 5) {
+							sb.append('s');
+						} else if (n2 == 8) {
+							sb.append('x');
+						}
+					}
+					break;
+				case 7:
+					sb.append("septe");
+					if (n2 == 0) {
+						if (1 <= n3 && n3 <= 7) {
+							sb.append('n');
+						} else if (n3 == 8) {
+							sb.append('m');
+						}
+					} else {
+						if (n2 == 1 || (3 <= n2 && n2 <= 7)) {
+							sb.append('n');
+						} else if (n2 == 2 || n2 == 8) {
+							sb.append('m');
+						}
+					}
+					break;
+				case 8: sb.append("octo"); break;
+				case 9:
+					sb.append("nove");
+					if (n2 == 0) {
+						if (1 <= n3 && n3 <= 7) {
+							sb.append('n');
+						} else if (n3 == 8) {
+							sb.append('m');
+						}
+					} else {
+						if (n2 == 1 || (3 <= n2 && n2 <= 7)) {
+							sb.append('n');
+						} else if (n2 == 2 || n2 == 8) {
+							sb.append('m');
+						}
+					}
+					break;
+				default: assert false;
+				}
+			} else {
+				// Default system; CW4EN system (Conway-Wechsler for English system)
+				
+				switch (n1) {
+				case 0: /* NOP */ break;
+				case 1: sb.append("un"); break;
+				case 2: sb.append("duo"); break;
+				case 3:
+					sb.append("tre");
+					if (n2 == 0) {
+						if (n3 == 1) {
+							// n = 103 (Tre[s]centillion)
+							sb.append('s');
+						}
+					}
+					break;
+				case 4: sb.append("quattuor"); break;
+				case 5: sb.append("quin"); break;
+				case 6: sb.append("sex"); break;
+				case 7: sb.append("septen"); break;
+				case 8: sb.append("octo"); break;
+				case 9: sb.append("novem"); break;
+				default: assert false;
+				}
+			}
+			
+			switch (n2) {
+			case 0: /* NOP */ break;
+			case 1: sb.append((n3 == 0) ? "dec" : "deci"); break;
+			case 2: sb.append((n3 == 0) ? "vigint" : "viginti"); break;
+			case 3: sb.append((n3 == 0) ? "trigint" : "triginta"); break;
+			case 4: sb.append((n3 == 0) ? "quadragint" : "quadraginta"); break;
+			case 5: sb.append((n3 == 0) ? "quinquagint" : "quinquaginta"); break;
+			case 6: sb.append((n3 == 0) ? "sexagint" : "sexaginta"); break;
+			case 7: sb.append((n3 == 0) ? "septuagint" : "septuaginta"); break;
+			case 8: sb.append((n3 == 0) ? "octogint" : "octoginta"); break;
+			case 9: sb.append((n3 == 0) ? "nonagint" : "nonaginta"); break;
+			default: assert false;
+			}
+			
+			switch (n3) {
+			case 0: /* NOP */ break;
+			case 1: sb.append("cent"); break;
+			case 2: sb.append("ducent"); break;
+			case 3: sb.append("trecent"); break;
+			case 4: sb.append("quadringent"); break;
+			case 5: sb.append("quingent"); break;
+			case 6: sb.append("sescent"); break;
+			case 7: sb.append("septingent"); break;
+			case 8: sb.append("octingent"); break;
+			case 9: sb.append("nongent"); break;
+			default: assert false;
+			}
+		}
+		
+		sb.append("illi");
+	}
+	
 	public static BigDecimal parseEnNumShortScale(String enNum) {
 		return parseEnNumShortScale(enNum, RoundingMode.HALF_UP, -1);
 	}
 	
 	public static BigDecimal parseEnNumShortScale(String enNum, RoundingMode decimalRoundingMode, int fixedDecimalScale) {
+		return parseEnNum(enNum, decimalRoundingMode, fixedDecimalScale, false);
+	}
+	
+	public static BigDecimal parseEnNumLongScale(String enNum) {
+		return parseEnNumLongScale(enNum, RoundingMode.HALF_UP, -1);
+	}
+	
+	public static BigDecimal parseEnNumLongScale(String enNum, RoundingMode decimalRoundingMode, int fixedDecimalScale) {
+		return parseEnNum(enNum, decimalRoundingMode, fixedDecimalScale, true);
+	}
+	
+	private static BigDecimal parseEnNum(String enNum, RoundingMode decimalRoundingMode, int fixedDecimalScale, boolean longScale) {
 		if (enNum == null) {
 			return null;
 		}
@@ -704,8 +981,8 @@ public final class NumberUtilz {
 			String iNumStr = matcherDecPoint.group(1);
 			String dNumStr = matcherDecPoint.group(2);
 			
-			BigDecimal iNum = parseEnNumShortScaleUnsignedIntPart(iNumStr);
-			BigDecimal dNum = parseEnNumShortScaleUnsignedDecPart(dNumStr, fixedDecimalScale, decimalRoundingMode);
+			BigDecimal iNum = parseEnNumUnsignedIntPart(iNumStr, longScale);
+			BigDecimal dNum = parseEnNumUnsignedDecPart(dNumStr, fixedDecimalScale, decimalRoundingMode, longScale);
 
 			num = iNum.add(dNum);
 		} else {
@@ -716,7 +993,7 @@ public final class NumberUtilz {
 				String dnNumStr = matcherDecAnd.group(2);
 				String ddNumStr = matcherDecAnd.group(3);
 				
-				BigDecimal iNum = parseEnNumShortScaleUnsignedIntPart(iNumStr);
+				BigDecimal iNum = parseEnNumUnsignedIntPart(iNumStr, longScale);
 				int dNumScale;
 				if (0 <= fixedDecimalScale) {
 					dNumScale = fixedDecimalScale;
@@ -728,7 +1005,7 @@ public final class NumberUtilz {
 				num = iNum.add(dNum);
 			} else {
 				// Integer
-				num = parseEnNumShortScaleUnsignedIntPart(enNumUnsigned);
+				num = parseEnNumUnsignedIntPart(enNumUnsigned, longScale);
 			}
 		}
 		
@@ -741,15 +1018,15 @@ public final class NumberUtilz {
 		return num;
 	}
 	
-	private static BigDecimal parseEnNumShortScaleUnsignedIntPart(String enNum) {
-		return parseEnNumShortScaleUnsignedPart(enNum, false, -1, null);
+	private static BigDecimal parseEnNumUnsignedIntPart(String enNum, boolean longScale) {
+		return parseEnNumUnsignedPart(enNum, false, -1, null, longScale);
 	}
 	
-	private static BigDecimal parseEnNumShortScaleUnsignedDecPart(String enNum, int fixedDecimalScale, RoundingMode decimalRoundingMode) {
-		return parseEnNumShortScaleUnsignedPart(enNum, true, fixedDecimalScale, decimalRoundingMode);
+	private static BigDecimal parseEnNumUnsignedDecPart(String enNum, int fixedDecimalScale, RoundingMode decimalRoundingMode, boolean longScale) {
+		return parseEnNumUnsignedPart(enNum, true, fixedDecimalScale, decimalRoundingMode, longScale);
 	}
 	
-	private static BigDecimal parseEnNumShortScaleUnsignedPart(String enNum, boolean decimalPart, int fixedDecimalScale, RoundingMode decimalRoundingMode) {
+	private static BigDecimal parseEnNumUnsignedPart(String enNum, boolean decimalPart, int fixedDecimalScale, RoundingMode decimalRoundingMode, boolean longScale) {
 		if (enNum == null) {
 			return null;
 		}
@@ -762,9 +1039,10 @@ public final class NumberUtilz {
 		
 		BigDecimal num = BigDecimal.ZERO;
 		BigDecimal n = BigDecimal.ZERO;
+		BigDecimal n2 = BigDecimal.ZERO;
 		int d = -1;
-		boolean xty = false;
-		boolean prevXty = false;
+		int zeros = 0;
+		int prevZeros = 0;
 		int zeroPrefixCount = 0;
 		
 		String[] tokens = enNum.split("\\s+");
@@ -775,10 +1053,8 @@ public final class NumberUtilz {
 				continue;
 			}
 			
-			boolean isLast = (i + 1 == tokens.length);
-			
-			prevXty = xty;
-			xty = false;
+			prevZeros = zeros;
+			zeros = 0;
 			
 			boolean parsed = false;
 			char c0 = token.charAt(0);
@@ -794,65 +1070,71 @@ public final class NumberUtilz {
 			if (!parsed) {
 				switch (token) {
 				case "zero":
-					n = add(n, 0, !prevXty);
-					if (BigDecimal.ZERO.equals(n)) {
+					n = add(n, 0, (prevZeros < 1));
+					if (n.signum() == 0) {
 						zeroPrefixCount++;
 					}
 					break;
-				case "one": n = add(n, 1L, !prevXty); break;
-				case "two": n = add(n, 2L, !prevXty); break;
-				case "three": n = add(n, 3L, !prevXty); break;
-				case "four": n = add(n, 4L, !prevXty); break;
-				case "five": n = add(n, 5L, !prevXty); break;
-				case "six": n = add(n, 6L, !prevXty); break;
-				case "seven": n = add(n, 7L, !prevXty); break;
-				case "eight": n = add(n, 8L, !prevXty); break;
-				case "nine": n = add(n, 9L, !prevXty); break;
-				case "ten": n = add(n, 10L, !prevXty); break;
-				case "eleven": n = add(n, 11L, !prevXty); break;
-				case "twelve": n = add(n, 12L, !prevXty); break;
-				case "thirteen": n = add(n, 13L, !prevXty); break;
-				case "fourteen": n = add(n, 14L, !prevXty); break;
-				case "fifteen": n = add(n, 15L, !prevXty); break;
-				case "sixteen": n = add(n, 16L, !prevXty); break;
-				case "seventeen": n = add(n, 17L, !prevXty); break;
-				case "eighteen": n = add(n, 18L, !prevXty); break;
-				case "nineteen": n = add(n, 19L, !prevXty); break;
-				case "twenty": n = add(n, 20L, !prevXty); xty = true; break;
-				case "thirty": n = add(n, 30L, !prevXty); xty = true; break;
-				case "forty": n = add(n, 40L, !prevXty); xty = true; break;
-				case "fifty": n = add(n, 50L, !prevXty); xty = true; break;
-				case "sixty": n = add(n, 60L, !prevXty); xty = true; break;
-				case "seventy": n = add(n, 70L, !prevXty); xty = true; break;
-				case "eighty": n = add(n, 80L, !prevXty); xty = true; break;
-				case "ninety": n = add(n, 90L, !prevXty); xty = true; break;
-				case "hundred": n = n.scaleByPowerOfTen(2); xty = true; break;
-				case "thousand": d = 3; break;
-				case "million": d = 6; break;
-				case "billion": d = 9; break;
-				case "trillion": d = 12; break;
-				case "quadrillion": d = 15; break;
-				case "quintillion": d = 18; break;
-				case "sextillion": d = 21; break;
-				case "septillion": d = 24; break;
-				default: throw new NumberParseException("Unsupported word: " + token);
+				case "one": n = add(n, 1L, (prevZeros < 1)); break;
+				case "two": n = add(n, 2L, (prevZeros < 1)); break;
+				case "three": n = add(n, 3L, (prevZeros < 1)); break;
+				case "four": n = add(n, 4L, (prevZeros < 1)); break;
+				case "five": n = add(n, 5L, (prevZeros < 1)); break;
+				case "six": n = add(n, 6L, (prevZeros < 1)); break;
+				case "seven": n = add(n, 7L, (prevZeros < 1)); break;
+				case "eight": n = add(n, 8L, (prevZeros < 1)); break;
+				case "nine": n = add(n, 9L, (prevZeros < 1)); break;
+				case "ten": n = add(n, 10L, (prevZeros < 1)); break;
+				case "eleven": n = add(n, 11L, (prevZeros < 2)); break;
+				case "twelve": n = add(n, 12L, (prevZeros < 2)); break;
+				case "thirteen": n = add(n, 13L, (prevZeros < 2)); break;
+				case "fourteen": n = add(n, 14L, (prevZeros < 2)); break;
+				case "fifteen": n = add(n, 15L, (prevZeros < 2)); break;
+				case "sixteen": n = add(n, 16L, (prevZeros < 2)); break;
+				case "seventeen": n = add(n, 17L, (prevZeros < 2)); break;
+				case "eighteen": n = add(n, 18L, (prevZeros < 2)); break;
+				case "nineteen": n = add(n, 19L, (prevZeros < 2)); break;
+				case "twenty": n = add(n, 20L, (prevZeros < 2)); zeros = 1; break;
+				case "thirty": n = add(n, 30L, (prevZeros < 2)); zeros = 1; break;
+				case "forty": n = add(n, 40L, (prevZeros < 2)); zeros = 1; break;
+				case "fifty": n = add(n, 50L, (prevZeros < 2)); zeros = 1; break;
+				case "sixty": n = add(n, 60L, (prevZeros < 2)); zeros = 1; break;
+				case "seventy": n = add(n, 70L, (prevZeros < 2)); zeros = 1; break;
+				case "eighty": n = add(n, 80L, (prevZeros < 2)); zeros = 1; break;
+				case "ninety": n = add(n, 90L, (prevZeros < 2)); zeros = 1; break;
+				case "hundred":
+					n = n.scaleByPowerOfTen(2);
+					zeros = 2;
+					break;
+				case "thousand":
+					n2 = n.scaleByPowerOfTen(3);
+					n = BigDecimal.ZERO;
+					break;
+				default:
+					d = enNumIllionToDigit(token, longScale);
+					if (d < 0) {
+						d = enNumIlliardToDigit(token, longScale);
+						if (d < 0) {
+							throw new NumberParseException("Unsupported word: " + token);
+						}
+					}
+					
+					num = num.add(n2.add(n).scaleByPowerOfTen(d));
+					
+					n = BigDecimal.ZERO;
+					n2 = BigDecimal.ZERO;
+					d = -1;
+					
+					break;
 				}
 			}
-			
-			if (d != -1) {
-				num = num.add(n.scaleByPowerOfTen(d));
-				
-				n = BigDecimal.ZERO;
-				d = -1;
-			} else if (isLast) {
-				num = num.add(n);
-			}
 		}
+		num = num.add(n2).add(n);
 		
 		if (decimalPart) {
 			// convert to decimal part
 			int len;
-			if (0 < zeroPrefixCount && BigDecimal.ZERO.equals(num)) {
+			if (0 < zeroPrefixCount && num.signum() == 0) {
 				// avoid double count
 				len = zeroPrefixCount;
 			} else {
@@ -881,6 +1163,150 @@ public final class NumberUtilz {
 		}
 		
 		return num;
+	}
+	
+	private static int enNumIllionToDigit(String illion, boolean longScale) {
+		int n = enNumIlliToN(illion, false);
+		if (n < 0) {
+			return -1;
+		}
+		
+		if (longScale) {
+			return 6 * n;
+		} else {
+			return 3 * n + 3;
+		}
+	}
+	
+	private static int enNumIlliardToDigit(String illiard, boolean longScale) {
+		if (longScale) {
+			int n = enNumIlliToN(illiard, true);
+			if (n < 0) {
+				return -1;
+			}
+			
+			return 6 * n + 3;
+		} else {
+			// Unsupported
+			return -1;
+		}
+	}
+	
+	private static int enNumIlliToN(String illi, boolean illiard) {
+		Matcher m = EN_NUM_MULTI_ILLI_PATTERN.matcher(illi);
+		if (!m.find()) {
+			return -1;
+		}
+		
+		int n = 0;
+		String suffix = null;
+		do {
+			String d = m.group(1);
+			suffix = m.group(2);
+			
+			n *= 1000;
+			
+			Matcher mp = EN_NUM_MULTI_ILLI_PART_PATTERN.matcher(d);
+			if (!mp.matches()) {
+				return -1;
+			}
+			
+			String d1 = mp.group(1);
+			String d2 = mp.group(2);
+			String d3 = mp.group(3);
+			
+			if (d1 != null) {
+				if (d2 == null && d3 == null) {
+					// n < 10
+					switch (d1) {
+					case "ni": if (n == 0) { return -1; } break;
+					case "mi": n += 1; break;
+					case "bi": n += 2; break;
+					case "tri": n += 3; break;
+					case "quadri": n += 4; break;
+					case "quinti": n += 5; break;
+					case "sexti": n += 6; break;
+					case "septi": n += 7; break;
+					case "octi": n += 8; break;
+					case "noni": n += 9; break;
+					default: assert false : "Unsuppoorted -illion/-illiard: " + illi + " (" + d1 + ")";
+					}
+				} else {
+					// 10 <= n
+					switch (d1) {
+					case "un": n += 1; break;
+					case "duo": n += 2; break;
+					case "tre": // FALLTHRU
+					case "tres": n += 3; break;
+					case "quattuor": n += 4; break;
+					case "quin": // FALLTHRU
+					case "quinqua": n += 5; break;
+					case "se": // FALLTHRU
+					case "ses": // FALLTHRU
+					case "sex": n += 6; break;
+					case "septe": // FALLTHRU
+					case "septen": // FALLTHRU
+					case "septem": n += 7; break;
+					case "octo": n += 8; break;
+					case "nove": // FALLTHRU
+					case "noven": // FALLTHRU
+					case "novem": n += 9; break;
+					default: assert false : "Unsuppoorted -illion/-illiard: " + illi + " (" + d1 + ")";
+					}
+				}
+			}
+			
+			if (d2 != null) {
+				switch (d2) {
+				case "deci": n += 10; break;
+				case "viginti": n += 20; break;
+				case "triginta": // FALLTHRU
+				case "triginti": n += 30; break;
+				case "quadraginta": // FALLTHRU
+				case "quadraginti": n += 40; break;
+				case "quinquaginta": // FALLTHRU
+				case "quinquaginti": n += 50; break;
+				case "sexaginta": // FALLTHRU
+				case "sexaginti": n += 60; break;
+				case "septuaginta": // FALLTHRU
+				case "septuaginti": n += 70; break;
+				case "octoginta": // FALLTHRU
+				case "octoginti": n += 80; break;
+				case "nonaginta": // FALLTHRU
+				case "nonaginti": n += 90; break;
+				default: assert false : "Unsuppoorted -illion/-illiard: " + illi + " (" + d2 + ")";
+				}
+			}
+			
+			if (d3 != null) {
+				switch (d3) {
+				case "centi": n += 100; break;
+				case "ducenti": n += 200; break;
+				case "trecenti": n += 300; break;
+				case "quadringenti": n += 400; break;
+				case "quingenti": n += 500; break;
+				case "sescenti": n += 600; break;
+				case "septingenti": n += 700; break;
+				case "octingenti": n += 800; break;
+				case "nongenti": n += 900; break;
+				default: assert false : "Unsuppoorted -illion/-illiard: " + illi + " (" + d3 + ")";
+				}
+			}
+			
+			if (suffix != null) {
+				if (illiard && suffix.equals("on")) {
+					return -1;
+				} else if (!illiard && suffix.equals("ard")) {
+					return -1;
+				}
+			}
+		} while (m.find());
+		
+		if (suffix == null) {
+			return -1;
+		}
+		
+		return n;
 	}
 	
 	private static BigDecimal add(BigDecimal baseNum, long num, boolean asDigit) {

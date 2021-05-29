@@ -344,6 +344,15 @@ public class NumberUtilzTest {
 		assertEquals("Twelve Million Three Hundred Forty-Five Thousand Six Hundred Seventy-Eight", NumberUtilz.toEnNumShortScale(new BigDecimal("12345678"), false));
 		
 		assertEquals("Nine Hundred Eighty-Seven Septillion Six Hundred Fifty-Four Sextillion Three Hundred Twenty-One Quintillion Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trillion Four Hundred Thirty-Two Billion One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three", NumberUtilz.toEnNumShortScale(new BigDecimal("987654321098765432109876543"), false));
+		assertEquals("Nine Hundred Eighty-Seven Vigintillion Six Hundred Fifty-Four Novemdecillion Three Hundred Twenty-One Octodecillion Ninety-Eight Septendecillion Seven Hundred Sixty-Five Sexdecillion Four Hundred Thirty-Two Quindecillion One Hundred Nine Quattuordecillion Eight Hundred Seventy-Six Tredecillion Five Hundred Forty-Three Duodecillion Two Hundred Ten Undecillion Nine Hundred Eighty-Seven Decillion Six Hundred Fifty-Four Nonillion Three Hundred Twenty-One Octillion Ninety-Eight Septillion Seven Hundred Sixty-Five Sextillion Four Hundred Thirty-Two Quintillion One Hundred Nine Quadrillion Eight Hundred Seventy-Six Trillion Five Hundred Forty-Three Billion Two Hundred Ten Million Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four", NumberUtilz.toEnNumShortScale(new BigDecimal("987654321098765432109876543210987654321098765432109876543210987654"), false));
+		{
+			BigDecimal v = BigDecimal.ZERO;
+			for (int i = 1, n = 6; i <= 305; i++, n = (n == 0) ? 9 : n - 1) {
+				v = v.scaleByPowerOfTen(1).add(BigDecimal.valueOf(n));
+				assert v.precision() == i && v.signum() == 1;
+				assertEquals(v, NumberUtilz.parseEnNumShortScale(NumberUtilz.toEnNumShortScale(v, false)));
+			}
+		}	
 		
 		
 		assertEquals("Zero point Zero", NumberUtilz.toEnNumShortScale(new BigDecimal("0.0"), false));
@@ -357,6 +366,15 @@ public class NumberUtilzTest {
 		
 		
 		assertEquals("Negative Nine Hundred Eighty-Seven Septillion Six Hundred Fifty-Four Sextillion Three Hundred Twenty-One Quintillion Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trillion Four Hundred Thirty-Two Billion One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three", NumberUtilz.toEnNumShortScale(new BigDecimal("-987654321098765432109876543"), false));
+		assertEquals("Negative Nine Hundred Eighty-Seven Vigintillion Six Hundred Fifty-Four Novemdecillion Three Hundred Twenty-One Octodecillion Ninety-Eight Septendecillion Seven Hundred Sixty-Five Sexdecillion Four Hundred Thirty-Two Quindecillion One Hundred Nine Quattuordecillion Eight Hundred Seventy-Six Tredecillion Five Hundred Forty-Three Duodecillion Two Hundred Ten Undecillion Nine Hundred Eighty-Seven Decillion Six Hundred Fifty-Four Nonillion Three Hundred Twenty-One Octillion Ninety-Eight Septillion Seven Hundred Sixty-Five Sextillion Four Hundred Thirty-Two Quintillion One Hundred Nine Quadrillion Eight Hundred Seventy-Six Trillion Five Hundred Forty-Three Billion Two Hundred Ten Million Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four", NumberUtilz.toEnNumShortScale(new BigDecimal("-987654321098765432109876543210987654321098765432109876543210987654"), false));
+		{
+			BigDecimal v = BigDecimal.ZERO;
+			for (int i = 1, n = 6; i <= 305; i++, n = (n == 0) ? 9 : n - 1) {
+				v = v.scaleByPowerOfTen(1).subtract(BigDecimal.valueOf(n));
+				assert v.precision() == i && v.signum() == -1;
+				assertEquals(v, NumberUtilz.parseEnNumShortScale(NumberUtilz.toEnNumShortScale(v, false)));
+			}
+		}
 		
 		
 		assertEquals("Zero point Zero", NumberUtilz.toEnNumShortScale(new BigDecimal("-0.0"), false)); // BigDecimal has not signed zero
@@ -367,6 +385,164 @@ public class NumberUtilzTest {
 		
 		assertEquals("Negative Zero point Zero One Two", NumberUtilz.toEnNumShortScale(new BigDecimal("-0.012"), false));
 		assertEquals("Negative One and 12/1000", NumberUtilz.toEnNumShortScale(new BigDecimal("-1.012"), true));
+	}
+	
+	@Test
+	public void testToEnNumLongScale() throws Exception {
+		assertEquals(null, NumberUtilz.toEnNumLongScale((BigDecimal)null, false, false));
+		assertEquals(null, NumberUtilz.toEnNumLongScale((BigDecimal)null, true, false));
+		
+		assertEquals("Zero", NumberUtilz.toEnNumLongScale(new BigDecimal("0"), false, false));
+		assertEquals("One", NumberUtilz.toEnNumLongScale(new BigDecimal("1"), false, false));
+		assertEquals("Two", NumberUtilz.toEnNumLongScale(new BigDecimal("2"), false, false));
+		
+		assertEquals("Ten", NumberUtilz.toEnNumLongScale(new BigDecimal("10"), false, false));
+		assertEquals("Eleven", NumberUtilz.toEnNumLongScale(new BigDecimal("11"), false, false));
+		assertEquals("Twelve", NumberUtilz.toEnNumLongScale(new BigDecimal("12"), false, false));
+		
+		assertEquals("Twenty", NumberUtilz.toEnNumLongScale(new BigDecimal("20"), false, false));
+		assertEquals("Twenty-One", NumberUtilz.toEnNumLongScale(new BigDecimal("21"), false, false));
+
+		assertEquals("Ninety-Nine", NumberUtilz.toEnNumLongScale(new BigDecimal("99"), false, false));
+
+		assertEquals("One Hundred", NumberUtilz.toEnNumLongScale(new BigDecimal("100"), false, false));
+		assertEquals("One Hundred One", NumberUtilz.toEnNumLongScale(new BigDecimal("101"), false, false));
+		
+		assertEquals("One Hundred Ten", NumberUtilz.toEnNumLongScale(new BigDecimal("110"), false, false));
+		assertEquals("One Hundred Eleven", NumberUtilz.toEnNumLongScale(new BigDecimal("111"), false, false));
+		assertEquals("One Hundred Twenty", NumberUtilz.toEnNumLongScale(new BigDecimal("120"), false, false));
+		assertEquals("One Hundred Twenty-One", NumberUtilz.toEnNumLongScale(new BigDecimal("121"), false, false));
+		
+		assertEquals("Two Thousand", NumberUtilz.toEnNumLongScale(new BigDecimal("2000"), false, false));
+		
+		assertEquals("Twenty-Three Thousand Four Hundred Fifty-Six", NumberUtilz.toEnNumLongScale(new BigDecimal("23456"), false, false));
+		
+		assertEquals("Twelve Thousand Three Hundred Forty-Five", NumberUtilz.toEnNumLongScale(new BigDecimal("12345"), false, false));
+		assertEquals("One Hundred Twenty-Three Thousand Four Hundred Fifty-Six", NumberUtilz.toEnNumLongScale(new BigDecimal("123456"), false, false));
+		assertEquals("One Million Two Hundred Thirty-Four Thousand Five Hundred Sixty-Seven", NumberUtilz.toEnNumLongScale(new BigDecimal("1234567"), false, false));
+		assertEquals("Twelve Million Three Hundred Forty-Five Thousand Six Hundred Seventy-Eight", NumberUtilz.toEnNumLongScale(new BigDecimal("12345678"), false, false));
+		
+		assertEquals("Nine Hundred Eighty-Seven Quadrillion Six Hundred Fifty-Four Thousand Three Hundred Twenty-One Trillion Ninety-Eight Thousand Seven Hundred Sixty-Five Billion Four Hundred Thirty-Two Thousand One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three", NumberUtilz.toEnNumLongScale(new BigDecimal("987654321098765432109876543"), false, false));
+		assertEquals("Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four Decillion Three Hundred Twenty-One Thousand Ninety-Eight Nonillion Seven Hundred Sixty-Five Thousand Four Hundred Thirty-Two Octillion One Hundred Nine Thousand Eight Hundred Seventy-Six Septillion Five Hundred Forty-Three Thousand Two Hundred Ten Sextillion Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four Quintillion Three Hundred Twenty-One Thousand Ninety-Eight Quadrillion Seven Hundred Sixty-Five Thousand Four Hundred Thirty-Two Trillion One Hundred Nine Thousand Eight Hundred Seventy-Six Billion Five Hundred Forty-Three Thousand Two Hundred Ten Million Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four", NumberUtilz.toEnNumLongScale(new BigDecimal("987654321098765432109876543210987654321098765432109876543210987654"), false, false));
+		{
+			BigDecimal v = BigDecimal.ZERO;
+			for (int i = 1, v1 = 6; i <= 605; i++, v1 = (v1 == 0) ? 9 : v1 - 1) {
+				v = v.scaleByPowerOfTen(1).add(BigDecimal.valueOf(v1));
+				assert v.precision() == i && v.signum() == 1;
+				assertEquals(v, NumberUtilz.parseEnNumLongScale(NumberUtilz.toEnNumLongScale(v, false, false)));
+			}
+		}
+		
+		
+		assertEquals("Zero point Zero", NumberUtilz.toEnNumLongScale(new BigDecimal("0.0"), false, false));
+		assertEquals("One and 0/10", NumberUtilz.toEnNumLongScale(new BigDecimal("1.0"), true, false));
+		
+		assertEquals("Zero point Zero Zero", NumberUtilz.toEnNumLongScale(new BigDecimal("0.00"), false, false));
+		assertEquals("One and 0/100", NumberUtilz.toEnNumLongScale(new BigDecimal("1.00"), true, false));
+		
+		assertEquals("Zero point Zero One Two", NumberUtilz.toEnNumLongScale(new BigDecimal("0.012"), false, false));
+		assertEquals("One and 12/1000", NumberUtilz.toEnNumLongScale(new BigDecimal("1.012"), true, false));
+		
+		
+		assertEquals("Negative Nine Hundred Eighty-Seven Quadrillion Six Hundred Fifty-Four Thousand Three Hundred Twenty-One Trillion Ninety-Eight Thousand Seven Hundred Sixty-Five Billion Four Hundred Thirty-Two Thousand One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three", NumberUtilz.toEnNumLongScale(new BigDecimal("-987654321098765432109876543"), false, false));
+		assertEquals("Negative Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four Decillion Three Hundred Twenty-One Thousand Ninety-Eight Nonillion Seven Hundred Sixty-Five Thousand Four Hundred Thirty-Two Octillion One Hundred Nine Thousand Eight Hundred Seventy-Six Septillion Five Hundred Forty-Three Thousand Two Hundred Ten Sextillion Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four Quintillion Three Hundred Twenty-One Thousand Ninety-Eight Quadrillion Seven Hundred Sixty-Five Thousand Four Hundred Thirty-Two Trillion One Hundred Nine Thousand Eight Hundred Seventy-Six Billion Five Hundred Forty-Three Thousand Two Hundred Ten Million Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four", NumberUtilz.toEnNumLongScale(new BigDecimal("-987654321098765432109876543210987654321098765432109876543210987654"), false, false));
+		{
+			BigDecimal v = BigDecimal.ZERO;
+			for (int i = 1, v1 = 6; i <= 605; i++, v1 = (v1 == 0) ? 9 : v1 - 1) {
+				v = v.scaleByPowerOfTen(1).subtract(BigDecimal.valueOf(v1));
+				assert v.precision() == i && v.signum() == -1;
+				assertEquals(v, NumberUtilz.parseEnNumLongScale(NumberUtilz.toEnNumLongScale(v, false, false)));
+			}
+		}
+		
+		
+		assertEquals("Zero point Zero", NumberUtilz.toEnNumLongScale(new BigDecimal("-0.0"), false, false)); // BigDecimal has not signed zero
+		assertEquals("Negative One and 0/10", NumberUtilz.toEnNumLongScale(new BigDecimal("-1.0"), true, false));
+		
+		assertEquals("Zero point Zero Zero", NumberUtilz.toEnNumLongScale(new BigDecimal("-0.00"), false, false)); // BigDecimal has not signed zero
+		assertEquals("Negative One and 0/100", NumberUtilz.toEnNumLongScale(new BigDecimal("-1.00"), true, false));
+		
+		assertEquals("Negative Zero point Zero One Two", NumberUtilz.toEnNumLongScale(new BigDecimal("-0.012"), false, false));
+		assertEquals("Negative One and 12/1000", NumberUtilz.toEnNumLongScale(new BigDecimal("-1.012"), true, false));
+	}
+	
+	@Test
+	public void testToEnNumLongScale_Ard() throws Exception {
+		assertEquals(null, NumberUtilz.toEnNumLongScale((BigDecimal)null, false, true));
+		assertEquals(null, NumberUtilz.toEnNumLongScale((BigDecimal)null, true, true));
+		
+		assertEquals("Zero", NumberUtilz.toEnNumLongScale(new BigDecimal("0"), false, true));
+		assertEquals("One", NumberUtilz.toEnNumLongScale(new BigDecimal("1"), false, true));
+		assertEquals("Two", NumberUtilz.toEnNumLongScale(new BigDecimal("2"), false, true));
+		
+		assertEquals("Ten", NumberUtilz.toEnNumLongScale(new BigDecimal("10"), false, true));
+		assertEquals("Eleven", NumberUtilz.toEnNumLongScale(new BigDecimal("11"), false, true));
+		assertEquals("Twelve", NumberUtilz.toEnNumLongScale(new BigDecimal("12"), false, true));
+		
+		assertEquals("Twenty", NumberUtilz.toEnNumLongScale(new BigDecimal("20"), false, true));
+		assertEquals("Twenty-One", NumberUtilz.toEnNumLongScale(new BigDecimal("21"), false, true));
+
+		assertEquals("Ninety-Nine", NumberUtilz.toEnNumLongScale(new BigDecimal("99"), false, true));
+
+		assertEquals("One Hundred", NumberUtilz.toEnNumLongScale(new BigDecimal("100"), false, true));
+		assertEquals("One Hundred One", NumberUtilz.toEnNumLongScale(new BigDecimal("101"), false, true));
+		
+		assertEquals("One Hundred Ten", NumberUtilz.toEnNumLongScale(new BigDecimal("110"), false, true));
+		assertEquals("One Hundred Eleven", NumberUtilz.toEnNumLongScale(new BigDecimal("111"), false, true));
+		assertEquals("One Hundred Twenty", NumberUtilz.toEnNumLongScale(new BigDecimal("120"), false, true));
+		assertEquals("One Hundred Twenty-One", NumberUtilz.toEnNumLongScale(new BigDecimal("121"), false, true));
+		
+		assertEquals("Two Thousand", NumberUtilz.toEnNumLongScale(new BigDecimal("2000"), false, true));
+		
+		assertEquals("Twenty-Three Thousand Four Hundred Fifty-Six", NumberUtilz.toEnNumLongScale(new BigDecimal("23456"), false, true));
+		
+		assertEquals("Twelve Thousand Three Hundred Forty-Five", NumberUtilz.toEnNumLongScale(new BigDecimal("12345"), false, true));
+		assertEquals("One Hundred Twenty-Three Thousand Four Hundred Fifty-Six", NumberUtilz.toEnNumLongScale(new BigDecimal("123456"), false, true));
+		assertEquals("One Million Two Hundred Thirty-Four Thousand Five Hundred Sixty-Seven", NumberUtilz.toEnNumLongScale(new BigDecimal("1234567"), false, true));
+		assertEquals("Twelve Million Three Hundred Forty-Five Thousand Six Hundred Seventy-Eight", NumberUtilz.toEnNumLongScale(new BigDecimal("12345678"), false, true));
+		
+		assertEquals("Nine Hundred Eighty-Seven Quadrillion Six Hundred Fifty-Four Trilliard Three Hundred Twenty-One Trillion Ninety-Eight Billiard Seven Hundred Sixty-Five Billion Four Hundred Thirty-Two Milliard One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three", NumberUtilz.toEnNumLongScale(new BigDecimal("987654321098765432109876543"), false, true));
+		assertEquals("Nine Hundred Eighty-Seven Decilliard Six Hundred Fifty-Four Decillion Three Hundred Twenty-One Nonilliard Ninety-Eight Nonillion Seven Hundred Sixty-Five Octilliard Four Hundred Thirty-Two Octillion One Hundred Nine Septilliard Eight Hundred Seventy-Six Septillion Five Hundred Forty-Three Sextilliard Two Hundred Ten Sextillion Nine Hundred Eighty-Seven Quintilliard Six Hundred Fifty-Four Quintillion Three Hundred Twenty-One Quadrilliard Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trilliard Four Hundred Thirty-Two Trillion One Hundred Nine Billiard Eight Hundred Seventy-Six Billion Five Hundred Forty-Three Milliard Two Hundred Ten Million Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four", NumberUtilz.toEnNumLongScale(new BigDecimal("987654321098765432109876543210987654321098765432109876543210987654"), false, true));
+		{
+			BigDecimal v = BigDecimal.ZERO;
+			for (int i = 1, v1 = 6; i <= 605; i++, v1 = (v1 == 0) ? 9 : v1 - 1) {
+				v = v.scaleByPowerOfTen(1).add(BigDecimal.valueOf(v1));
+				assert v.precision() == i && v.signum() == 1;
+				assertEquals(v, NumberUtilz.parseEnNumLongScale(NumberUtilz.toEnNumLongScale(v, false, true)));
+			}
+		}
+		
+		
+		assertEquals("Zero point Zero", NumberUtilz.toEnNumLongScale(new BigDecimal("0.0"), false, true));
+		assertEquals("One and 0/10", NumberUtilz.toEnNumLongScale(new BigDecimal("1.0"), true, true));
+		
+		assertEquals("Zero point Zero Zero", NumberUtilz.toEnNumLongScale(new BigDecimal("0.00"), false, true));
+		assertEquals("One and 0/100", NumberUtilz.toEnNumLongScale(new BigDecimal("1.00"), true, true));
+		
+		assertEquals("Zero point Zero One Two", NumberUtilz.toEnNumLongScale(new BigDecimal("0.012"), false, true));
+		assertEquals("One and 12/1000", NumberUtilz.toEnNumLongScale(new BigDecimal("1.012"), true, true));
+		
+		
+		assertEquals("Negative Nine Hundred Eighty-Seven Quadrillion Six Hundred Fifty-Four Trilliard Three Hundred Twenty-One Trillion Ninety-Eight Billiard Seven Hundred Sixty-Five Billion Four Hundred Thirty-Two Milliard One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three", NumberUtilz.toEnNumLongScale(new BigDecimal("-987654321098765432109876543"), false, true));
+		assertEquals("Negative Nine Hundred Eighty-Seven Decilliard Six Hundred Fifty-Four Decillion Three Hundred Twenty-One Nonilliard Ninety-Eight Nonillion Seven Hundred Sixty-Five Octilliard Four Hundred Thirty-Two Octillion One Hundred Nine Septilliard Eight Hundred Seventy-Six Septillion Five Hundred Forty-Three Sextilliard Two Hundred Ten Sextillion Nine Hundred Eighty-Seven Quintilliard Six Hundred Fifty-Four Quintillion Three Hundred Twenty-One Quadrilliard Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trilliard Four Hundred Thirty-Two Trillion One Hundred Nine Billiard Eight Hundred Seventy-Six Billion Five Hundred Forty-Three Milliard Two Hundred Ten Million Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four", NumberUtilz.toEnNumLongScale(new BigDecimal("-987654321098765432109876543210987654321098765432109876543210987654"), false, true));
+		{
+			BigDecimal v = BigDecimal.ZERO;
+			for (int i = 1, v1 = 6; i <= 605; i++, v1 = (v1 == 0) ? 9 : v1 - 1) {
+				v = v.scaleByPowerOfTen(1).subtract(BigDecimal.valueOf(v1));
+				assert v.precision() == i && v.signum() == -1;
+				assertEquals(v, NumberUtilz.parseEnNumLongScale(NumberUtilz.toEnNumLongScale(v, false, true)));
+			}
+		}
+		
+		
+		assertEquals("Zero point Zero", NumberUtilz.toEnNumLongScale(new BigDecimal("-0.0"), false, true)); // BigDecimal has not signed zero
+		assertEquals("Negative One and 0/10", NumberUtilz.toEnNumLongScale(new BigDecimal("-1.0"), true, true));
+		
+		assertEquals("Zero point Zero Zero", NumberUtilz.toEnNumLongScale(new BigDecimal("-0.00"), false, true)); // BigDecimal has not signed zero
+		assertEquals("Negative One and 0/100", NumberUtilz.toEnNumLongScale(new BigDecimal("-1.00"), true, true));
+		
+		assertEquals("Negative Zero point Zero One Two", NumberUtilz.toEnNumLongScale(new BigDecimal("-0.012"), false, true));
+		assertEquals("Negative One and 12/1000", NumberUtilz.toEnNumLongScale(new BigDecimal("-1.012"), true, true));
 	}
 	
 	@Test
@@ -398,6 +574,32 @@ public class NumberUtilzTest {
 		assertEquals(new BigDecimal("23456"), NumberUtilz.parseEnNumShortScale("Twenty-Three Thousand Four Hundred Fifty-Six"));
 		
 		assertEquals(new BigDecimal("987654321098765432109876543"), NumberUtilz.parseEnNumShortScale("Nine Hundred Eighty-Seven Septillion Six Hundred Fifty-Four Sextillion Three Hundred Twenty-One Quintillion Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trillion Four Hundred Thirty-Two Billion One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three"));
+		assertEquals(new BigDecimal("987654321098765432109876543210987654321098765432109876543210987654"), NumberUtilz.parseEnNumShortScale("Nine Hundred Eighty-Seven Vigintillion Six Hundred Fifty-Four Novemdecillion Three Hundred Twenty-One Octodecillion Ninety-Eight Septendecillion Seven Hundred Sixty-Five Sexdecillion Four Hundred Thirty-Two Quindecillion One Hundred Nine Quattuordecillion Eight Hundred Seventy-Six Tredecillion Five Hundred Forty-Three Duodecillion Two Hundred Ten Undecillion Nine Hundred Eighty-Seven Decillion Six Hundred Fifty-Four Nonillion Three Hundred Twenty-One Octillion Ninety-Eight Septillion Seven Hundred Sixty-Five Sextillion Four Hundred Thirty-Two Quintillion One Hundred Nine Quadrillion Eight Hundred Seventy-Six Trillion Five Hundred Forty-Three Billion Two Hundred Ten Million Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four"));
+		
+		{
+			for (int n = 1; n <= 999; n++) {
+				BigDecimal v = BigDecimal.valueOf(9).scaleByPowerOfTen(3 * n + 3);
+				
+				// Default system
+				assertEquals(0, v.compareTo(NumberUtilz.parseEnNumShortScale(NumberUtilz.toEnNumShortScale(v, false, false))));
+				
+				// Conway-Wechsler system
+				assertEquals(0, v.compareTo(NumberUtilz.parseEnNumShortScale(NumberUtilz.toEnNumShortScale(v, false, true))));
+			}
+		}
+		
+		{
+			for (int n = 1000; n <= 100000; n *= 10) {
+				BigDecimal v = BigDecimal.valueOf(9).scaleByPowerOfTen(3 * n + 3);
+
+				// Default system
+				assertEquals(0, v.compareTo(NumberUtilz.parseEnNumShortScale(NumberUtilz.toEnNumShortScale(v, false, false))));
+				
+				// Conway-Wechsler system
+				assertEquals(0, v.compareTo(NumberUtilz.parseEnNumShortScale(NumberUtilz.toEnNumShortScale(v, false, true))));
+			}
+		}
+		
 		
 		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumShortScale("Zero point Zero"));
 		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseEnNumShortScale("One and 0/10"));
@@ -443,6 +645,8 @@ public class NumberUtilzTest {
 		
 
 		assertEquals(new BigDecimal("-987654321098765432109876543"), NumberUtilz.parseEnNumShortScale("Negative Nine Hundred Eighty-Seven Septillion Six Hundred Fifty-Four Sextillion Three Hundred Twenty-One Quintillion Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trillion Four Hundred Thirty-Two Billion One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three"));
+		assertEquals(new BigDecimal("-987654321098765432109876543210987654321098765432109876543210987654"), NumberUtilz.parseEnNumShortScale("Negative Nine Hundred Eighty-Seven Vigintillion Six Hundred Fifty-Four Novemdecillion Three Hundred Twenty-One Octodecillion Ninety-Eight Septendecillion Seven Hundred Sixty-Five Sexdecillion Four Hundred Thirty-Two Quindecillion One Hundred Nine Quattuordecillion Eight Hundred Seventy-Six Tredecillion Five Hundred Forty-Three Duodecillion Two Hundred Ten Undecillion Nine Hundred Eighty-Seven Decillion Six Hundred Fifty-Four Nonillion Three Hundred Twenty-One Octillion Ninety-Eight Septillion Seven Hundred Sixty-Five Sextillion Four Hundred Thirty-Two Quintillion One Hundred Nine Quadrillion Eight Hundred Seventy-Six Trillion Five Hundred Forty-Three Billion Two Hundred Ten Million Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four"));
+		
 		
 		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumShortScale("Negative Zero point Zero"));
 		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseEnNumShortScale("Negative One and 0/10"));
@@ -529,6 +733,210 @@ public class NumberUtilzTest {
 		
 		try {
 			NumberUtilz.parseEnNumShortScale("Two Hundreds");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+	}
+	
+	@Test
+	public void testParseEnNumLongScale() throws Exception {
+		assertEquals(null, NumberUtilz.parseEnNumLongScale(null));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumLongScale("Zero"));
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseEnNumLongScale("One"));
+		
+		assertEquals(new BigDecimal("10"), NumberUtilz.parseEnNumLongScale("Ten"));
+		
+		assertEquals(new BigDecimal("11"), NumberUtilz.parseEnNumLongScale("Eleven"));
+		
+		assertEquals(new BigDecimal("20"), NumberUtilz.parseEnNumLongScale("Twenty"));
+		assertEquals(new BigDecimal("21"), NumberUtilz.parseEnNumLongScale("Twenty-One"));
+		
+		assertEquals(new BigDecimal("99"), NumberUtilz.parseEnNumLongScale("Ninety-Nine"));
+		
+		assertEquals(new BigDecimal("100"), NumberUtilz.parseEnNumLongScale("One Hundred"));
+		assertEquals(new BigDecimal("101"), NumberUtilz.parseEnNumLongScale("One Hundred One"));
+		
+		assertEquals(new BigDecimal("110"), NumberUtilz.parseEnNumLongScale("One Hundred Ten"));
+		assertEquals(new BigDecimal("111"), NumberUtilz.parseEnNumLongScale("One Hundred Eleven"));
+		assertEquals(new BigDecimal("120"), NumberUtilz.parseEnNumLongScale("One Hundred Twenty"));
+		assertEquals(new BigDecimal("121"), NumberUtilz.parseEnNumLongScale("One Hundred Twenty-One"));
+		
+		assertEquals(new BigDecimal("2000"), NumberUtilz.parseEnNumLongScale("Two Thousand"));
+		
+		assertEquals(new BigDecimal("23456"), NumberUtilz.parseEnNumLongScale("Twenty-Three Thousand Four Hundred Fifty-Six"));
+		
+		assertEquals(new BigDecimal("987654321098765432109876543"), NumberUtilz.parseEnNumLongScale("Nine Hundred Eighty-Seven Quadrillion Six Hundred Fifty-Four Thousand Three Hundred Twenty-One Trillion Ninety-Eight Thousand Seven Hundred Sixty-Five Billion Four Hundred Thirty-Two Thousand One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three"));
+		assertEquals(new BigDecimal("987654321098765432109876543210987654321098765432109876543210987654"), NumberUtilz.parseEnNumLongScale("Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four Decillion Three Hundred Twenty-One Thousand Ninety-Eight Nonillion Seven Hundred Sixty-Five Thousand Four Hundred Thirty-Two Octillion One Hundred Nine Thousand Eight Hundred Seventy-Six Septillion Five Hundred Forty-Three Thousand Two Hundred Ten Sextillion Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four Quintillion Three Hundred Twenty-One Thousand Ninety-Eight Quadrillion Seven Hundred Sixty-Five Thousand Four Hundred Thirty-Two Trillion One Hundred Nine Thousand Eight Hundred Seventy-Six Billion Five Hundred Forty-Three Thousand Two Hundred Ten Million Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four"));
+		// -illiard
+		assertEquals(new BigDecimal("987654321098765432109876543"), NumberUtilz.parseEnNumLongScale("Nine Hundred Eighty-Seven Quadrillion Six Hundred Fifty-Four Trilliard Three Hundred Twenty-One Trillion Ninety-Eight Billiard Seven Hundred Sixty-Five Billion Four Hundred Thirty-Two Milliard One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three"));
+		assertEquals(new BigDecimal("987654321098765432109876543210987654321098765432109876543210987654"), NumberUtilz.parseEnNumLongScale("Nine Hundred Eighty-Seven Decilliard Six Hundred Fifty-Four Decillion Three Hundred Twenty-One Nonilliard Ninety-Eight Nonillion Seven Hundred Sixty-Five Octilliard Four Hundred Thirty-Two Octillion One Hundred Nine Septilliard Eight Hundred Seventy-Six Septillion Five Hundred Forty-Three Sextilliard Two Hundred Ten Sextillion Nine Hundred Eighty-Seven Quintilliard Six Hundred Fifty-Four Quintillion Three Hundred Twenty-One Quadrilliard Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trilliard Four Hundred Thirty-Two Trillion One Hundred Nine Billiard Eight Hundred Seventy-Six Billion Five Hundred Forty-Three Milliard Two Hundred Ten Million Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four"));
+		
+		{
+			for (int n = 1; n <= 999; n++) {
+				BigDecimal v = BigDecimal.valueOf(9).scaleByPowerOfTen(6 * n);
+				
+				// Default system
+				assertEquals(0, v.compareTo(NumberUtilz.parseEnNumLongScale(NumberUtilz.toEnNumLongScale(v, false, false, false))));
+				assertEquals(0, v.compareTo(NumberUtilz.parseEnNumLongScale(NumberUtilz.toEnNumLongScale(v, false, true, false))));
+				
+				// Conway-Wechsler system
+				assertEquals(0, v.compareTo(NumberUtilz.parseEnNumLongScale(NumberUtilz.toEnNumLongScale(v, false, false, true))));
+				assertEquals(0, v.compareTo(NumberUtilz.parseEnNumLongScale(NumberUtilz.toEnNumLongScale(v, false, true, true))));
+			}
+		}
+		
+		{
+			for (int n = 1000; n <= 100000; n *= 10) {
+				BigDecimal v = BigDecimal.valueOf(9).scaleByPowerOfTen(6 * n);
+				
+				// Default system
+				assertEquals(0, v.compareTo(NumberUtilz.parseEnNumLongScale(NumberUtilz.toEnNumLongScale(v, false, false, false))));
+				assertEquals(0, v.compareTo(NumberUtilz.parseEnNumLongScale(NumberUtilz.toEnNumLongScale(v, false, true, false))));
+				
+				// Conway-Wechsler system
+				assertEquals(0, v.compareTo(NumberUtilz.parseEnNumLongScale(NumberUtilz.toEnNumLongScale(v, false, false, true))));
+				assertEquals(0, v.compareTo(NumberUtilz.parseEnNumLongScale(NumberUtilz.toEnNumLongScale(v, false, true, true))));
+			}
+		}
+		
+		
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumLongScale("Zero point Zero"));
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseEnNumLongScale("One and 0/10"));
+		
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumLongScale("Zero point Zero Zero"));
+		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseEnNumLongScale("One and 0/100"));
+		
+		assertEquals(new BigDecimal("0.012"), NumberUtilz.parseEnNumLongScale("Zero point Zero One Two"));
+		assertEquals(new BigDecimal("1.012"), NumberUtilz.parseEnNumLongScale("One and 12/1000"));
+		
+		
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumLongScale("Zero point Zero", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumLongScale("Zero point Zero", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumLongScale("Zero point Zero", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseEnNumLongScale("Zero point Zero", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseEnNumLongScale("One and 0/10", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseEnNumLongScale("One and 0/10", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseEnNumLongScale("One and 0/10", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("1.000"), NumberUtilz.parseEnNumLongScale("One and 0/10", RoundingMode.HALF_UP, 3));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumLongScale("Zero point Zero Zero", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumLongScale("Zero point Zero Zero", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumLongScale("Zero point Zero Zero", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseEnNumLongScale("Zero point Zero Zero", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseEnNumLongScale("One and 0/100", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseEnNumLongScale("One and 0/100", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("1.00"), NumberUtilz.parseEnNumLongScale("One and 0/100", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("1.000"), NumberUtilz.parseEnNumLongScale("One and 0/100", RoundingMode.HALF_UP, 3));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumLongScale("Zero point Zero One Two", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumLongScale("Zero point Zero One Two", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.01"), NumberUtilz.parseEnNumLongScale("Zero point Zero One Two", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.012"), NumberUtilz.parseEnNumLongScale("Zero point Zero One Two", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseEnNumLongScale("One and 12/1000", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("1.0"), NumberUtilz.parseEnNumLongScale("One and 12/1000", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("1.01"), NumberUtilz.parseEnNumLongScale("One and 12/1000", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("1.012"), NumberUtilz.parseEnNumLongScale("One and 12/1000", RoundingMode.HALF_UP, 3));
+		
+		assertEquals(new BigDecimal("1"), NumberUtilz.parseEnNumLongScale("Zero point Five Five Five", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.6"), NumberUtilz.parseEnNumLongScale("Zero point Five Five Five", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.56"), NumberUtilz.parseEnNumLongScale("Zero point Five Five Five", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.555"), NumberUtilz.parseEnNumLongScale("Zero point Five Five Five", RoundingMode.HALF_UP, 3));
+		
+		
+		assertEquals(new BigDecimal("-987654321098765432109876543"), NumberUtilz.parseEnNumLongScale("Negative Nine Hundred Eighty-Seven Quadrillion Six Hundred Fifty-Four Thousand Three Hundred Twenty-One Trillion Ninety-Eight Thousand Seven Hundred Sixty-Five Billion Four Hundred Thirty-Two Thousand One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three"));
+		assertEquals(new BigDecimal("-987654321098765432109876543210987654321098765432109876543210987654"), NumberUtilz.parseEnNumLongScale("Negative Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four Decillion Three Hundred Twenty-One Thousand Ninety-Eight Nonillion Seven Hundred Sixty-Five Thousand Four Hundred Thirty-Two Octillion One Hundred Nine Thousand Eight Hundred Seventy-Six Septillion Five Hundred Forty-Three Thousand Two Hundred Ten Sextillion Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four Quintillion Three Hundred Twenty-One Thousand Ninety-Eight Quadrillion Seven Hundred Sixty-Five Thousand Four Hundred Thirty-Two Trillion One Hundred Nine Thousand Eight Hundred Seventy-Six Billion Five Hundred Forty-Three Thousand Two Hundred Ten Million Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four"));
+		// -illiard
+		assertEquals(new BigDecimal("-987654321098765432109876543"), NumberUtilz.parseEnNumLongScale("Negative Nine Hundred Eighty-Seven Quadrillion Six Hundred Fifty-Four Trilliard Three Hundred Twenty-One Trillion Ninety-Eight Billiard Seven Hundred Sixty-Five Billion Four Hundred Thirty-Two Milliard One Hundred Nine Million Eight Hundred Seventy-Six Thousand Five Hundred Forty-Three"));
+		assertEquals(new BigDecimal("-987654321098765432109876543210987654321098765432109876543210987654"), NumberUtilz.parseEnNumLongScale("Negative Nine Hundred Eighty-Seven Decilliard Six Hundred Fifty-Four Decillion Three Hundred Twenty-One Nonilliard Ninety-Eight Nonillion Seven Hundred Sixty-Five Octilliard Four Hundred Thirty-Two Octillion One Hundred Nine Septilliard Eight Hundred Seventy-Six Septillion Five Hundred Forty-Three Sextilliard Two Hundred Ten Sextillion Nine Hundred Eighty-Seven Quintilliard Six Hundred Fifty-Four Quintillion Three Hundred Twenty-One Quadrilliard Ninety-Eight Quadrillion Seven Hundred Sixty-Five Trilliard Four Hundred Thirty-Two Trillion One Hundred Nine Billiard Eight Hundred Seventy-Six Billion Five Hundred Forty-Three Milliard Two Hundred Ten Million Nine Hundred Eighty-Seven Thousand Six Hundred Fifty-Four"));
+		
+		
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero"));
+		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseEnNumLongScale("Negative One and 0/10"));
+		
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero Zero"));
+		assertEquals(new BigDecimal("-1.00"), NumberUtilz.parseEnNumLongScale("Negative One and 0/100"));
+		
+		assertEquals(new BigDecimal("-0.012"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero One Two"));
+		assertEquals(new BigDecimal("-1.012"), NumberUtilz.parseEnNumLongScale("Negative One and 12/1000"));
+		
+		
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("-1"), NumberUtilz.parseEnNumLongScale("Negative One and 0/10", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseEnNumLongScale("Negative One and 0/10", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-1.00"), NumberUtilz.parseEnNumLongScale("Negative One and 0/10", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-1.000"), NumberUtilz.parseEnNumLongScale("Negative One and 0/10", RoundingMode.HALF_UP, 3));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero Zero", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero Zero", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("0.00"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero Zero", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("0.000"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero Zero", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("-1"), NumberUtilz.parseEnNumLongScale("Negative One and 0/100", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseEnNumLongScale("Negative One and 0/100", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-1.00"), NumberUtilz.parseEnNumLongScale("Negative One and 0/100", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-1.000"), NumberUtilz.parseEnNumLongScale("Negative One and 0/100", RoundingMode.HALF_UP, 3));
+
+		assertEquals(new BigDecimal("0"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero One Two", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("0.0"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero One Two", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-0.01"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero One Two", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-0.012"), NumberUtilz.parseEnNumLongScale("Negative Zero point Zero One Two", RoundingMode.HALF_UP, 3));
+		assertEquals(new BigDecimal("-1"), NumberUtilz.parseEnNumLongScale("Negative One and 12/1000", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("-1.0"), NumberUtilz.parseEnNumLongScale("Negative One and 12/1000", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-1.01"), NumberUtilz.parseEnNumLongScale("Negative One and 12/1000", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-1.012"), NumberUtilz.parseEnNumLongScale("Negative One and 12/1000", RoundingMode.HALF_UP, 3));
+		
+		assertEquals(new BigDecimal("-1"), NumberUtilz.parseEnNumLongScale("Negative Zero point Five Five Five", RoundingMode.HALF_UP, 0));
+		assertEquals(new BigDecimal("-0.6"), NumberUtilz.parseEnNumLongScale("Negative Zero point Five Five Five", RoundingMode.HALF_UP, 1));
+		assertEquals(new BigDecimal("-0.56"), NumberUtilz.parseEnNumLongScale("Negative Zero point Five Five Five", RoundingMode.HALF_UP, 2));
+		assertEquals(new BigDecimal("-0.555"), NumberUtilz.parseEnNumLongScale("Negative Zero point Five Five Five", RoundingMode.HALF_UP, 3));
+		
+
+		assertEquals(new BigDecimal("25"), NumberUtilz.parseEnNumLongScale("25"));
+		assertEquals(new BigDecimal("2.5"), NumberUtilz.parseEnNumLongScale("2.5"));
+		
+		assertEquals(new BigDecimal("2500"), NumberUtilz.parseEnNumLongScale("25 Hundred"));
+		assertEquals(new BigDecimal("250"), NumberUtilz.parseEnNumLongScale("2.5 Hundred"));
+		
+		assertEquals(new BigDecimal("25000"), NumberUtilz.parseEnNumLongScale("25 Thousand"));
+		assertEquals(new BigDecimal("2500"), NumberUtilz.parseEnNumLongScale("2.5 Thousand"));
+		
+		assertEquals(new BigDecimal("25000000"), NumberUtilz.parseEnNumLongScale("25 Million"));
+		assertEquals(new BigDecimal("2500000"), NumberUtilz.parseEnNumLongScale("2.5 Million"));
+		
+		try {
+			NumberUtilz.parseEnNumLongScale("");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+		
+		try {
+			NumberUtilz.parseEnNumLongScale("-");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+		
+		try {
+			NumberUtilz.parseEnNumLongScale("xxx");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+		
+		try {
+			NumberUtilz.parseEnNumLongScale("Hundred");
+			assertTrue(true);
+		} catch (NumberParseException e) {
+			// NOP
+		}
+		
+		try {
+			NumberUtilz.parseEnNumLongScale("Two Hundreds");
 			assertTrue(true);
 		} catch (NumberParseException e) {
 			// NOP
