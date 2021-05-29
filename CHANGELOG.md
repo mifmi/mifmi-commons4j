@@ -1,4 +1,9 @@
 
+## 0.2.10 (2021-05-29)
+Add:
+
+  - Add large number support for NumerUtilz English number methods
+
 ## 0.2.9 (2021-02-13)
 Add:
 
