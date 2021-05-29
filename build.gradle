@@ -1,11 +1,12 @@
 plugins {
     id 'java'
     id 'maven'
-    id 'com.jfrog.bintray' version '1.8.5'
+    id 'maven-publish'
+    id 'signing'
 }
 
 repositories {
-    jcenter()
+    mavenCentral()
 }
 
 dependencies {
@@ -13,8 +14,7 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
-def ver = getVersionNum(getParam('releaseVersion', 'RELEASE_VERSION', '0.0.0-SNAPSHOT'))
-version = ver
+version = getVersionNum(getParam('releaseVersion', 'RELEASE_VERSION', '0.0.0-SNAPSHOT'))
 
 def getParam(propName, envName, defaultValue) {
     if (propName != null && project.hasProperty(propName)) {
@@ -45,12 +45,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-artifacts {
-    archives jar
-    archives sourcesJar
-    archives javadocJar
-}
-
 jar {
     into('META-INF') {
         from 'LICENSE'
@@ -63,20 +57,65 @@ javadoc {
     options.charSet = javadocCharset
 }
 
-bintray {
-    user = getParam('bintrayUser', 'BINTRAY_USER', null)
-    key = getParam('bintrayApiKey', 'BINTRAY_API_KEY', null)
-    configurations = ['archives']
-    publish = false
-    dryRun = false
-    pkg {
-        userOrg = bintrayUserOrg
-        repo = bintrayRepository
-        name = bintrayPackage
-        version {
-            name = ver
-            released = new Date()
-            vcsTag = 'v' + ver
+artifacts {
+    archives jar
+    archives sourcesJar
+    archives javadocJar
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId = 'mifmi-commons4j'
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            pom {
+                name = 'mifmi-commons4j'
+                description = 'The mifmi-commons4j presents basic utility classes for Java development.'
+                url = 'https://github.com/mifmi/mifmi-commons4j'
+                licenses {
+                    license {
+                        name = 'MIT License'
+                        url = 'https://raw.githubusercontent.com/mifmi/mifmi-commons4j/master/LICENSE'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'mozq'
+                        name = 'Mozq'
+                        email = 'dev@mozq.net'
+                    }
+                }
+                scm {
+                    connection = 'scm:git:https://github.com/mifmi/mifmi-commons4j.git'
+                    developerConnection = 'scm:git:https://github.com/mifmi/mifmi-commons4j.git'
+                    url = 'https://github.com/mifmi/mifmi-commons4j'
+                }
+            }
         }
     }
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username = getParam('sonatypeUsername', 'SONATYPE_USERNAME', null)
+                password = getParam('sonatypePassword', 'SONATYPE_PASSWORD', null)
+            }
+        }
+    }
+}
+
+signing {
+    def signingKeyId = getParam('signingKeyId', 'SIGNING_KEY_ID', null)
+    def signingKey = getParam('signingKey', 'SIGNING_KEY', null)
+    def signingPassword = getParam('signingPassword', 'SIGNING_PASSWORD', null)
+    useInMemoryPgpKeys(signingKeyId, signingKey, signingPassword)
+    sign publishing.publications.mavenJava
+}
+
+tasks.withType(Sign) {
+    onlyIf { !version.endsWith('SNAPSHOT') }
 }
