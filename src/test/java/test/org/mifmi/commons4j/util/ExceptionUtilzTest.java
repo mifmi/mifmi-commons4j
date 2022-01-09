@@ -8,10 +8,10 @@
  */
 package test.org.mifmi.commons4j.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mifmi.commons4j.util.ExceptionUtilz;
 import org.mifmi.commons4j.web.servlet.MifmiServletException;
 

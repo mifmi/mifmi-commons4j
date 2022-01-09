@@ -8,7 +8,7 @@
  */
 package test.org.mifmi.commons4j.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.DayOfWeek;
 import java.time.Instant;
@@ -31,7 +31,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mifmi.commons4j.util.DateUtilz;
 
 public class DateUtilzTest {
@@ -289,54 +289,54 @@ public class DateUtilzTest {
 		for (TemporalAccessor t1 : join(defsDateTime, defsDate)) {
 			for (TemporalAccessor t2 : join(defsDateTime, defsDate)) {
 				if (t1 == defY && !t2.isSupported(ChronoField.YEAR)) {
-					assertEquals(t1 + " / " + t2, 2, DateUtilz.compareChrono(t1, t2, true));
+					assertEquals(2, DateUtilz.compareChrono(t1, t2, true), t1 + " / " + t2);
 				} else if (t2 == defY && !t1.isSupported(ChronoField.YEAR)) {
-					assertEquals(t1 + " / " + t2, -2, DateUtilz.compareChrono(t1, t2, true));
+					assertEquals(-2, DateUtilz.compareChrono(t1, t2, true), t1 + " / " + t2);
 				} else if (t1 == defW && !t2.isSupported(ChronoField.DAY_OF_WEEK)) {
 					if (t2.isSupported(ChronoField.YEAR) || t2.isSupported(ChronoField.MONTH_OF_YEAR) || t2.isSupported(ChronoField.DAY_OF_MONTH)) {
-						assertEquals(t1 + " / " + t2, -2, DateUtilz.compareChrono(t1, t2, true));
+						assertEquals(-2, DateUtilz.compareChrono(t1, t2, true), t1 + " / " + t2);
 					} else {
-						assertEquals(t1 + " / " + t2, 2, DateUtilz.compareChrono(t1, t2, true));
+						assertEquals(2, DateUtilz.compareChrono(t1, t2, true), t1 + " / " + t2);
 					}
 				} else if (t2 == defW && !t1.isSupported(ChronoField.DAY_OF_WEEK)) {
 					if (t1.isSupported(ChronoField.YEAR) || t1.isSupported(ChronoField.MONTH_OF_YEAR) || t1.isSupported(ChronoField.DAY_OF_MONTH)) {
-						assertEquals(t1 + " / " + t2, 2, DateUtilz.compareChrono(t1, t2, true));
+						assertEquals(2, DateUtilz.compareChrono(t1, t2, true), t1 + " / " + t2);
 					} else {
-						assertEquals(t1 + " / " + t2, -2, DateUtilz.compareChrono(t1, t2, true));
+						assertEquals(-2, DateUtilz.compareChrono(t1, t2, true), t1 + " / " + t2);
 					}
 				} else {
-					assertEquals(t1 + " / " + t2, 0, DateUtilz.compareChrono(t1, t2, true));
+					assertEquals(0, DateUtilz.compareChrono(t1, t2, true), t1 + " / " + t2);
 				}
 			}
 		}
 		
 		for (TemporalAccessor t1 : join(defsDateTime, defsTime)) {
 			for (TemporalAccessor t2 : join(defsDateTime, defsTime)) {
-				assertEquals(t1 + " / " + t2, 0, DateUtilz.compareChrono(t1, t2, true));
+				assertEquals(0, DateUtilz.compareChrono(t1, t2, true), t1 + " / " + t2);
 			}
 		}
 		
 		for (TemporalAccessor t1 : defsDate) {
 			for (TemporalAccessor t2 : defsTime) {
-				assertEquals(t1 + " / " + t2, 2, DateUtilz.compareChrono(t1, t2, true));
+				assertEquals(2, DateUtilz.compareChrono(t1, t2, true), t1 + " / " + t2);
 			}
 		}
 		
 		for (TemporalAccessor t1 : defsTime) {
 			for (TemporalAccessor t2 : defsDate) {
-				assertEquals(t1 + " / " + t2, -2, DateUtilz.compareChrono(t1, t2, true));
+				assertEquals(-2, DateUtilz.compareChrono(t1, t2, true), t1 + " / " + t2);
 			}
 		}
 		
 		for (TemporalAccessor t1 : defsDate) {
 			for (TemporalAccessor t2 : defsTime) {
-				assertEquals(t1 + " / " + t2, 2, DateUtilz.compareChrono(t1, t2, false));
+				assertEquals(2, DateUtilz.compareChrono(t1, t2, false), t1 + " / " + t2);
 			}
 		}
 		
 		for (TemporalAccessor t1 : defsTime) {
 			for (TemporalAccessor t2 : defsDate) {
-				assertEquals(t1 + " / " + t2, -2, DateUtilz.compareChrono(t1, t2, false));
+				assertEquals(-2, DateUtilz.compareChrono(t1, t2, false), t1 + " / " + t2);
 			}
 		}
 

@@ -8,10 +8,10 @@
  */
 package test.org.mifmi.commons4j.text.token;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mifmi.commons4j.text.token.StringToken;
 import org.mifmi.commons4j.text.token.StringTokenParser;
 

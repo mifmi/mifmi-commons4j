@@ -14,14 +14,14 @@ import java.io.FileOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mifmi.commons4j.graphics.image.ImageUtilz;
 
 public class ImageUtilzTest {
 
 	@Test
-	@Ignore
+	@Disabled
 	public void testSampleCodeShrink() throws Exception {
 
 		Map<RenderingHints.Key, Object> hints = new HashMap<RenderingHints.Key, Object>();

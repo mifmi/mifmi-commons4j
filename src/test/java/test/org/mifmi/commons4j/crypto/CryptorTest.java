@@ -8,7 +8,7 @@
  */
 package test.org.mifmi.commons4j.crypto;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -16,7 +16,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Random;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mifmi.commons4j.crypto.AESCryptor;
 import org.mifmi.commons4j.crypto.BlowfishCryptor;
 import org.mifmi.commons4j.crypto.Cryptor;

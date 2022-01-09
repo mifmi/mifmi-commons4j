@@ -8,6 +8,8 @@
  */
 package test.org.mifmi.commons4j.text.format;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -22,8 +24,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mifmi.commons4j.text.format.NamedFormatter;
 
 public class NamedFormatterTest {
@@ -46,22 +47,22 @@ public class NamedFormatterTest {
 		//// Refer value as '${varName}'
 		
 		// Refer value
-		Assert.assertEquals("val", new NamedFormatter("${varStr}").format(vars));
-		Assert.assertEquals("FOOvalBAR123456BAZ", new NamedFormatter("FOO${varStr}BAR${varInt}BAZ").format(vars));
+		assertEquals("val", new NamedFormatter("${varStr}").format(vars));
+		assertEquals("FOOvalBAR123456BAZ", new NamedFormatter("FOO${varStr}BAR${varInt}BAZ").format(vars));
 		
 		
 		//// Format value as '${varName%format}'
 		
 		// Format Integer value
-		Assert.assertEquals("123,456", new NamedFormatter("${varInt%#,##0}").format(vars));
-		Assert.assertEquals("123,456.000000", new NamedFormatter("${varInt%#,##0.000000}").format(vars));
+		assertEquals("123,456", new NamedFormatter("${varInt%#,##0}").format(vars));
+		assertEquals("123,456.000000", new NamedFormatter("${varInt%#,##0.000000}").format(vars));
 		
 		// Format Decimal value
-		Assert.assertEquals("123,457", new NamedFormatter("${varDec%#,##0}").format(vars));
-		Assert.assertEquals("123,456.789000", new NamedFormatter("${varDec%#,##0.000000}").format(vars));
+		assertEquals("123,457", new NamedFormatter("${varDec%#,##0}").format(vars));
+		assertEquals("123,456.789000", new NamedFormatter("${varDec%#,##0.000000}").format(vars));
 		
 		// Format Date value
-		Assert.assertEquals("20000123 040506123", new NamedFormatter("${varDate%uuuuMMdd HHmmssSSS}").format(vars));
+		assertEquals("20000123 040506123", new NamedFormatter("${varDate%uuuuMMdd HHmmssSSS}").format(vars));
 		
 		
 		//// Choice value as '${varName/val1:ret1/val2:ret2/default:retDefault}'
@@ -73,26 +74,26 @@ public class NamedFormatterTest {
 		////   >= is Greater than equals
 		
 		// Choice String value
-		Assert.assertEquals("Z", new NamedFormatter("${varStr/xxx:X/yyy:Y/default:Z}").format(vars));
-		Assert.assertEquals("Y", new NamedFormatter("${varStr/xxx:X/val:Y/default:Z}").format(vars));
-		Assert.assertEquals("Z", new NamedFormatter("${varStr/xxx:X/!=val:Y/default:Z}").format(vars));
+		assertEquals("Z", new NamedFormatter("${varStr/xxx:X/yyy:Y/default:Z}").format(vars));
+		assertEquals("Y", new NamedFormatter("${varStr/xxx:X/val:Y/default:Z}").format(vars));
+		assertEquals("Z", new NamedFormatter("${varStr/xxx:X/!=val:Y/default:Z}").format(vars));
 		
 		// Choice Integer value
-		Assert.assertEquals("Y", new NamedFormatter("${varInt/<123456:X/123456:Y/>123456:Z}").format(vars));
+		assertEquals("Y", new NamedFormatter("${varInt/<123456:X/123456:Y/>123456:Z}").format(vars));
 		
 		// Choice Decimal value
-		Assert.assertEquals("Y", new NamedFormatter("${varDec/<123456.789:X/123456.789:Y/>123456.789:Z}").format(vars));
+		assertEquals("Y", new NamedFormatter("${varDec/<123456.789:X/123456.789:Y/>123456.789:Z}").format(vars));
 		
 		// Choice Date value
-		Assert.assertEquals("Y", new NamedFormatter("${varDate/<#2000-01-23#:X/#2000-01-23#:Y/>#2000-01-23#:Z}").format(vars));
-		Assert.assertEquals("Y", new NamedFormatter("${varDate/<#2000-01-23T04:05:06.123456789+09:00#:X/#2000-01-23T04:05:06.123456789+09:00#:Y/>#2000-01-23T04:05:06.123456789+09:00#:Z}").format(vars));
+		assertEquals("Y", new NamedFormatter("${varDate/<#2000-01-23#:X/#2000-01-23#:Y/>#2000-01-23#:Z}").format(vars));
+		assertEquals("Y", new NamedFormatter("${varDate/<#2000-01-23T04:05:06.123456789+09:00#:X/#2000-01-23T04:05:06.123456789+09:00#:Y/>#2000-01-23T04:05:06.123456789+09:00#:Z}").format(vars));
 		
 		// Choice Boolean value
-		Assert.assertEquals("Y", new NamedFormatter("${varBool/false:X/true:Y}").format(vars));
-		Assert.assertEquals("X", new NamedFormatter("${varBool/!=false:X/!=true:Y}").format(vars));
+		assertEquals("Y", new NamedFormatter("${varBool/false:X/true:Y}").format(vars));
+		assertEquals("X", new NamedFormatter("${varBool/!=false:X/!=true:Y}").format(vars));
 		
 		// Choice Null value
-		Assert.assertEquals("Y", new NamedFormatter("${varNull/'null':X/null:Y/default:Z}").format(vars));
+		assertEquals("Y", new NamedFormatter("${varNull/'null':X/null:Y/default:Z}").format(vars));
 	}
 
 	@Test
@@ -102,14 +103,14 @@ public class NamedFormatterTest {
 			String text = formatter.format(varName -> {
 				return "";
 			});
-			Assert.assertEquals("", text);
+			assertEquals("", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var}");
 			String text = formatter.format(varName -> {
 				return "val";
 			});
-			Assert.assertEquals("val", text);
+			assertEquals("val", text);
 		}
 	}
 
@@ -120,21 +121,21 @@ public class NamedFormatterTest {
 			String text = formatter.format(varName -> {
 				return 0;
 			});
-			Assert.assertEquals("0", text);
+			assertEquals("0", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var}");
 			String text = formatter.format(varName -> {
 				return 1234;
 			});
-			Assert.assertEquals("1234", text);
+			assertEquals("1234", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var}");
 			String text = formatter.format(varName -> {
 				return -1234;
 			});
-			Assert.assertEquals("-1234", text);
+			assertEquals("-1234", text);
 		}
 	}
 
@@ -145,21 +146,21 @@ public class NamedFormatterTest {
 			String text = formatter.format(varName -> {
 				return 0.0;
 			});
-			Assert.assertEquals("0.0", text);
+			assertEquals("0.0", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var}");
 			String text = formatter.format(varName -> {
 				return 1234.5678;
 			});
-			Assert.assertEquals("1234.5678", text);
+			assertEquals("1234.5678", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var}");
 			String text = formatter.format(varName -> {
 				return -1234.5678;
 			});
-			Assert.assertEquals("-1234.5678", text);
+			assertEquals("-1234.5678", text);
 		}
 	}
 
@@ -171,7 +172,7 @@ public class NamedFormatterTest {
 			String text = formatter.format(varName -> {
 				return date;
 			});
-			Assert.assertEquals(date.toString(), text);
+			assertEquals(date.toString(), text);
 		}
 	}
 
@@ -182,14 +183,14 @@ public class NamedFormatterTest {
 			String text = formatter.format(varName -> {
 				return Boolean.TRUE;
 			});
-			Assert.assertEquals("true", text);
+			assertEquals("true", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var}");
 			String text = formatter.format(varName -> {
 				return Boolean.FALSE;
 			});
-			Assert.assertEquals("false", text);
+			assertEquals("false", text);
 		}
 	}
 
@@ -200,7 +201,7 @@ public class NamedFormatterTest {
 			String text = formatter.format(varName -> {
 				return null;
 			});
-			Assert.assertEquals("", text);
+			assertEquals("", text);
 		}
 	}
 
@@ -215,7 +216,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("testval1testval2test", text);
+			assertEquals("testval1testval2test", text);
 		}
 	}
 
@@ -226,7 +227,7 @@ public class NamedFormatterTest {
 			String text = formatter.format(varName -> {
 				return 1234;
 			});
-			Assert.assertEquals("001234", text);
+			assertEquals("001234", text);
 		}
 		
 		{
@@ -234,14 +235,14 @@ public class NamedFormatterTest {
 			String text = formatter.format(varName -> {
 				return 1234;
 			});
-			Assert.assertEquals("001234", text);
+			assertEquals("001234", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var%#,###}");
 			String text = formatter.format(varName -> {
 				return 1234;
 			});
-			Assert.assertEquals("1,234", text);
+			assertEquals("1,234", text);
 		}
 	}
 
@@ -252,7 +253,7 @@ public class NamedFormatterTest {
 			String text = formatter.format(varName -> {
 				return 1234.5678;
 			});
-			Assert.assertEquals("1,234.57", text);
+			assertEquals("1,234.57", text);
 		}
 	}
 
@@ -264,7 +265,7 @@ public class NamedFormatterTest {
 			String text = formatter.format(varName -> {
 				return date;
 			});
-			Assert.assertEquals(String.format("%tY-%tm-%td", date, date, date), text);
+			assertEquals(String.format("%tY-%tm-%td", date, date, date), text);
 		}
 		
 		{
@@ -273,7 +274,7 @@ public class NamedFormatterTest {
 			String text = formatter.format(varName -> {
 				return date;
 			});
-			Assert.assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(date), text);
+			assertEquals(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(date), text);
 		}
 	}
 
@@ -290,7 +291,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("testval1test1,234test" + (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(date)) + "test${var1}\\", text);
+			assertEquals("testval1test1,234test" + (new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(date)) + "test${var1}\\", text);
 		}
 	}
 
@@ -304,7 +305,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retStr", text);
+			assertEquals("retStr", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/'strVal':retStr/~'(?i).+va.':retRegex/!'not':retNot/default:retDef}");
@@ -314,7 +315,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retStr", text);
+			assertEquals("retStr", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/'strVal':retStr/~'(?i).+va.':retRegex/!'not':retNot/default:retDef}");
@@ -324,7 +325,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retRegex", text);
+			assertEquals("retRegex", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/'strVal':retStr/~'(?i).+va.':retRegex/!'not':retNot/default:retDef}");
@@ -334,7 +335,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retNot", text);
+			assertEquals("retNot", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/'strVal':retStr/~'(?i).+va.':retRegex/!'not':retNot/default:retDef}");
@@ -344,7 +345,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retDef", text);
+			assertEquals("retDef", text);
 		}
 
 		{
@@ -355,7 +356,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retLT", text);
+			assertEquals("retLT", text);
 		}
 	}
 
@@ -369,7 +370,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retEQ", text);
+			assertEquals("retEQ", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<123456:retLT/123456:retEQ/>123456:retGT/default:retDef}");
@@ -379,7 +380,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retGT", text);
+			assertEquals("retGT", text);
 		}
 
 		{
@@ -390,7 +391,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retLT", text);
+			assertEquals("retLT", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<123456:retLT/123456:retEQ/>123456:retGT/default:retDef}");
@@ -400,7 +401,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retEQ", text);
+			assertEquals("retEQ", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<123456:retLT/123456:retEQ/>123456:retGT/default:retDef}");
@@ -410,7 +411,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retGT", text);
+			assertEquals("retGT", text);
 		}
 	}
 
@@ -424,7 +425,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retLT", text);
+			assertEquals("retLT", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<123.456:retLT/123.456:retEQ/>123.456:retGT/default:retDef}");
@@ -434,7 +435,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retEQ", text);
+			assertEquals("retEQ", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<123.456:retLT/123.456:retEQ/>123.456:retGT/default:retDef}");
@@ -444,7 +445,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retGT", text);
+			assertEquals("retGT", text);
 		}
 
 		{
@@ -455,7 +456,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retLT", text);
+			assertEquals("retLT", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<123.456:retLT/123.456:retEQ/>123.456:retGT/default:retDef}");
@@ -465,7 +466,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retEQ", text);
+			assertEquals("retEQ", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<123.456:retLT/123.456:retEQ/>123.456:retGT/default:retDef}");
@@ -475,7 +476,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retGT", text);
+			assertEquals("retGT", text);
 		}
 	}
 
@@ -489,7 +490,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retEQ", text);
+			assertEquals("retEQ", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retLT/#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retEQ/>#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retGT/default:retDef}");
@@ -499,7 +500,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retEQ", text);
+			assertEquals("retEQ", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retLT/#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retEQ/>#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retGT/default:retDef}");
@@ -509,7 +510,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retEQ", text);
+			assertEquals("retEQ", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retLT/#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retEQ/>#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retGT/default:retDef}");
@@ -519,7 +520,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retEQ", text);
+			assertEquals("retEQ", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retLT/#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retEQ/>#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retGT/default:retDef}");
@@ -529,7 +530,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retEQ", text);
+			assertEquals("retEQ", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retLT/#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retEQ/>#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retGT/default:retDef}");
@@ -539,7 +540,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retEQ", text);
+			assertEquals("retEQ", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retLT/#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retEQ/>#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retGT/default:retDef}");
@@ -549,7 +550,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retEQ", text);
+			assertEquals("retEQ", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/<#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retLT/#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retEQ/>#2000-01-23T04:05:06.123456789+09:00[Asia/Tokyo]#:retGT/default:retDef}");
@@ -559,7 +560,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retEQ", text);
+			assertEquals("retEQ", text);
 		}
 	}
 
@@ -573,7 +574,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retT", text);
+			assertEquals("retT", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/true:retT/false:retF/default:retDef}");
@@ -583,7 +584,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retF", text);
+			assertEquals("retF", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/true:retT/false:retF/default:retDef}");
@@ -593,7 +594,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retDef", text);
+			assertEquals("retDef", text);
 		}
 
 		{
@@ -604,7 +605,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retF", text);
+			assertEquals("retF", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/!true:retT/!false:retF/default:retDef}");
@@ -614,7 +615,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retT", text);
+			assertEquals("retT", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/!true:retT/!false:retF/default:retDef}");
@@ -624,7 +625,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retT", text);
+			assertEquals("retT", text);
 		}
 
 		{
@@ -635,7 +636,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retT", text);
+			assertEquals("retT", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/true:retT/false:retF/default:retDef}");
@@ -645,7 +646,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retF", text);
+			assertEquals("retF", text);
 		}
 	}
 
@@ -659,7 +660,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retN", text);
+			assertEquals("retN", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/!null:retN/default:retDef}");
@@ -669,7 +670,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retDef", text);
+			assertEquals("retDef", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/null:retN/default:retDef}");
@@ -679,7 +680,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retDef", text);
+			assertEquals("retDef", text);
 		}
 		{
 			NamedFormatter formatter = new NamedFormatter("${var/null:retN/default:retDef}");
@@ -689,7 +690,7 @@ public class NamedFormatterTest {
 				default: return null;
 				}
 			});
-			Assert.assertEquals("retDef", text);
+			assertEquals("retDef", text);
 		}
 	}
 }
