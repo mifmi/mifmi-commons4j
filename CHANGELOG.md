@@ -1,4 +1,9 @@
 
+## 0.3.0 (2022-01-09)
+Changed:
+
+  - Migrate Servlet from Java EE to Jakarta EE
+
 ## 0.2.10 (2021-05-29)
 Add:
 
