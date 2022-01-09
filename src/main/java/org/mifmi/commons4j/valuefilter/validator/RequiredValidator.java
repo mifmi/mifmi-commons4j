@@ -12,7 +12,7 @@ import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
 
 import org.mifmi.commons4j.util.ReflectionUtilz;
 
@@ -60,7 +60,7 @@ public class RequiredValidator extends AbstractValidator<Object> {
 			if (mapValue.isEmpty()) {
 				return true;
 			}
-		} else if (ReflectionUtilz.isExistsClass("javax.servlet.http.Part")
+		} else if (ReflectionUtilz.isExistsClass("jakarta.servlet.http.Part")
 				&& value instanceof Part) {
 			Part partValue = (Part)value;
 			if (partValue.getSize() == 0) {

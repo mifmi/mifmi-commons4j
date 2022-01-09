@@ -10,7 +10,7 @@ package org.mifmi.commons4j.valuefilter.validator;
 
 import java.io.File;
 
-import javax.servlet.http.Part;
+import jakarta.servlet.http.Part;
 
 import org.mifmi.commons4j.util.ReflectionUtilz;
 import org.mifmi.commons4j.valuefilter.UnsupportedValueTypeException;
@@ -50,7 +50,7 @@ public class FileSizeValidator extends AbstractValidator<Object> {
 		} else if (value instanceof File) {
 			File fileValue = (File)value;
 			len = fileValue.length();
-		} else if (ReflectionUtilz.isExistsClass("javax.servlet.http.Part")
+		} else if (ReflectionUtilz.isExistsClass("jakarta.servlet.http.Part")
 				&& value instanceof Part) {
 			Part partValue = (Part)value;
 			len = partValue.getSize();

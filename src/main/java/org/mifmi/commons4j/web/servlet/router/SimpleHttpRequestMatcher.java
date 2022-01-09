@@ -11,8 +11,8 @@ package org.mifmi.commons4j.web.servlet.router;
 import java.util.Locale;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.mifmi.commons4j.matcher.IMatcher;
 import org.mifmi.commons4j.matcher.StringMatcher;
