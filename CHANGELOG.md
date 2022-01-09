@@ -1,4 +1,9 @@
 
+## 0.3.1 (2022-01-09)
+Add:
+
+  - Add JitPack setting
+
 ## 0.3.0 (2022-01-09)
 Changed:
 
