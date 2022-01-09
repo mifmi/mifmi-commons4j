@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.mifmi.commons4j.graphics.color.HSLColor;
 import org.mifmi.commons4j.util.CollectionUtilz;
 
 public class RGBColor implements IColor {
