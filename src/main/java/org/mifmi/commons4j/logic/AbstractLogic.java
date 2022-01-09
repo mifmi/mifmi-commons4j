@@ -76,13 +76,4 @@ public abstract class AbstractLogic implements Logic, Transactional, Disposable 
 		doDispose();
 		this.disposed = true;
 	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		try {
-			dispose();
-		} finally {
-			super.finalize();
-		}
-	}
 }

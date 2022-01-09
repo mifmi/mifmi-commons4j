@@ -177,14 +177,4 @@ public class ConnectionManager implements Transactional {
 			throw ex;
 		}
 	}
-
-
-	@Override
-	protected void finalize() throws Throwable {
-		try {
-			close();
-		} finally {
-			super.finalize();
-		}
-	}
 }

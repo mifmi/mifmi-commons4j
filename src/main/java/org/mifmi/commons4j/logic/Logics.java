@@ -112,13 +112,4 @@ public class Logics implements Transactional, Disposable {
 			throw firstException;
 		}
 	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		try {
-			dispose();
-		} finally {
-			super.finalize();
-		}
-	}
 }

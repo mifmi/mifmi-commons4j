@@ -8,6 +8,8 @@
  */
 package org.mifmi.commons4j.logic;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.mifmi.commons4j.transaction.Disposable;
 import org.mifmi.commons4j.transaction.Transactional;
 
@@ -44,10 +46,18 @@ public class LogicManager implements Transactional, Disposable {
 	public <T extends Logic> T createLogic(Class<T> logicClass, boolean transactionDisabled) {
 		T logic;
 		try {
-			logic = logicClass.newInstance();
+			logic = logicClass.getDeclaredConstructor().newInstance();
 		} catch (InstantiationException e) {
 			throw new LogicException(e);
 		} catch (IllegalAccessException e) {
+			throw new LogicException(e);
+		} catch (IllegalArgumentException e) {
+			throw new LogicException(e);
+		} catch (InvocationTargetException e) {
+			throw new LogicException(e);
+		} catch (NoSuchMethodException e) {
+			throw new LogicException(e);
+		} catch (SecurityException e) {
 			throw new LogicException(e);
 		}
 		
@@ -69,14 +79,5 @@ public class LogicManager implements Transactional, Disposable {
 
 	public void dispose() {
 		this.logics.dispose();
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		try {
-			dispose();
-		} finally {
-			super.finalize();
-		}
 	}
 }
