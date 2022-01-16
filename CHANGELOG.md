@@ -1,4 +1,9 @@
 
+## 0.3.2 (2022-01-16)
+Add:
+
+ - Add ArithmeticException handling to NumberUtilz#toEnNum and NumberUtilz#toJPNum
+
 ## 0.3.1 (2022-01-09)
 Add:
 
