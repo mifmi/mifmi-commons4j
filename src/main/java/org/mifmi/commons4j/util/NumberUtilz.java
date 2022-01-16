@@ -613,7 +613,13 @@ public final class NumberUtilz {
 			sb.append("Negative ");
 		}
 		
-		BigInteger numInt = num.toBigInteger();
+		BigInteger numInt;
+		try {
+			numInt = num.toBigInteger();
+		} catch (ArithmeticException e) {
+			throw new NumberParseException(e);
+		}
+		
 		if (NumberUtilz.isZero(numInt)) {
 			sb.append("Zero ");
 		} else {
@@ -1375,7 +1381,13 @@ public final class NumberUtilz {
 			sb.append("−");
 		}
 		
-		BigInteger numInt = num.toBigInteger();
+		BigInteger numInt;
+		try {
+			numInt = num.toBigInteger();
+		} catch (ArithmeticException e) {
+			throw new NumberParseException(e);
+		}
+		
 		if (NumberUtilz.isZero(numInt)) {
 			sb.append((useDaiji) ? "零" : "〇");
 		} else {
